@@ -5,7 +5,7 @@ import { db } from '../../../../firebaseConfig';
 
 const ProductDetail = () => {
     const router = useRouter();
-    const { id } = router.query; // URLから商品IDを取得
+    const { id } = router.query;
     const [product, setProduct] = useState(null);
     const [sellers, setSellerName] = useState('');
 
@@ -64,7 +64,7 @@ const ProductDetail = () => {
 
             <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>詳細</h2>
             <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{product.description}</p>
-            <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>出品者</h2> {/* 出品者タイトル */}
+            <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>出品者</h2>
             <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{sellers.sellerName}</p>
             <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>
                 <strong>価格:</strong> ¥{product.price.toLocaleString()}
