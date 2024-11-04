@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
@@ -14,11 +13,9 @@ const Home = () => {
     const router = useRouter();
 
     useEffect(() => {
-
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
-
 
         const fetchProducts = async () => {
             const productsCollection = collection(db, 'products');
@@ -33,7 +30,6 @@ const Home = () => {
         fetchProducts();
     }, []);
 
-
     const handleLogout = async () => {
         try {
             await signOut(auth);
@@ -43,10 +39,13 @@ const Home = () => {
         }
     };
 
+
     return (
         <div style={{ padding: '20px', backgroundColor: '#f9f9f9', position: 'relative' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>商品一覧</h1>
-
+            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+                <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '10px' }}>EC_SITE</h1>
+                <h2 style={{ fontSize: '24px', color: '#555' }}>商品一覧</h2>
+            </header>
 
             {user && (
                 <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px' }}>
@@ -89,7 +88,11 @@ const Home = () => {
                             boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                             textDecoration: 'none'
                         }}>
-                            <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
+                            <img
+                                src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : '/placeholder.jpg'}
+                                alt={product.name}
+                                style={{ width: '100%', height: '150px', objectFit: 'cover' }}
+                            />
                             <div style={{ padding: '16px', color: 'black' }}>
                                 <h2 style={{ fontSize: '18px', margin: '0 0 8px' }}>{product.name}</h2>
                                 <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0' }}>${product.price}</p>

@@ -1,9 +1,7 @@
-
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
-import sellerName from "@/pages/sellerName";
 
 const ProductDetail = () => {
     const router = useRouter();
@@ -20,7 +18,6 @@ const ProductDetail = () => {
                     const productSnapshot = await getDoc(productDoc);
 
                     if (productSnapshot.exists()) {
-
                         setProduct({ id: productSnapshot.id, ...productSnapshot.data() });
                     } else {
                         console.log('No such document!');
@@ -37,7 +34,6 @@ const ProductDetail = () => {
 
     const handlePurchase = () => {
         alert(`購入しました: ${product.name}`);
-
     };
 
 
@@ -46,27 +42,34 @@ const ProductDetail = () => {
     }
 
     return (
-        <div style={{maxWidth: '800px', margin: 'auto', padding: '20px'}}>
-            <h1 style={{textAlign: 'center', fontSize: '2rem', color: '#333'}}>{product.name}</h1>
-            <img
-                src={product.imageUrl}
-                alt={product.name}
-                style={{
-                    width: '100%',
-                    maxWidth: '600px',
-                    height: 'auto',
-                    display: 'block',
-                    margin: '20px auto'
-                }}
-            />
-            <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>詳細</h2>
-            <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.description}</p>
+        <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
+            <h1 style={{ textAlign: 'center', fontSize: '2rem', color: '#333' }}>{product.name}</h1>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+                {product.imageUrls && product.imageUrls.map((url, index) => (
+                    <img
+                        key={index}
+                        src={url}
+                        alt={`${product.name} - 画像${index + 1}`}
+                        style={{
+                            width: '100%',
+                            maxWidth: '250px',
+                            height: 'auto',
+                            borderRadius: '8px',
+                            margin: '10px'
+                        }}
+                    />
+                ))}
+            </div>
+
+            <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>詳細</h2>
+            <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{product.description}</p>
             <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>出品者</h2> {/* 出品者タイトル */}
             <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{sellers.sellerName}</p>
-            <p style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#333'}}>
+            <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>
                 <strong>価格:</strong> ¥{product.price.toLocaleString()}
             </p>
-            <div style={{textAlign: 'center'}}>
+            <div style={{ textAlign: 'center' }}>
                 <button
                     onClick={handlePurchase}
                     style={{

@@ -9,36 +9,37 @@ const AddProduct = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
-    const [file, setFile] = useState([])
+    const [files, setFiles] = useState([]);
     const router = useRouter();
 
 
-    const uploadImage = async (file) => {
-        const fileRef = ref(storage, `products/${uuidv4()}`);
-        await uploadBytes(fileRef, file);
-        return getDownloadURL(fileRef);
+    const uploadImages = async (files) => {
+        const uploadPromises = files.map((file) => {
+            const fileRef = ref(storage, `products/${uuidv4()}`);
+            return uploadBytes(fileRef, file).then(() => getDownloadURL(fileRef));
+        });
+        return Promise.all(uploadPromises);
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!file) {
+        if (files.length === 0) {
             alert('画像を選択してください。');
             return;
         }
 
         try {
-
-            const imageUrl = await uploadImage(file);
+            const imageUrls = await uploadImages(files); // Upload all images
 
             await addDoc(collection(db, 'products'), {
                 name,
                 price: parseFloat(price),
                 description,
-                imageUrl, // 取得した画像のURLを保存
+                imageUrls, // Store array of image URLs
                 createdAt: serverTimestamp(),
             });
+
             alert('商品が追加されました！');
             router.push('/');
         } catch (error) {
@@ -77,7 +78,8 @@ const AddProduct = () => {
                 <label>画像:</label>
                 <input
                     type="file"
-                    onChange={(e) => setFile(e.target.files[0])} // 単一ファイルを選択
+                    multiple // Allow multiple files
+                    onChange={(e) => setFiles(Array.from(e.target.files))} // Update state with selected files
                     accept="image/*"
                     required
                 />
