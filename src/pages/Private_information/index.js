@@ -24,7 +24,7 @@ const PersonalInfoPage = () => {
                 createdAt: serverTimestamp()
             });
             alert('個人情報が保存されました');
-            router.push('/sellerName');
+            router.push('/Catalog');
         } catch (error) {
             console.error('個人情報の保存に失敗しました: ', error);
             alert('保存に失敗しました。もう一度お試しください。');

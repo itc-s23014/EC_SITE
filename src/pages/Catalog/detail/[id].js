@@ -10,9 +10,10 @@ const ProductDetail = () => {
     const [sellerName, setSellerName] = useState('');
 
     useEffect(() => {
-        const fetchProduct = async () => {
+        const fetchProductAndSeller = async () => {
             if (id) {
                 try {
+
                     const productDoc = doc(db, 'products', id);
                     const productSnapshot = await getDoc(productDoc);
 
@@ -20,19 +21,22 @@ const ProductDetail = () => {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         console.log('productData:', productData);
                         setProduct(productData);
+
                         const sellerId = productData.sellerId;
-                        const sellerName = productData.sellerName;
                         if (sellerId) {
-                            console.log("sellerId: ",sellerId);
-                            // const sellerDoc = doc(db, 'sellers', sellerId);
-                            // console.log("出品者ドキュメントのリファレンス: ,",sellerDoc);
-                            // const sellerSnapshot = await getDoc(sellerDoc);
-                            if (sellerName) {
-                                console.log("sellerName: ", sellerName);
-                                // const sellerData = sellerSnapshot.data();
+                            console.log("sellerId:", sellerId);
+
+
+                            const sellerDoc = doc(db, 'sellers', sellerId);
+                            const sellerSnapshot = await getDoc(sellerDoc);
+
+                            if (sellerSnapshot.exists()) {
+                                const sellerData = sellerSnapshot.data();
+                                const sellerName = sellerData.sellerName;
+                                console.log("sellerName:", sellerName);
                                 setSellerName(sellerName);
                             } else {
-                                console.log('出品者が見つかりませんでした！',sellerSnapshot);
+                                console.log('指定したsellerIdに一致する出品者が見つかりませんでした！');
                                 setSellerName('不明');
                             }
                         } else {
@@ -47,8 +51,9 @@ const ProductDetail = () => {
             }
         };
 
-        fetchProduct();
+        fetchProductAndSeller();
     }, [id]);
+
 
     const handlePurchase = () => {
         alert(`購入しました: ${product.name}`);
