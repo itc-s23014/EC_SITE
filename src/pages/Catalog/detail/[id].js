@@ -18,21 +18,19 @@ const ProductDetail = () => {
 
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
+                        console.log('productData:', productData);
                         setProduct(productData);
-                        console.log('商品データ:', productData);
-
                         const sellerId = productData.sellerId;
-                        console.log(sellerId);
+                        const sellerName = productData.sellerName;
                         if (sellerId) {
-                            const sellerDoc = doc(db, 'sellers', sellerId);
-                            console.log("出品者ドキュメントのリファレンス: ,",sellerDoc);
-                            const sellerSnapshot = await getDoc(sellerDoc);
-
-
-                            if (sellerSnapshot.id.includes(sellerSnapshot.id)) {
-                                const sellerData = sellerSnapshot.data();
-                                setSellerName(sellerData.sellerName);
-                                console.log('出品者データ:',sellerData);
+                            console.log("sellerId: ",sellerId);
+                            // const sellerDoc = doc(db, 'sellers', sellerId);
+                            // console.log("出品者ドキュメントのリファレンス: ,",sellerDoc);
+                            // const sellerSnapshot = await getDoc(sellerDoc);
+                            if (sellerName) {
+                                console.log("sellerName: ", sellerName);
+                                // const sellerData = sellerSnapshot.data();
+                                setSellerName(sellerName);
                             } else {
                                 console.log('出品者が見つかりませんでした！',sellerSnapshot);
                                 setSellerName('不明');
