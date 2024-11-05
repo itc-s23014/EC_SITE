@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import app from '../../../firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useRouter } from 'next/navigation';
 
@@ -18,13 +18,11 @@ const AddUserPage = () => {
         e.preventDefault();
 
         try {
-
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
 
-            await addDoc(collection(db, 'sellers'), {
-                sellerId: user.uid,
+            await setDoc(doc(db, 'sellers', user.uid), {
                 sellerName,
                 createdAt: new Date(),
             });
