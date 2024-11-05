@@ -7,8 +7,7 @@ const ProductDetail = () => {
     const router = useRouter();
     const { id } = router.query;
     const [product, setProduct] = useState(null);
-    const [sellers, setSellerName] = useState('');
-
+    const [sellerName, setSellerName] = useState('');
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -18,12 +17,32 @@ const ProductDetail = () => {
                     const productSnapshot = await getDoc(productDoc);
 
                     if (productSnapshot.exists()) {
-                        setProduct({ id: productSnapshot.id, ...productSnapshot.data() });
+                        const productData = { id: productSnapshot.id, ...productSnapshot.data() };
+                        console.log('productData:', productData);
+                        setProduct(productData);
+                        const sellerId = productData.sellerId;
+                        const sellerName = productData.sellerName;
+                        if (sellerId) {
+                            console.log("sellerId: ",sellerId);
+                            // const sellerDoc = doc(db, 'sellers', sellerId);
+                            // console.log("出品者ドキュメントのリファレンス: ,",sellerDoc);
+                            // const sellerSnapshot = await getDoc(sellerDoc);
+                            if (sellerName) {
+                                console.log("sellerName: ", sellerName);
+                                // const sellerData = sellerSnapshot.data();
+                                setSellerName(sellerName);
+                            } else {
+                                console.log('出品者が見つかりませんでした！',sellerSnapshot);
+                                setSellerName('不明');
+                            }
+                        } else {
+                            console.log('sellerIdが見つかりません！');
+                        }
                     } else {
-                        console.log('No such document!');
+                        console.log('商品が見つかりませんでした！');
                     }
                 } catch (error) {
-                    console.error('Error fetching product:', error);
+                    console.error('商品取得エラー:', error);
                 }
             }
         };
@@ -31,11 +50,9 @@ const ProductDetail = () => {
         fetchProduct();
     }, [id]);
 
-
     const handlePurchase = () => {
         alert(`購入しました: ${product.name}`);
     };
-
 
     if (!product) {
         return <div>読み込み中...</div>;
@@ -65,7 +82,7 @@ const ProductDetail = () => {
             <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>詳細</h2>
             <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{product.description}</p>
             <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>出品者</h2>
-            <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{sellers.sellerName}</p>
+            <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{sellerName || '不明'}</p>
             <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>
                 <strong>価格:</strong> ¥{product.price.toLocaleString()}
             </p>
