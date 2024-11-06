@@ -11,7 +11,7 @@ const AddProduct = () => {
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [files, setFiles] = useState([]);
-    const [sellerName, setSellerName] = useState(''); // sellerNameを追加
+    const [sellerName, setSellerName] = useState('');
     const router = useRouter();
     const auth = getAuth();
 
@@ -19,7 +19,7 @@ const AddProduct = () => {
         const fetchSellerName = async () => {
             const user = auth.currentUser;
             if (user) {
-                // 現在のユーザーの UID を使って sellerName を取得
+
                 const sellerDoc = doc(db, 'sellers', user.uid);
                 const sellerSnapshot = await getDoc(sellerDoc);
 
@@ -49,19 +49,19 @@ const AddProduct = () => {
         }
 
         try {
-            const imageUrls = await uploadImages(files); // 画像をアップロード
+            const imageUrls = await uploadImages(files);
 
-            // 現在のユーザーの UID を取得
+
             const user = auth.currentUser;
-            const sellerId = user ? user.uid : null; // ユーザーの UID を取得
+            const sellerId = user ? user.uid : null;
 
             await addDoc(collection(db, 'products'), {
                 name,
                 price: parseFloat(price),
                 description,
-                imageUrls, // 画像のURLの配列を保存
+                imageUrls,
                 createdAt: serverTimestamp(),
-                sellerId, // 出品者の UID を追加
+                sellerId,
             });
 
             alert('商品が追加されました！');
@@ -102,8 +102,8 @@ const AddProduct = () => {
                 <label>画像:</label>
                 <input
                     type="file"
-                    multiple // 複数のファイルを許可
-                    onChange={(e) => setFiles(Array.from(e.target.files))} // 選択されたファイルを状態に更新
+                    multiple
+                    onChange={(e) => setFiles(Array.from(e.target.files))}
                     accept="image/*"
                     required
                 />
