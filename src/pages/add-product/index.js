@@ -65,7 +65,7 @@ const AddProduct = () => {
             });
 
             alert('商品が追加されました！');
-            router.push('/');
+            router.push('/Catalog');
         } catch (error) {
             console.error('商品追加エラー: ', error);
             alert('商品追加に失敗しました。もう一度お試しください。');
