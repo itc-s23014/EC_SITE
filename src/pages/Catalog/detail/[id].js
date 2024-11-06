@@ -74,7 +74,7 @@ const ProductDetail = () => {
             addItem({
                 name: product.name,
                 id: product.id,
-                price: product.price * 100,
+                price: product.price ,
                 currency: 'jpy',
             });
             alert(`${product.name} をカートに追加しました`);
