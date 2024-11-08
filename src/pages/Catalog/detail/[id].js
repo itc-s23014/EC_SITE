@@ -81,11 +81,24 @@ const ProductDetail = () => {
         }
     };
 
-    const handlePurchase = () => {
-
-        alert('購入手続きに進みます');
-
+    const handlePurchase = async () => {
+        try {
+            const res = await fetch('/api/checkout_api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId: product.id })
+            });
+            const data = await res.json();
+            if (data.checkout_url) {
+                window.location.href = data.checkout_url;
+            } else {
+                console.error('購入手続きエラー:', data.error);
+            }
+        } catch (error) {
+            console.error('購入手続きエラー:', error);
+        }
     };
+
 
     if (!product) {
         return <div>読み込み中...</div>;

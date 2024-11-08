@@ -7,8 +7,8 @@ function MyApp({ Component, pageProps }) {
           mode="payment"
           cartMode="client-only"
           stripe={process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY}
-          successUrl="https://example.com/success"
-          cancelUrl="https://example.com/cancel"
+          successUrl="https://localhost:3000/success"
+          cancelUrl="https://localhost:3000"
           currency="jpy"
        shouldPersist>
         <Component {...pageProps} />
