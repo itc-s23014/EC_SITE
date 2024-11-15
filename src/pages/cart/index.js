@@ -2,11 +2,14 @@ import { useShoppingCart } from 'use-shopping-cart';
 import { collection, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useState, useEffect } from 'react';
+import {getAuth} from 'firebase/auth';
 
 const CartContents = () => {
     const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const auth = getAuth();
+    const user = auth.currentUser;
 
     const fetchProducts = async () => {
         const productsCollection = collection(db, 'products');
