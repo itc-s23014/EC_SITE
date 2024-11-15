@@ -6,6 +6,7 @@ import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
 
+
 const ProductDetail = () => {
     const router = useRouter();
     const { id } = router.query;
@@ -24,6 +25,8 @@ const ProductDetail = () => {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
+                        const productr = productData
+
 
                         const sellerId = productData.sellerId;
                         if (sellerId) {
@@ -81,22 +84,33 @@ const ProductDetail = () => {
         }
     };
 
-    const handlePurchase = async () => {
-        try {
-            const res = await fetch('/api/checkout_api', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId: product.id })
-            });
-            const data = await res.json();
-            if (data.checkout_url) {
-                window.location.href = data.checkout_url;
-            } else {
-                console.error('購入手続きエラー:', data.error);
-            }
-        } catch (error) {
-            console.error('購入手続きエラー:', error);
+    // const handlePurchase = async () => {
+    //     try {
+    //         const res = await fetch('api/checkout_api', {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //             body: JSON.stringify({ productId: product.id })
+    //         });
+    //         const data = await res.json();
+    //         if (data.checkout_url) {
+    //             window.location.href = data.checkout_url;
+    //         } else {
+    //             console.error('購入手続きエラー:', data.error);
+    //         }
+    //     } catch (error) {
+    //         console.error('購入手続きエラー:', error);
+    //     }
+    // };
+
+    const purchase = () => {
+        if (!product?.id) {
+            console.error('商品IDが取得できません');
+            return;
         }
+        router.push({
+            pathname: '/select-purchase',
+            query: { productId: product.id },
+        });
     };
 
 
@@ -149,7 +163,7 @@ const ProductDetail = () => {
                     カートに追加
                 </button>
                 <button
-                    onClick={handlePurchase}
+                    onClick={purchase}
                     style={{
                         padding: '12px 24px',
                         backgroundColor: '#28a745',

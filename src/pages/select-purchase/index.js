@@ -1,28 +1,50 @@
-// pages/select-payment-method.js
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
+import {doc, getDoc} from "firebase/firestore";
+import {db} from "../../../firebaseConfig";
 
 export default function SelectPaymentMethod() {
     const [selectedMethod, setSelectedMethod] = useState('');
     const router = useRouter();
+    const [product, setProduct] = useState(null);
+    const { id } = router.query;
+    const {productId} = router.query
+
+useEffect(() => {
+    console.log('受けっとた商品id: ',productId)
+})
 
     const handlePurchase = () => {
         if (!selectedMethod) return;
-
-    switch (selectedMethod) {
-        case 'credit-card':
-            router.push('/purchase/credit-card');
-            break;
-        case 'convenience-store':
+        if (selectedMethod === 'credit-card') {
+            stripe_handlePurchase()
+        } else if (selectedMethod === 'convenience-store') {
             router.push('/purchase/convenience-store');
-            break;
-        case 'cash-on-delivery':
+        } else if (selectedMethod === 'cash-on-delivery') {
             router.push('/purchase/cash-on-delivery');
-            break;
-        default:
+        } else {
             alert('支払い方法を選択してください');
         }
     };
+
+    const stripe_handlePurchase = async () => {
+        try {
+            const res = await fetch('/api/checkout_api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId })
+            });
+            const data = await res.json();
+            if (data.checkout_url) {
+                window.location.href = data.checkout_url;
+            } else {
+                console.error('購入手続きエラー:', data.error);
+            }
+        } catch (error) {
+            console.error('購入手続きエラー:', error);
+        }
+    };
+
 
     return (
         <div className="container">
@@ -33,64 +55,64 @@ export default function SelectPaymentMethod() {
         </header>
 
         {/* コンテンツ */}
-        <div className="content">
-            {/* ポイント利用のセクション */}
-        <div className="points-section">
-            <p>ポイントの利用</p>
-            <p className="points">P0</p>
-        </div>
+            <div className="content">
+                {/* ポイント利用のセクション */}
+                <div className="points-section">
+                    <p>ポイントの利用</p>
+                    <p className="points">P0</p>
+                </div>
 
-        {/* 支払い方法のセクション */}
-        <div className="payment-method-section">
-            <p className="section-title">支払い方法</p>
-            <div className="radio-group">
-            <label className="radio-option">
-                <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="credit-card"
-                    checked={selectedMethod === 'credit-card'}
-                    onChange={() => setSelectedMethod('credit-card')}
-                />
-                クレジットカード
-            </label>
-            <label className="radio-option">
-                <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="convenience-store"
-                    checked={selectedMethod === 'convenience-store'}
-                    onChange={() => setSelectedMethod('convenience-store')}
-                />
-                コンビニ/ATM
-            </label>
-            <label className="radio-option">
-                <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="cash-on-delivery"
-                    checked={selectedMethod === 'cash-on-delivery'}
-                    onChange={() => setSelectedMethod('cash-on-delivery')}
-                />
-                代金交換
-            </label>
+                {/* 支払い方法のセクション */}
+                <div className="payment-method-section">
+                    <p className="section-title">支払い方法</p>
+                    <div className="radio-group">
+                        <label className="radio-option">
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="credit-card"
+                                checked={selectedMethod === 'credit-card'}
+                                onChange={() => setSelectedMethod('credit-card')}
+                            />
+                            クレジットカード
+                        </label>
+                        <label className="radio-option">
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="convenience-store"
+                                checked={selectedMethod === 'convenience-store'}
+                                onChange={() => setSelectedMethod('convenience-store')}
+                            />
+                            コンビニ/ATM
+                        </label>
+                        <label className="radio-option">
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="cash-on-delivery"
+                                checked={selectedMethod === 'cash-on-delivery'}
+                                onChange={() => setSelectedMethod('cash-on-delivery')}
+                            />
+                            代金交換
+                        </label>
+                    </div>
+                </div>
+
+                {/* 購入ボタン */}
+                <button
+                    onClick={handlePurchase}
+                    className={`purchase-button ${selectedMethod ? 'enabled' : ''}`}
+                    disabled={!selectedMethod}
+                >
+                    購入
+                </button>
             </div>
-        </div>
 
-        {/* 購入ボタン */}
-        <button
-            onClick={handlePurchase}
-            className={`purchase-button ${selectedMethod ? 'enabled' : ''}`}
-            disabled={!selectedMethod}
-        >
-            購入
-        </button>
-        </div>
-
-        <style jsx>{`
-            .container {
-            display: flex;
-            flex-direction: column;
+            <style jsx>{`
+                .container {
+                    display: flex;
+                    flex-direction: column;
             width: 100%;
             min-height: 100vh;
             font-family: Arial, sans-serif;
