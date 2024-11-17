@@ -5,6 +5,7 @@ import { db } from '../../../../firebaseConfig';
 import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
+import BackButton from "@/pages/backbutton";
 
 
 const ProductDetail = () => {
@@ -25,7 +26,6 @@ const ProductDetail = () => {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
-                        const productr = productData
 
 
                         const sellerId = productData.sellerId;
@@ -120,6 +120,7 @@ const ProductDetail = () => {
 
     return (
         <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
+            <BackButton/>
             <h1 style={{ textAlign: 'center', fontSize: '2rem', color: '#333' }}>{product.name}</h1>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
@@ -180,5 +181,6 @@ const ProductDetail = () => {
         </div>
     );
 };
+
 
 export default ProductDetail;

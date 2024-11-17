@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../../firebaseConfig";
+import Backbutton from "@/pages/backbutton";
 
 export default function SelectPaymentMethod() {
     const [selectedMethod, setSelectedMethod] = useState('');
@@ -48,21 +49,20 @@ useEffect(() => {
 
     return (
         <div className="container">
-        {/* ヘッダー */}
+
         <header>
-            <button onClick={() => router.back()} className="back-button">← 戻る</button>
+            <Backbutton />
             <h1>購入手続き</h1>
         </header>
 
-        {/* コンテンツ */}
             <div className="content">
-                {/* ポイント利用のセクション */}
+
                 <div className="points-section">
                     <p>ポイントの利用</p>
                     <p className="points">P0</p>
                 </div>
 
-                {/* 支払い方法のセクション */}
+
                 <div className="payment-method-section">
                     <p className="section-title">支払い方法</p>
                     <div className="radio-group">
@@ -99,7 +99,6 @@ useEffect(() => {
                     </div>
                 </div>
 
-                {/* 購入ボタン */}
                 <button
                     onClick={handlePurchase}
                     className={`purchase-button ${selectedMethod ? 'enabled' : ''}`}
@@ -196,7 +195,7 @@ useEffect(() => {
             transition: background-color 0.3s;
         }
         .purchase-button.enabled {
-          background-color: #0070f3; /* ボタンが青くなる */
+          background-color: #0070f3; 
             cursor: pointer;
         }
         `}</style>

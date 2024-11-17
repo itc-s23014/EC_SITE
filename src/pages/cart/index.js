@@ -3,6 +3,7 @@ import { collection, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useState, useEffect } from 'react';
 import {getAuth} from 'firebase/auth';
+import BackButton from "@/pages/backbutton";
 
 const CartContents = () => {
     const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
@@ -49,6 +50,7 @@ const CartContents = () => {
 
                     return (
                         <li key={item.id} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+                            <BackButton/>
                             <img
                                 src={imageUrl}
                                 alt={item.name}
