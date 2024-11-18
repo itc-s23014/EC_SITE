@@ -6,6 +6,7 @@ import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
 import BackButton from "@/pages/backbutton";
+import Header from "@/components/Header";
 
 
 const ProductDetail = () => {
@@ -119,9 +120,11 @@ const ProductDetail = () => {
     }
 
     return (
+        <>
+        <Header title={product.name} />
         <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
-            <BackButton/>
-            <h1 style={{ textAlign: 'center', fontSize: '2rem', color: '#333' }}>{product.name}</h1>
+            {/* <BackButton/>
+            <h1 style={{ textAlign: 'center', fontSize: '2rem', color: '#333' }}>{product.name}</h1> */}
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
                 {product.imageUrls && product.imageUrls.map((url, index) => (
@@ -179,6 +182,7 @@ const ProductDetail = () => {
                 </button>
             </div>
         </div>
+        </>
     );
 };
 
