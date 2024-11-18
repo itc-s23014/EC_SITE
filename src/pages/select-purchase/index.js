@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../../firebaseConfig";
-import Backbutton from "@/pages/backbutton";
+import Header from "@/components/Header";
 
 export default function SelectPaymentMethod() {
     const [selectedMethod, setSelectedMethod] = useState('');
@@ -60,10 +60,7 @@ useEffect(() => {
     return (
         <div className="container">
 
-        <header>
-            <Backbutton />
-            <h1>購入手続き</h1>
-        </header>
+            <Header title="購入手続き" />
 
             <div className="content">
 
@@ -205,7 +202,7 @@ useEffect(() => {
             transition: background-color 0.3s;
         }
         .purchase-button.enabled {
-          background-color: #0070f3; 
+          background-color: #0070f3;
             cursor: pointer;
         }
         `}</style>
