@@ -14,20 +14,30 @@ export default function SelectPaymentMethod() {
 useEffect(() => {
     console.log('受けっとた商品id: ',productId)
 })
+    const pushed = () => {
+        if (!productId) {
+            console.error('商品IDが取得できません');
+            return;
+        }
+        router.push({
+            pathname: '/convenience_store_payment',
+            query: { productId: productId },
+        });
+    };
 
     const handlePurchase = () => {
         if (!selectedMethod) return;
         if (selectedMethod === 'credit-card') {
             stripe_handlePurchase()
         } else if (selectedMethod === 'convenience-store') {
-            router.push('/purchase/convenience-store');
+            pushed()
         } else if (selectedMethod === 'cash-on-delivery') {
             router.push('/purchase/cash-on-delivery');
         } else {
             alert('支払い方法を選択してください');
         }
-    };
 
+    }
     const stripe_handlePurchase = async () => {
         try {
             const res = await fetch('/api/checkout_api', {
