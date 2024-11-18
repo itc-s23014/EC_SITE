@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Backbutton from "@/pages/backbutton";
+import Header from "@/components/Header";
 
 export default function UserDashboard() {
   const router = useRouter();
@@ -10,10 +10,7 @@ export default function UserDashboard() {
 
   return (
     <div className="container">
-      <header>
-        <Backbutton />
-        <h1>購入手続き</h1>
-      </header>
+        <Header title="ユーザーネーム" />
 
       {/* セクション1 */}
       <section className="section">
