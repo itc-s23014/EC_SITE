@@ -15,7 +15,7 @@ const ProductDetail = () => {
     const [sellerName, setSellerName] = useState('');
     const [user] = useAuthState(auth);
     const { addItem, cartDetails } = useShoppingCart();
-
+console.log(id)
     useEffect(() => {
         const fetchProductAndSeller = async () => {
             if (id) {
@@ -26,7 +26,6 @@ const ProductDetail = () => {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
-
 
                         const sellerId = productData.sellerId;
                         if (sellerId) {
