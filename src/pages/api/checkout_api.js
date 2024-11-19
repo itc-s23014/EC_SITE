@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       ],
       mode: 'payment',
       success_url: 'http://localhost:3000/success',
-      cancel_url: 'http://localhost:3000/cancel',
+      cancel_url: 'http://localhost:3000/select-purchase',
     });
 
     res.status(200).json({ checkout_url: session.url });
