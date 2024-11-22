@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import backIcon from '../../../public/image/back.svg';
 
-const BackButton = ({ label = '← 戻る', style }) => {
+const BackButton = ({ label , style }) => {
     const router = useRouter();
 
     const defaultStyle = {
@@ -21,7 +23,8 @@ const BackButton = ({ label = '← 戻る', style }) => {
             style={defaultStyle}
             className="back-button"
         >
-            {label}
+            <Image src={backIcon} alt="戻る" width={40} height={40} />
+            <span>{label}</span>
         </button>
     );
 };
