@@ -74,6 +74,18 @@ const Home = () => {
                 >
                 {cartCount}
             </span>
+            <Link href="/setting-list" passHref>
+                    <img
+                        src="/image/setting.png"
+                        alt="設定"
+                        style={{
+                            width: '70px',
+                            height: '60px',
+                            cursor: 'pointer',
+                            borderRadius: '50%',
+                        }}
+                    />
+                </Link>
             </div>
 
             {user ? (
@@ -95,8 +107,8 @@ const Home = () => {
                         alt="ログアウト"
                         onClick={handleLogout}
                         style={{
-                            width: '75px',
-                            height: '75px',
+                            width: '60px',
+                            height: '60px',
                             cursor: 'pointer',
                             borderRadius: '5px',
                         }}
