@@ -51,13 +51,13 @@ const Home = () => {
             <div style={{position: 'absolute', top: '10px', left: '10px'}}>
                 <Link href="/cart" passHref>
                     <img
-                        src="/image/cart.png"
+                        src="/image/cart.svg"
                         alt="カート"
                         style={{
-                            width: '75px',
-                            height: '75px',
+                            width: '60px',
+                            height: '60px',
                             cursor: 'pointer',
-                            borderRadius: '50%',
+                            // borderRadius: '50%',
                         }}
                     />
                 </Link>
@@ -76,13 +76,13 @@ const Home = () => {
             </span>
             <Link href="/setting-list" passHref>
                     <img
-                        src="/image/setting.png"
+                        src="/image/setting.svg"
                         alt="設定"
                         style={{
-                            width: '70px',
+                            width: '60px',
                             height: '60px',
                             cursor: 'pointer',
-                            borderRadius: '50%',
+                            // borderRadius: '50%',
                         }}
                     />
                 </Link>
@@ -92,25 +92,25 @@ const Home = () => {
                 <div style={{position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px'}}>
                     <Link href="/add-product" passHref>
                         <img
-                            src="/image/upload.png"
+                            src="/image/upload.svg"
                             alt="商品追加"
                             style={{
-                                width: '75px',
-                                height: '75px',
+                                width: '60px',
+                                height: '60px',
                                 cursor: 'pointer',
-                                borderRadius: '5px',
+                                // borderRadius: '5px',
                             }}
                         />
                     </Link>
                     <img
-                        src="/image/logout.png"
+                        src="/image/logout.svg"
                         alt="ログアウト"
                         onClick={handleLogout}
                         style={{
                             width: '60px',
                             height: '60px',
                             cursor: 'pointer',
-                            borderRadius: '5px',
+                            // borderRadius: '5px',
                         }}
                     />
                 </div>
@@ -118,11 +118,11 @@ const Home = () => {
                 <div style={{position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px'}}>
                     <Link href="/login" passHref>
                         <img
-                            src="/image/"
+                            src="/image/login.svg"
                             alt="ログイン"
                             style={{
-                                width: '75px',
-                                height: '75px',
+                                width: '60px',
+                                height: '60px',
                                 cursor: 'pointer',
                                 borderRadius: '5px',
                             }}
@@ -130,11 +130,11 @@ const Home = () => {
                     </Link>
                     <Link href="/signup" passHref>
                         <img
-                            src="/image/"
+                            src="/image/signup.svg"
                             alt="新規登録"
                             style={{
-                                width: '75px',
-                                height: '75px',
+                                width: '60px',
+                                height: '60px',
                                 cursor: 'pointer',
                                 borderRadius: '5px',
                             }}
