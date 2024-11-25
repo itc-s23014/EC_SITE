@@ -35,6 +35,7 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment',
+
       success_url: `http://localhost:3000/Trading-screen?productId=${productId}`,
       cancel_url: 'http://localhost:3000/select-purchase',
     });
