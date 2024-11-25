@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Link from 'next/link';
@@ -11,13 +11,16 @@ const auth = getAuth();
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [user, setUser] = useState(null);
+    const [notifications, setNotifications] = useState([]);
     const router = useRouter();
-    const {cartCount} = useShoppingCart();
+    const { cartCount } = useShoppingCart();
 
     useEffect(() => {
+
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
+
 
         const fetchProducts = async () => {
             const productsCollection = collection(db, 'products');
@@ -30,7 +33,26 @@ const Home = () => {
         };
 
         fetchProducts();
-    }, []);
+
+
+        if (user) {
+            const notificationsQuery = query(
+                collection(db, 'notifications'),
+                where('sellerId', '==', user.uid)
+            );
+
+            const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+                const notificationsList = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setNotifications(notificationsList);
+            });
+
+
+            return () => unsubscribe();
+        }
+    }, [user]);
 
     const handleLogout = async () => {
         try {
@@ -42,13 +64,13 @@ const Home = () => {
     };
 
     return (
-        <div style={{padding: '20px', backgroundColor: '#f9f9f9', position: 'relative'}}>
-            <header style={{textAlign: 'center', marginBottom: '40px'}}>
-                <h1 style={{fontSize: '36px', fontWeight: 'bold', marginBottom: '10px'}}>EC_SITE</h1>
-                <h2 style={{fontSize: '24px', color: '#555'}}>商品一覧</h2>
+        <div style={{ padding: '20px', backgroundColor: '#f9f9f9', position: 'relative' }}>
+            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+                <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '10px' }}>EC_SITE</h1>
+                <h2 style={{ fontSize: '24px', color: '#555' }}>商品一覧</h2>
             </header>
 
-            <div style={{position: 'absolute', top: '10px', left: '10px'}}>
+            <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
                 <Link href="/cart" passHref>
                     <img
                         src="/image/cart.png"
@@ -72,9 +94,9 @@ const Home = () => {
                         fontWeight: 'bold',
                     }}
                 >
-                {cartCount}
-            </span>
-            <Link href="/setting-list" passHref>
+                    {cartCount}
+                </span>
+                <Link href="/setting-list" passHref>
                     <img
                         src="/image/setting.png"
                         alt="設定"
@@ -89,7 +111,7 @@ const Home = () => {
             </div>
 
             {user ? (
-                <div style={{position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px'}}>
+                <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px' }}>
                     <Link href="/add-product" passHref>
                         <img
                             src="/image/upload.png"
@@ -115,7 +137,7 @@ const Home = () => {
                     />
                 </div>
             ) : (
-                <div style={{position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px'}}>
+                <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px' }}>
                     <Link href="/login" passHref>
                         <img
                             src="/image/"
@@ -143,7 +165,39 @@ const Home = () => {
                 </div>
             )}
 
-            <div style={{display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center'}}>
+
+            {user && notifications.length > 0 && (
+                <div style={{ marginTop: '20px' }}>
+                    <h3>通知</h3>
+                    <ul style={{ listStyleType: 'none', paddingLeft: '0' }}>
+                        {notifications.map((notification) => (
+                            <li
+                                key={notification.id}
+                                style={{
+                                    backgroundColor: '#f0f0f0',
+                                    padding: '10px',
+                                    marginBottom: '10px',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                <Link href="/Trading-screen" passHref>
+                                    <div style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <p>{notification.message}</p>
+                                        <p style={{ fontSize: '12px', color: '#888' }}>
+                                            {new Date(notification.timestamp).toLocaleString()}
+                                        </p>
+                                    </div>
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+
+
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
                 {products.map(product => (
                     <Link key={product.id} href={`/Catalog/detail/${product.id}`} passHref>
                         <div
@@ -162,11 +216,11 @@ const Home = () => {
                             <img
                                 src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : '/placeholder.jpg'}
                                 alt={product.name}
-                                style={{width: '100%', height: '150px', objectFit: 'cover'}}
+                                style={{ width: '100%', height: '150px', objectFit: 'cover' }}
                             />
-                            <div style={{padding: '16px', color: 'black'}}>
-                                <h2 style={{fontSize: '18px', margin: '0 0 8px'}}>{product.name}</h2>
-                                <p style={{fontSize: '16px', fontWeight: 'bold', margin: '0'}}>${product.price}</p>
+                            <div style={{ padding: '16px', color: 'black' }}>
+                                <h2 style={{ fontSize: '18px', margin: '0 0 8px' }}>{product.name}</h2>
+                                <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0' }}>${product.price}</p>
                             </div>
                         </div>
                     </Link>
@@ -175,4 +229,5 @@ const Home = () => {
         </div>
     );
 };
-    export default Home;
+
+export default Home;
