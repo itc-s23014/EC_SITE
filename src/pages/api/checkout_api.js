@@ -20,7 +20,6 @@ export default async function handler(req, res) {
 
     const productData = productSnapshot.data();
 
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -36,7 +35,8 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment',
-      success_url: 'http://localhost:3000/success',
+
+      success_url: `http://localhost:3000/Trading-screen?productId=${productId}`,
       cancel_url: 'http://localhost:3000/select-purchase',
     });
 
