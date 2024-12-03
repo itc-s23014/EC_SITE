@@ -5,7 +5,6 @@ import { db } from '../../../../firebaseConfig';
 import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
-import BackButton from "@/pages/backbutton";
 import Header from "@/components/Header";
 
 
@@ -16,6 +15,7 @@ const ProductDetail = () => {
     const [sellerName, setSellerName] = useState('');
     const [user] = useAuthState(auth);
     const { addItem, cartDetails } = useShoppingCart();
+    const [cart, setCart] = useState({});
 console.log(id)
     useEffect(() => {
         const fetchProductAndSeller = async () => {
@@ -36,6 +36,8 @@ console.log(id)
                             if (sellerSnapshot.exists()) {
                                 const sellerData = sellerSnapshot.data();
                                 setSellerName(sellerData.sellerName);
+                                console.log("UserID")
+                                console.log(user.uid)
                             } else {
                                 setSellerName('不明');
                             }
@@ -55,34 +57,45 @@ console.log(id)
     }, [id]);
 
     useEffect(() => {
-        if (user) {
-            const saveCartToFirestore = async () => {
-                try {
-                    const userCartRef = doc(db, 'users', user.uid, 'cart', 'userCart');
-                    await setDoc(userCartRef, {
-                        cartDetails: cartDetails,
-                        timestamp: new Date(),
-                    });
-                } catch (error) {
-                    console.error('カートの保存エラー:', error);
+        const fetchCart = async () => {
+            if (user) {
+                const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
+                const cartSnapshot = await getDoc(userCartRef);
+
+                if (cartSnapshot.exists()) {
+                    setCart(cartSnapshot.data().cartDetails || {});
+                } else {
+                    setCart({});
                 }
+            }
+        };
+
+        fetchCart();
+    }, [user]);
+
+
+    const handleAddToCart = async () => {
+        if (product && user) {
+            const newCart = {
+                ...cart,
+                [product.id]: {
+                    name: product.name,
+                    price: product.price,
+                    quantity: (cart[product.id]?.quantity || 0) + 1,
+                },
             };
 
-            saveCartToFirestore();
-        }
-    }, [user, cartDetails]);
 
-    const handleAddToCart = () => {
-        if (product) {
-            addItem({
-                name: product.name,
-                id: product.id,
-                price: product.price ,
-                currency: 'jpy',
-            });
+            setCart(newCart);
+
+
+            const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
+            await setDoc(userCartRef, { cartDetails: newCart, timestamp: new Date() });
+
             alert(`${product.name} をカートに追加しました`);
         }
     };
+
 
     // const handlePurchase = async () => {
     //     try {
