@@ -4,6 +4,7 @@ import { db } from '../../../firebaseConfig';
 import { useState, useEffect } from 'react';
 import {getAuth} from 'firebase/auth';
 import BackButton from "@/pages/backbutton";
+import { useRouter } from 'next/router';
 
 const CartContents = () => {
     const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
@@ -11,6 +12,7 @@ const CartContents = () => {
     const [loading, setLoading] = useState(true);
     const auth = getAuth();
     const user = auth.currentUser;
+    const router = useRouter();
 
     const fetchProducts = async () => {
         const productsCollection = collection(db, 'products');
@@ -28,8 +30,7 @@ const CartContents = () => {
     }, []);
 
     const handleCheckout = () => {
-        alert('購入されました');
-        emptyCart();
+        router.push('/select-purchase');
     };
 
     if (loading) {
