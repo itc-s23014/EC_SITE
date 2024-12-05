@@ -1,8 +1,7 @@
-// components/Header.js
 import { useRouter } from 'next/router';
-import styles from './Header.module.css'; // モジュールCSSをインポート
+import styles from './Header.module.css';
 import Image from 'next/image';
-import backIcon from '../../public/image/back.svg';
+import backIcon from '../../../public/image/back.svg';
 
 export default function Header({ title }) {
   const router = useRouter();

@@ -5,8 +5,8 @@ import { db } from '../../../../firebaseConfig';
 import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
-import BackButton from "@/pages/backbutton";
-import Header from "@/components/Header";
+import BackButton from "@/components/BackButton/BackButton";
+import Header from "@/components/Header/Header";
 
 
 const ProductDetail = () => {

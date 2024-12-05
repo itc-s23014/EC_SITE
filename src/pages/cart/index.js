@@ -3,7 +3,7 @@ import { collection, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useState, useEffect } from 'react';
 import {getAuth} from 'firebase/auth';
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 import { useRouter } from 'next/router';
 
 const CartContents = () => {
