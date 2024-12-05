@@ -3,7 +3,7 @@ import styles from './Header.module.css';
 import Image from 'next/image';
 import backIcon from '../../../public/image/back.svg';
 
-export default function Header({ title }) {
+export default function Header({ title = 'ページタイトル' }) {
   const router = useRouter();
 
   return (
