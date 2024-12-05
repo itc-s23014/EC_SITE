@@ -39,6 +39,7 @@ const CartContents = () => {
 
     return (
         <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+            <BackButton/>
             <h2>カートの中身</h2>
             <p>商品数: {cartCount}</p>
             <p>合計金額: {formattedTotalPrice}</p>
@@ -51,7 +52,6 @@ const CartContents = () => {
 
                     return (
                         <li key={item.id} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-                            <BackButton/>
                             <img
                                 src={imageUrl}
                                 alt={item.name}
