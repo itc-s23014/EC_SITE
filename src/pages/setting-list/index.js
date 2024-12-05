@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import Header from "@/components/Header";
+import Link from "next/link";
 
 export default function UserDashboard() {
   const [userData, setUserData] = useState(null);

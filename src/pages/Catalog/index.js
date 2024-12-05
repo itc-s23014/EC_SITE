@@ -16,11 +16,9 @@ const Home = () => {
     const { cartCount } = useShoppingCart();
 
     useEffect(() => {
-
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
-
 
         const fetchProducts = async () => {
             const productsCollection = collection(db, 'products');
@@ -33,7 +31,6 @@ const Home = () => {
         };
 
         fetchProducts();
-
 
         if (user) {
             const notificationsQuery = query(
@@ -48,7 +45,6 @@ const Home = () => {
                 }));
                 setNotifications(notificationsList);
             });
-
 
             return () => unsubscribe();
         }
@@ -70,7 +66,7 @@ const Home = () => {
                 <h2 style={{ fontSize: '24px', color: '#555' }}>商品一覧</h2>
             </header>
 
-            <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+            <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '10px' }}>
                 <Link href="/cart" passHref>
                     <img
                         src="/image/cart.svg"
@@ -79,23 +75,20 @@ const Home = () => {
                             width: '60px',
                             height: '60px',
                             cursor: 'pointer',
-                            // borderRadius: '50%',
                         }}
                     />
                 </Link>
-                <span
-                    style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        color: 'white',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                    }}
-                >
-                    {cartCount}
-                </span>
+                <Link href="/like-list" passHref>
+                    <img
+                        src="/image/heart.svg"
+                        alt="お気に入り"
+                        style={{
+                            width: '60px',
+                            height: '60px',
+                            cursor: 'pointer',
+                        }}
+                    />
+                </Link>
                 <Link href="/setting-list" passHref>
                     <img
                         src="/image/setting.svg"
@@ -104,7 +97,6 @@ const Home = () => {
                             width: '60px',
                             height: '60px',
                             cursor: 'pointer',
-                            // borderRadius: '50%',
                         }}
                     />
                 </Link>
@@ -113,58 +105,28 @@ const Home = () => {
             {user ? (
                 <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px' }}>
                     <Link href="/add-product" passHref>
-                        <img
-                            src="/image/upload.svg"
-                            alt="商品追加"
-                            style={{
-                                width: '60px',
-                                height: '60px',
-                                cursor: 'pointer',
-                                // borderRadius: '5px',
-                            }}
-                        />
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>商品追加</button>
                     </Link>
-                    <img
-                        src="/image/logout.svg"
-                        alt="ログアウト"
+                    <button
                         onClick={handleLogout}
                         style={{
-                            width: '60px',
-                            height: '60px',
+                            padding: '10px 20px',
                             cursor: 'pointer',
-                            // borderRadius: '5px',
                         }}
-                    />
+                    >
+                        ログアウト
+                    </button>
                 </div>
             ) : (
                 <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px' }}>
                     <Link href="/login" passHref>
-                        <img
-                            src="/image/login.svg"
-                            alt="ログイン"
-                            style={{
-                                width: '60px',
-                                height: '60px',
-                                cursor: 'pointer',
-                                borderRadius: '5px',
-                            }}
-                        />
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>ログイン</button>
                     </Link>
                     <Link href="/signup" passHref>
-                        <img
-                            src="/image/signup.svg"
-                            alt="新規登録"
-                            style={{
-                                width: '60px',
-                                height: '60px',
-                                cursor: 'pointer',
-                                borderRadius: '5px',
-                            }}
-                        />
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>新規登録</button>
                     </Link>
                 </div>
             )}
-
 
             {user && notifications.length > 0 && (
                 <div style={{ marginTop: '20px' }}>
@@ -193,9 +155,6 @@ const Home = () => {
                     </ul>
                 </div>
             )}
-
-
-
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
                 {products.map(product => (
