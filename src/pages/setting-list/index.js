@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
+import Link from "next/link";
 
 export default function UserDashboard() {
   const router = useRouter();
@@ -10,25 +11,28 @@ export default function UserDashboard() {
 
   return (
     <div className="container">
-        <Header title="ユーザーネーム" />
+      <Header title="ユーザーネーム" />
 
       {/* セクション1 */}
       <section className="section">
         <ul>
           <li onClick={() => handleNavigation("/like-list")}>
-            <a href="/like-list">
-              いいねリスト <span className="arrow">▶</span>
-            </a>
+            <Link href="/like-list">
+              <span className="link-text">いいねリスト</span>
+              <span className="arrow">▶</span>
+            </Link>
           </li>
           <li onClick={() => handleNavigation("/selling-history")}>
-            <a href="/selling-history">
-              出品履歴・編集 <span className="arrow">▶</span>
-            </a>
+            <Link href="/selling-history">
+              <span className="link-text">出品履歴・編集</span>
+              <span className="arrow">▶</span>
+            </Link>
           </li>
           <li onClick={() => handleNavigation("/purchase-history")}>
-            <a href="/purchase-history">
-              購入履歴 <span className="arrow">▶</span>
-            </a>
+            <Link href="/purchase-history">
+              <span className="link-text">購入履歴</span>
+              <span className="arrow">▶</span>
+            </Link>
           </li>
         </ul>
       </section>
@@ -37,19 +41,22 @@ export default function UserDashboard() {
       <section className="section">
         <ul>
           <li onClick={() => handleNavigation("/personal-info")}>
-            <a href="/personal-info">
-              個人情報 <span className="arrow">▶</span>
-            </a>
+            <Link href="/personal-info">
+              <span className="link-text">個人情報</span>
+              <span className="arrow">▶</span>
+            </Link>
           </li>
           <li onClick={() => handleNavigation("/points")}>
-            <a href="/points">
-              ポイント残高 <span className="arrow">▶</span>
-            </a>
+            <Link href="/points">
+              <span className="link-text">ポイント残高</span>
+              <span className="arrow">▶</span>
+            </Link>
           </li>
           <li onClick={() => handleNavigation("/contact-form")}>
-            <a href="/contact-form">
-              お問い合わせフォーム <span className="arrow">▶</span>
-            </a>
+            <Link href="/contact-form">
+              <span className="link-text">お問い合わせフォーム</span>
+              <span className="arrow">▶</span>
+            </Link>
           </li>
         </ul>
       </section>
@@ -88,22 +95,36 @@ export default function UserDashboard() {
         li:last-child {
           border-bottom: none;
         }
-        a {
-          text-decoration: none;
-          color: #333;
-          font-size: 18px;
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          transition: background-color 0.2s ease;
-          pointer-events: none; /* a要素のクリックイベントを無効化 */
-        }
         li:hover {
           background-color: #e0f7fa;
         }
+
+        /* リンクテキスト */
+        .link-text {
+          color: #333;
+          font-size: 18px;
+          text-decoration: none;
+          flex-grow: 1; /* テキストを矢印の前に配置 */
+        }
+
+        /* アロー */
         .arrow {
           color: #666;
           font-size: 16px;
+          margin-left: 10px; /* 少し余白を追加 */
+        }
+
+        /* Linkコンポーネントのスタイル */
+        .section a {
+          display: flex;
+          text-decoration: none;
+          color: inherit; /* リンクの青色を無効化 */
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .section a:hover {
+          background-color: #e0f7fa; /* ホバー時の背景色 */
         }
       `}</style>
     </div>
