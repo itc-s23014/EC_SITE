@@ -11,6 +11,7 @@ const LikeList = () => {
     const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
     const [user, setUser] = useState(null);
 
+
     useEffect(() => {
         const auth = getAuth();
 

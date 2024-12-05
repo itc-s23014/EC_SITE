@@ -33,7 +33,7 @@ const AddUserPage = () => {
             await setDoc(doc(db, 'sellers', user.uid), {
                 sellerName,
                 createdAt: new Date(),
-                connectUserId: genUid,  // genUidを保存
+                genUid: genUid,  // genUidを保存
                 email: email,
                 password: password,  // 必要であれば保存
             });
