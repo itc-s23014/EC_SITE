@@ -1,36 +1,64 @@
 import { useShoppingCart } from 'use-shopping-cart';
-import { collection, doc, getDocs } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig';
+import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
+import { auth, db } from '../../../firebaseConfig';
 import { useState, useEffect } from 'react';
-import {getAuth} from 'firebase/auth';
-import BackButton from "@/pages/backbutton";
-import { useRouter } from 'next/router';
+import { getAuth } from 'firebase/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const CartContents = () => {
-    const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
-    const [products, setProducts] = useState([]);
+    const { emptyCart, removeItem } = useShoppingCart();
+    const [products, setProducts] = useState({});
+    const [userCart, setUserCart] = useState(null);
     const [loading, setLoading] = useState(true);
     const auth = getAuth();
-    const user = auth.currentUser;
-    const router = useRouter();
+    const [user] = useAuthState(auth);
 
     const fetchProducts = async () => {
-        const productsCollection = collection(db, 'products');
-        const productsSnapshot = await getDocs(productsCollection);
-        const productsList = productsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-        setProducts(productsList);
-        setLoading(false);
+        try {
+            const productsCollection = collection(db, 'products');
+            const productsSnapshot = await getDocs(productsCollection);
+            const productsList = productsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            const productMap = productsList.reduce((acc, product) => {
+                acc[product.id] = product;
+                return acc;
+            }, {});
+            setProducts(productMap);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+    const fetchUserCart = () => {
+        if (user) {
+            const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
+            const unsubscribe = onSnapshot(userCartRef, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    console.log("カート情報", docSnapshot.data());
+                    setUserCart(docSnapshot.data());
+                } else {
+                    setUserCart(null);
+                }
+                setLoading(false);
+            });
+            return unsubscribe;
+        } else {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        const unsubscribe = fetchUserCart();
+        return () => unsubscribe && unsubscribe();
+    }, [user]);
     const handleCheckout = () => {
-        router.push('/select-purchase');
+        alert('購入されました');
+        emptyCart();
     };
 
     if (loading) {
@@ -38,49 +66,58 @@ const CartContents = () => {
     }
 
     return (
-        <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
-            <h2>カートの中身</h2>
-            <p>商品数: {cartCount}</p>
-            <p>合計金額: {formattedTotalPrice}</p>
-            <ul>
-                {Object.keys(cartDetails).map((key) => {
-                    const item = cartDetails[key];
+        <div style={{ padding: '20px', maxWidth: '900px', margin: 'auto', fontFamily: 'Arial, sans-serif' }}>
+            <h2 style={{ fontSize: '2rem', color: '#333', marginBottom: '20px' }}>カートの中身</h2>
+            {userCart && userCart.cartDetails && Object.keys(userCart.cartDetails).length > 0 ? (
+                <ul style={{ padding: '0', listStyleType: 'none' }}>
+                    {Object.keys(userCart.cartDetails).map((productId) => {
+                        const item = userCart.cartDetails[productId];
+                        const product = products[productId];
+                        const imageUrl = product?.imageUrls?.[0] || '/placeholder.jpg';
 
-                    const product = products.find((prod) => prod.id === item.id);
-                    const imageUrl = product?.imageUrls?.[0] || '/placeholder.jpg';
-
-                    return (
-                        <li key={item.id} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-                            <BackButton/>
-                            <img
-                                src={imageUrl}
-                                alt={item.name}
-                                style={{ width: '80px', height: '80px', objectFit: 'cover', marginRight: '20px' }}
-                            />
-                            <div>
-                                <h3>{item.name}</h3>
-                                <p>価格: ¥{item.price.toLocaleString()}</p>
-                                <p>数量: {item.quantity}</p>
-                                <p>合計: ¥{(item.price * item.quantity).toLocaleString()}</p>
+                        return (
+                            <li key={productId} style={{
+                                marginBottom: '15px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: '10px',
+                                border: '1px solid #ddd',
+                                borderRadius: '8px',
+                                backgroundColor: '#f9f9f9',
+                            }}>
+                                <img
+                                    src={imageUrl}
+                                    alt={product?.name}
+                                    style={{ width: '80px', height: '80px', objectFit: 'cover', marginRight: '20px', borderRadius: '8px' }}
+                                />
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ fontSize: '1.2rem', color: '#333' }}>{product?.name}</h3>
+                                    <p style={{ fontSize: '1rem', color: '#555' }}>価格: ¥{product?.price?.toLocaleString()}</p>
+                                    <p style={{ fontSize: '1rem', color: '#555' }}>数量: {item.quantity}</p>
+                                    <p style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#333' }}>合計: ¥{(product?.price * item.quantity).toLocaleString()}</p>
+                                </div>
                                 <button
-                                    onClick={() => removeItem(item.id)}
+                                    onClick={() => removeItem(productId)}
                                     style={{
                                         backgroundColor: '#dc3545',
                                         color: 'white',
                                         border: 'none',
                                         borderRadius: '5px',
-                                        padding: '5px 10px',
+                                        padding: '8px 15px',
                                         cursor: 'pointer',
+                                        fontSize: '1rem',
                                     }}
                                 >
                                     削除
                                 </button>
-                            </div>
-                        </li>
-                    );
-                })}
-            </ul>
-            {cartCount > 0 && (
+                            </li>
+                        );
+                    })}
+                </ul>
+            ) : (
+                <p>カートは空です</p>
+            )}
+            {userCart && userCart.cartDetails && Object.keys(userCart.cartDetails).length > 0 && (
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <button
                         onClick={handleCheckout}
@@ -91,7 +128,9 @@ const CartContents = () => {
                             border: 'none',
                             borderRadius: '5px',
                             cursor: 'pointer',
-                            fontSize: '1rem',
+                            fontSize: '1.2rem',
+                            width: '100%',
+                            maxWidth: '300px',
                         }}
                     >
                         購入

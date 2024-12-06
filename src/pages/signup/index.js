@@ -1,34 +1,48 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import app from '../../../firebaseConfig';
-import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { generateUID } from '@/utils/uidGenerator'; // UID生成関数をインポート
+import app from '../../../firebaseConfig'; // Firebase appのインポート
 
 const auth = getAuth(app);
 
 const AddUserPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [sellerName, setSellerName] = useState(''); // sellerNameのステートを追加
+    const [sellerName, setSellerName] = useState('');
+    const [genUid, setGenUid] = useState('');  // genUidをuseStateで管理
     const router = useRouter();
+
+    // useEffectでUIDを生成
+    useEffect(() => {
+        setGenUid(generateUID());
+    }, []);
 
     const handleRegister = async (e) => {
         e.preventDefault();
 
         try {
+            // メールアドレスとパスワードでユーザー登録
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-
+            // Firestoreにユーザー情報を保存
             await setDoc(doc(db, 'sellers', user.uid), {
                 sellerName,
                 createdAt: new Date(),
+                genUid: genUid,  // genUidを保存
+                email: email,
+                password: password,  // 必要であれば保存
             });
 
             console.log('ユーザーが登録され、sellerIdとsellerNameが保存されました');
-            router.push('/Private_information');
+            router.push({
+                pathname: '/Private_information',
+                query: { genUid: genUid },  // genUidをクエリパラメータとして渡す
+            });
         } catch (error) {
             console.log('登録に失敗しました: ', error);
         }

@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
+import {getAuth} from "firebase/auth";
 
 const PersonalInfoPage = () => {
     const [fullName, setFullName] = useState('');
@@ -10,19 +11,32 @@ const PersonalInfoPage = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [birthDate, setBirthDate] = useState('');
     const router = useRouter();
+    const { genUid } = router.query;  // genUidの取得
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    const userId = currentUser.uid || genUid;
 
+        if (!userId) {
+            alert('Uidが見つかりませんでした。');
+            return;
+        }
+
+        try {
+            // Firestoreにデータを追加
             await addDoc(collection(db, 'users'), {
                 fullName,
                 address,
                 phoneNumber,
                 birthDate,
-                createdAt: serverTimestamp()
+                createdAt: serverTimestamp(),
+                genId: genUid,
+                userId,// genUidをFirestoreに保存
             });
+
             alert('個人情報が保存されました');
             router.push('/Catalog');
         } catch (error) {

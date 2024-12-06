@@ -1,6 +1,6 @@
 import { useShoppingCart } from 'use-shopping-cart';
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Link from 'next/link';
@@ -8,35 +8,47 @@ import Link from 'next/link';
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
+    const {cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem} = useShoppingCart();
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         const auth = getAuth();
 
-        // ユーザー認証の確認
+
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
 
             if (currentUser) {
                 fetchLikedProducts(currentUser.uid);
             } else {
-                setLoading(false); // ログインしていない場合
+                setLoading(false);
             }
         });
     }, []);
 
-    const fetchLikedProducts = async () => {
+    const fetchLikedProducts = async (uid) => {
         try {
-            const productsCollection = collection(db, 'products');
-            const productsSnapshot = await getDocs(productsCollection);
 
-            const productsList = productsSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const likesCollection = collection(db, 'likes');
+            const q = query(likesCollection, where('userId', '==', uid));
+            const likesSnapshot = await getDocs(q);
 
-            setLikedProducts(productsList);
+            const likedProductIds = likesSnapshot.docs.map((doc) => doc.data().productId);
+
+            if (likedProductIds.length > 0) {
+
+                const productsCollection = collection(db, 'products');
+                const productsSnapshot = await getDocs(productsCollection);
+
+
+                const filteredProducts = productsSnapshot.docs
+                    .map((doc) => ({id: doc.id, ...doc.data()}))
+                    .filter((product) => likedProductIds.includes(product.id));
+
+                setLikedProducts(filteredProducts);
+            } else {
+                setLikedProducts([]);
+            }
         } catch (error) {
             console.error('Error fetching liked products:', error);
         } finally {
@@ -53,12 +65,12 @@ const LikeList = () => {
     }
 
     return (
-        <div style={{ padding: '20px', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
-            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '10px' }}>
+        <div style={{padding: '20px', backgroundColor: '#f5f5f5', minHeight: '100vh'}}>
+            <header style={{textAlign: 'center', marginBottom: '40px'}}>
+                <h1 style={{fontSize: '36px', fontWeight: 'bold', marginBottom: '10px'}}>
                     Like List
                 </h1>
-                <h2 style={{ fontSize: '24px', color: '#555' }}>
+                <h2 style={{fontSize: '24px', color: '#555'}}>
                     あなたが「いいね」した商品
                 </h2>
             </header>
@@ -93,6 +105,7 @@ const LikeList = () => {
                                     e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
                                 }}
                             >
+                                {/* 商品画像 */}
                                 <img
                                     src={
                                         product.imageUrls && product.imageUrls.length > 0
@@ -101,17 +114,23 @@ const LikeList = () => {
                                     }
                                     alt={product.name}
                                     style={{
+                                        display: 'block',
                                         width: '100%',
-                                        height: '150px',
+                                        maxWidth: '150px',
+                                        aspectRatio: '4 / 3',
                                         objectFit: 'cover',
+                                        margin: '0 auto',
                                         borderBottom: '1px solid #ddd',
+                                        borderRadius: '10px',
                                     }}
                                 />
-                                <div style={{ padding: '16px', color: '#333' }}>
-                                    <h2 style={{ fontSize: '18px', margin: '0 0 8px' }}>
+
+                                {/* 商品情報 */}
+                                <div style={{padding: '16px', color: '#333'}}>
+                                    <h2 style={{fontSize: '18px', margin: '0 0 8px'}}>
                                         {product.name}
                                     </h2>
-                                    <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', color: '#666' }}>
+                                    <p style={{fontSize: '16px', fontWeight: 'bold', margin: '0', color: '#666'}}>
                                         ¥{product.price.toLocaleString()}
                                     </p>
                                 </div>
@@ -119,11 +138,11 @@ const LikeList = () => {
                         </Link>
                     ))
                 ) : (
-                    <p style={{ textAlign: 'center', color: '#777' }}>「いいね」した商品がありません。</p>
+                    <p style={{textAlign: 'center', color: '#777'}}>「いいね」した商品がありません。</p>
                 )}
             </div>
         </div>
     );
-};
+}
 
 export default LikeList;
