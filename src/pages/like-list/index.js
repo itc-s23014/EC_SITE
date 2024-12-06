@@ -8,22 +8,26 @@ import Link from 'next/link';
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const {cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem} = useShoppingCart();
+    const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         const auth = getAuth();
 
 
-        onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
-
             if (currentUser) {
+
                 fetchLikedProducts(currentUser.uid);
             } else {
+
                 setLoading(false);
             }
         });
+
+
+        return () => unsubscribe();
     }, []);
 
     const fetchLikedProducts = async (uid) => {
@@ -32,6 +36,7 @@ const LikeList = () => {
             const likesCollection = collection(db, 'likes');
             const q = query(likesCollection, where('userId', '==', uid));
             const likesSnapshot = await getDocs(q);
+
 
             const likedProductIds = likesSnapshot.docs.map((doc) => doc.data().productId);
 
@@ -42,15 +47,16 @@ const LikeList = () => {
 
 
                 const filteredProducts = productsSnapshot.docs
-                    .map((doc) => ({id: doc.id, ...doc.data()}))
+                    .map((doc) => ({ id: doc.id, ...doc.data() }))
                     .filter((product) => likedProductIds.includes(product.id));
 
                 setLikedProducts(filteredProducts);
             } else {
+
                 setLikedProducts([]);
             }
         } catch (error) {
-            console.error('Error fetching liked products:', error);
+            console.error('fetching liked products:', error);
         } finally {
             setLoading(false);
         }
@@ -65,12 +71,12 @@ const LikeList = () => {
     }
 
     return (
-        <div style={{padding: '20px', backgroundColor: '#f5f5f5', minHeight: '100vh'}}>
-            <header style={{textAlign: 'center', marginBottom: '40px'}}>
-                <h1 style={{fontSize: '36px', fontWeight: 'bold', marginBottom: '10px'}}>
+        <div style={{ padding: '20px', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
+            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+                <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '10px' }}>
                     Like List
                 </h1>
-                <h2 style={{fontSize: '24px', color: '#555'}}>
+                <h2 style={{ fontSize: '24px', color: '#555' }}>
                     あなたが「いいね」した商品
                 </h2>
             </header>
@@ -126,11 +132,11 @@ const LikeList = () => {
                                 />
 
                                 {/* 商品情報 */}
-                                <div style={{padding: '16px', color: '#333'}}>
-                                    <h2 style={{fontSize: '18px', margin: '0 0 8px'}}>
+                                <div style={{ padding: '16px', color: '#333' }}>
+                                    <h2 style={{ fontSize: '18px', margin: '0 0 8px' }}>
                                         {product.name}
                                     </h2>
-                                    <p style={{fontSize: '16px', fontWeight: 'bold', margin: '0', color: '#666'}}>
+                                    <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', color: '#666' }}>
                                         ¥{product.price.toLocaleString()}
                                     </p>
                                 </div>
@@ -138,11 +144,11 @@ const LikeList = () => {
                         </Link>
                     ))
                 ) : (
-                    <p style={{textAlign: 'center', color: '#777'}}>「いいね」した商品がありません。</p>
+                    <p style={{ textAlign: 'center', color: '#777' }}>「いいね」した商品がありません。</p>
                 )}
             </div>
         </div>
     );
-}
+};
 
 export default LikeList;
