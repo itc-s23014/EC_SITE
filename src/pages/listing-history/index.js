@@ -9,19 +9,19 @@ const ProductsPage = () => {
     const [user, setUser] = useState(null);
     const router = useRouter();
 
-    // ユーザー情報の取得
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
                 setUser(currentUser);
             } else {
-                router.push("/login"); // 未ログインの場合はログインページへ
+                router.push("/login");
             }
         });
         return () => unsubscribe();
     }, [router]);
 
-    // 出品データを取得
+
     useEffect(() => {
         const fetchProducts = async () => {
             if (user) {
@@ -80,10 +80,10 @@ const styles = {
         backgroundColor: "#fff",
         borderRadius: "8px",
         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        position: "relative", // 戻るボタンを配置するための基準
+        position: "relative",
     },
     backButton: {
-        position: "absolute", // 親コンテナ内の左上に固定
+        position: "absolute",
         top: "20px",
         left: "20px",
         padding: "8px 12px",
@@ -102,7 +102,7 @@ const styles = {
         listStyle: "none",
         padding: "0",
         display: "grid",
-        gridTemplateColumns: "1fr 1fr", // 2列レイアウト
+        gridTemplateColumns: "1fr 1fr",
         gap: "20px",
     },
     productCard: {

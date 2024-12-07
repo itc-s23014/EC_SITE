@@ -17,7 +17,7 @@ const ProductEditPage = () => {
     });
     const [newImage, setNewImage] = useState(null);
 
-    // Firestoreから商品データを取得
+
     useEffect(() => {
         const fetchProduct = async () => {
             if (id) {
@@ -39,7 +39,7 @@ const ProductEditPage = () => {
         fetchProduct();
     }, [id]);
 
-    // 画像アップロード処理
+
     const uploadImage = async (file) => {
         const storageRef = ref(storage, `products/${file.name}`);
         const snapshot = await uploadBytes(storageRef, file);
@@ -47,7 +47,7 @@ const ProductEditPage = () => {
         return downloadURL;
     };
 
-    // フォーム送信時の処理
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {

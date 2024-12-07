@@ -144,13 +144,13 @@ const styles = {
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     },
     productImage: {
-        width: "auto", // 自動幅調整
-        height: "150px", // 高さ固定
-        maxWidth: "100%", // カード内での画像の最大幅を制限
-        objectFit: "cover", // 画像の比率を保ちながらカードにフィット
+        width: "auto",
+        height: "150px",
+        maxWidth: "100%",
+        objectFit: "cover",
         borderBottom: "1px solid #ddd",
-        display: "block", // 中央寄せのため
-        margin: "0 auto", // カード内で中央に配置
+        display: "block",
+        margin: "0 auto",
     },
 
     productInfo: {
