@@ -62,6 +62,7 @@ const AddProduct = () => {
                 imageUrls,
                 createdAt: serverTimestamp(),
                 sellerId,
+
             });
 
             alert('商品が追加されました！');
