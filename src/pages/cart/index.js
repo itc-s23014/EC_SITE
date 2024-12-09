@@ -1,9 +1,10 @@
 import { useShoppingCart } from 'use-shopping-cart';
 import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../../../firebaseConfig';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import BackButton from "@/pages/backbutton";
 
 const CartContents = () => {
     const { emptyCart, removeItem } = useShoppingCart();
@@ -67,6 +68,7 @@ const CartContents = () => {
 
     return (
         <div style={{ padding: '20px', maxWidth: '900px', margin: 'auto', fontFamily: 'Arial, sans-serif' }}>
+            <BackButton/>
             <h2 style={{ fontSize: '2rem', color: '#333', marginBottom: '20px' }}>カートの中身</h2>
             {userCart && userCart.cartDetails && Object.keys(userCart.cartDetails).length > 0 ? (
                 <ul style={{ padding: '0', listStyleType: 'none' }}>
