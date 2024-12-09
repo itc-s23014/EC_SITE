@@ -75,7 +75,7 @@ export default function UserDashboard() {
                 いいねリスト <span className="arrow">▶</span>
               </a>
             </li>
-            <li onClick={() => handleNavigation("/selling-history")}>
+            <li onClick={() => handleNavigation("/listing-history")}>
               <a href="#">
                 出品履歴・編集 <span className="arrow">▶</span>
               </a>
@@ -91,7 +91,7 @@ export default function UserDashboard() {
         {/* セクション2 */}
         <section className="section">
           <ul>
-            <li onClick={() => handleNavigation("/personal-info")}>
+            <li onClick={() => handleNavigation("/personal-information")}>
               <a href="#">
                 個人情報 <span className="arrow">▶</span>
               </a>
