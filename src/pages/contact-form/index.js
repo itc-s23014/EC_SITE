@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import BackButton from "@/pages/backbutton";
 
 const ContactPage = () => {
     const [name, setName] = useState('');
@@ -51,6 +52,7 @@ const ContactPage = () => {
             margin: '0 auto',
             overflowY: 'auto'
         }}>
+            <BackButton/>
             <h2 style={{textAlign: 'center', marginBottom: '30px', fontSize: '24px'}}>お問い合わせ</h2>
 
             {successMessage && (
