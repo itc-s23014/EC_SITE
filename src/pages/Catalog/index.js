@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useShoppingCart } from 'use-shopping-cart';
+import ProductCard from '@/components/ProductCard';
 
 const auth = getAuth();
 
@@ -158,31 +159,7 @@ const Home = () => {
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
                 {products.map(product => (
-                    <Link key={product.id} href={`/Catalog/detail/${product.id}`} passHref>
-                        <div
-                            style={{
-                                border: '1px solid #ddd',
-                                borderRadius: '8px',
-                                overflow: 'hidden',
-                                backgroundColor: 'white',
-                                width: '250px',
-                                cursor: 'pointer',
-                                transition: 'transform 0.2s ease',
-                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            <img
-                                src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : '/placeholder.jpg'}
-                                alt={product.name}
-                                style={{ width: '100%', height: '150px', objectFit: 'cover' }}
-                            />
-                            <div style={{ padding: '16px', color: 'black' }}>
-                                <h2 style={{ fontSize: '18px', margin: '0 0 8px' }}>{product.name}</h2>
-                                <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0' }}>${product.price}</p>
-                            </div>
-                        </div>
-                    </Link>
+                    <ProductCard key={product.id} product={product} />
                 ))}
             </div>
         </div>
