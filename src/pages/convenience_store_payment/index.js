@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 import {db} from '../../../firebaseConfig'
 
 
