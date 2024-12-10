@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../../../firebaseConfig";
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);

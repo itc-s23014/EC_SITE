@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 
 const ContactPage = () => {
     const [name, setName] = useState('');
