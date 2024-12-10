@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../../firebaseConfig";
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 
 const ProductEditPage = () => {
     const router = useRouter();

@@ -4,7 +4,7 @@ import { auth, db } from '../../../firebaseConfig';
 import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 
 const CartContents = () => {
     const { emptyCart, removeItem } = useShoppingCart();

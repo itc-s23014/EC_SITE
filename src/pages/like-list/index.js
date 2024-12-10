@@ -4,7 +4,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);

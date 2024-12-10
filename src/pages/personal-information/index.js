@@ -3,7 +3,7 @@ import { db } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
-import BackButton from "@/pages/backbutton";
+import BackButton from "@/components/BackButton/BackButton";
 
 const EditProfile = () => {
     const [userData, setUserData] = useState(null);
