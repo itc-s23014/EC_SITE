@@ -1,129 +1,176 @@
-import { useShoppingCart } from 'use-shopping-cart';
-import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import Link from 'next/link';
+import { useShoppingCart } from "use-shopping-cart";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../../firebaseConfig";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Link from "next/link";
+import BackButton from "@/pages/backbutton";
 
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { cartDetails, cartCount, formattedTotalPrice, emptyCart, removeItem } = useShoppingCart();
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         const auth = getAuth();
 
-        // ユーザー認証の確認
-        onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
-
             if (currentUser) {
                 fetchLikedProducts(currentUser.uid);
             } else {
-                setLoading(false); // ログインしていない場合
+                setLoading(false);
             }
         });
+
+        return () => unsubscribe();
     }, []);
 
-    const fetchLikedProducts = async () => {
+    const fetchLikedProducts = async (uid) => {
         try {
-            const productsCollection = collection(db, 'products');
-            const productsSnapshot = await getDocs(productsCollection);
+            const likesCollection = collection(db, "likes");
+            const q = query(likesCollection, where("userId", "==", uid));
+            const likesSnapshot = await getDocs(q);
 
-            const productsList = productsSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const likedProductIds = likesSnapshot.docs.map((doc) => doc.data().productId);
 
-            setLikedProducts(productsList);
+            if (likedProductIds.length > 0) {
+                const productsCollection = collection(db, "products");
+                const productsSnapshot = await getDocs(productsCollection);
+
+                const filteredProducts = productsSnapshot.docs
+                    .map((doc) => ({ id: doc.id, ...doc.data() }))
+                    .filter((product) => likedProductIds.includes(product.id));
+
+                setLikedProducts(filteredProducts);
+            } else {
+                setLikedProducts([]);
+            }
         } catch (error) {
-            console.error('Error fetching liked products:', error);
+            console.error("Error fetching liked products:", error);
         } finally {
             setLoading(false);
         }
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <p style={{ textAlign: "center", marginTop: "20px" }}>Loading...</p>;
     }
 
     if (!user) {
-        return <p>ログインしてください。</p>;
+        return <p style={{ textAlign: "center", marginTop: "20px" }}>ログインしてください。</p>;
     }
 
     return (
-        <div style={{ padding: '20px', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
-            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '10px' }}>
-                    Like List
-                </h1>
-                <h2 style={{ fontSize: '24px', color: '#555' }}>
-                    あなたが「いいね」した商品
-                </h2>
+        <div style={styles.container}>
+            <BackButton/>
+            <header style={styles.header}>
+                <h1 style={styles.title}>Like List</h1>
+                <h2 style={styles.subtitle}>あなたが「いいね」した商品</h2>
             </header>
 
-            <div
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                    gap: '20px',
-                }}
-            >
+            <div style={styles.gridContainer}>
                 {likedProducts.length > 0 ? (
                     likedProducts.map((product) => (
                         <Link key={product.id} href={`/Catalog/detail/${product.id}`} passHref>
-                            <div
-                                style={{
-                                    border: '1px solid #ddd',
-                                    borderRadius: '10px',
-                                    overflow: 'hidden',
-                                    backgroundColor: '#fff',
-                                    cursor: 'pointer',
-                                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                                    textDecoration: 'none',
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'scale(1.03)';
-                                    e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'scale(1)';
-                                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-                                }}
-                            >
+                            <div style={styles.card}>
                                 <img
                                     src={
                                         product.imageUrls && product.imageUrls.length > 0
                                             ? product.imageUrls[0]
-                                            : '/placeholder.jpg'
+                                            : "/placeholder.jpg"
                                     }
                                     alt={product.name}
-                                    style={{
-                                        width: '100%',
-                                        height: '150px',
-                                        objectFit: 'cover',
-                                        borderBottom: '1px solid #ddd',
-                                    }}
+                                    style={styles.productImage}
                                 />
-                                <div style={{ padding: '16px', color: '#333' }}>
-                                    <h2 style={{ fontSize: '18px', margin: '0 0 8px' }}>
-                                        {product.name}
-                                    </h2>
-                                    <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', color: '#666' }}>
-                                        ¥{product.price.toLocaleString()}
-                                    </p>
+                                <div style={styles.productInfo}>
+                                    <h2 style={styles.productName}>{product.name}</h2>
+                                    <p style={styles.productPrice}>¥{product.price.toLocaleString()}</p>
                                 </div>
                             </div>
                         </Link>
                     ))
                 ) : (
-                    <p style={{ textAlign: 'center', color: '#777' }}>「いいね」した商品がありません。</p>
+                    <p style={styles.noItemsMessage}>「いいね」した商品がありません。</p>
                 )}
             </div>
         </div>
     );
+};
+
+const styles = {
+    container: {
+        padding: "20px",
+        backgroundColor: "#f5f5f5",
+        minHeight: "100vh",
+        position: "relative",
+    },
+    backButton: {
+        position: "absolute",
+        top: "20px",
+        left: "20px",
+        padding: "8px 12px",
+        fontSize: "14px",
+        backgroundColor: "#f0f0f0",
+        border: "1px solid #ccc",
+        borderRadius: "4px",
+        cursor: "pointer",
+    },
+    header: {
+        textAlign: "center",
+        marginBottom: "40px",
+    },
+    title: {
+        fontSize: "36px",
+        fontWeight: "bold",
+        marginBottom: "10px",
+    },
+    subtitle: {
+        fontSize: "24px",
+        color: "#555",
+    },
+    gridContainer: {
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+        gap: "20px",
+    },
+    card: {
+        border: "1px solid #ddd",
+        borderRadius: "10px",
+        overflow: "hidden",
+        backgroundColor: "#fff",
+        cursor: "pointer",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    },
+    productImage: {
+        width: "auto",
+        height: "150px",
+        maxWidth: "100%",
+        objectFit: "cover",
+        borderBottom: "1px solid #ddd",
+        display: "block",
+        margin: "0 auto",
+    },
+
+    productInfo: {
+        padding: "16px",
+        textAlign: "center",
+    },
+    productName: {
+        fontSize: "18px",
+        fontWeight: "bold",
+        margin: "0 0 8px",
+    },
+    productPrice: {
+        fontSize: "16px",
+        color: "#666",
+    },
+    noItemsMessage: {
+        textAlign: "center",
+        color: "#777",
+        fontSize: "16px",
+    },
 };
 
 export default LikeList;

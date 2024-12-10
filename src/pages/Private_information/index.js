@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useRouter } from 'next/router';
+import {getAuth} from "firebase/auth";
 
 const PersonalInfoPage = () => {
     const [fullName, setFullName] = useState('');
@@ -15,8 +16,12 @@ const PersonalInfoPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!genUid) {
-            alert('genUidが見つかりませんでした。');
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    const userId = currentUser.uid || genUid;
+
+        if (!userId) {
+            alert('Uidが見つかりませんでした。');
             return;
         }
 
@@ -28,7 +33,8 @@ const PersonalInfoPage = () => {
                 phoneNumber,
                 birthDate,
                 createdAt: serverTimestamp(),
-                genId: genUid, // genUidをFirestoreに保存
+                genId: genUid,
+                userId,// genUidをFirestoreに保存
             });
 
             alert('個人情報が保存されました');

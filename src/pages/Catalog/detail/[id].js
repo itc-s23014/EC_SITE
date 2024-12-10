@@ -1,12 +1,13 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
 import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
 import BackButton from "@/components/BackButton/BackButton";
 import Header from "@/components/Header/Header";
+
 
 
 const ProductDetail = () => {
@@ -16,7 +17,10 @@ const ProductDetail = () => {
     const [sellerName, setSellerName] = useState('');
     const [user] = useAuthState(auth);
     const { addItem, cartDetails } = useShoppingCart();
-console.log(id)
+    const [cart, setCart] = useState({});
+    const [isLiked, setIsLiked] = useState(false);
+    console.log(id)
+
     useEffect(() => {
         const fetchProductAndSeller = async () => {
             if (id) {
@@ -55,52 +59,71 @@ console.log(id)
     }, [id]);
 
     useEffect(() => {
-        if (user) {
-            const saveCartToFirestore = async () => {
-                try {
-                    const userCartRef = doc(db, 'users', user.uid, 'cart', 'userCart');
-                    await setDoc(userCartRef, {
-                        cartDetails: cartDetails,
-                        timestamp: new Date(),
-                    });
-                } catch (error) {
-                    console.error('カートの保存エラー:', error);
+        const fetchCart = async () => {
+            if (user) {
+                const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
+                const cartSnapshot = await getDoc(userCartRef);
+                if (cartSnapshot.exists()) {
+                    setCart(cartSnapshot.data().cartDetails || {});
+                } else {
+                    setCart({});
                 }
-            };
+            }
+        };
+        fetchCart();
+    }, [user]);
 
-            saveCartToFirestore();
+    useEffect(() => {
+        const fetchLikeStatus = async () => {
+            if (user && id) {
+                const likeRef = doc(db, 'likes', `${user.uid}_${id}`);
+                const likeSnapshot = await getDoc(likeRef);
+                setIsLiked(likeSnapshot.exists());
+            }
+        };
+        fetchLikeStatus();
+    }, [user, id]);
+
+    const handleLikeToggle = async () => {
+        if (!user) {
+            alert('いいねするにはログインしてください！');
+            return;
         }
-    }, [user, cartDetails]);
-
-    const handleAddToCart = () => {
-        if (product) {
-            addItem({
-                name: product.name,
-                id: product.id,
-                price: product.price ,
-                currency: 'jpy',
-            });
-            alert(`${product.name} をカートに追加しました`);
+        const likeRef = doc(db, 'likes', `${user.uid}_${id}`);
+        try {
+            if (isLiked) {
+                await deleteDoc(likeRef);
+                setIsLiked(false);
+            } else {
+                await setDoc(likeRef, {
+                    productId: id,
+                    userId: user.uid,
+                    likedAt: new Date(),
+                });
+                setIsLiked(true);
+            }
+        } catch (error) {
+            console.error('いいね操作エラー:', error);
         }
     };
 
-    // const handlePurchase = async () => {
-    //     try {
-    //         const res = await fetch('api/checkout_api', {
-    //             method: 'POST',
-    //             headers: { 'Content-Type': 'application/json' },
-    //             body: JSON.stringify({ productId: product.id })
-    //         });
-    //         const data = await res.json();
-    //         if (data.checkout_url) {
-    //             window.location.href = data.checkout_url;
-    //         } else {
-    //             console.error('購入手続きエラー:', data.error);
-    //         }
-    //     } catch (error) {
-    //         console.error('購入手続きエラー:', error);
-    //     }
-    // };
+    const handleAddToCart = async () => {
+        if (product && user) {
+            const newCart = {
+                ...cart,
+                [product.id]: {
+                    name: product.name,
+                    price: product.price,
+                    quantity: (cart[product.id]?.quantity || 0) + 1,
+                },
+            };
+
+            setCart(newCart);
+            const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
+            await setDoc(userCartRef, { cartDetails: newCart, timestamp: new Date() });
+            alert(`${product.name} をカートに追加しました`);
+        }
+    };
 
     const purchase = () => {
         if (!product?.id) {
@@ -113,19 +136,14 @@ console.log(id)
         });
     };
 
-
     if (!product) {
         return <div>読み込み中...</div>;
     }
 
     return (
         <>
-        <Header title={product.name} />
-        <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
-            {/* <BackButton/>
-            <h1 style={{ textAlign: 'center', fontSize: '2rem', color: '#333' }}>{product.name}</h1> */}
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+            <Header title={product.name}/>
+            <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
                 {product.imageUrls && product.imageUrls.map((url, index) => (
                     <img
                         key={index}
@@ -141,49 +159,64 @@ console.log(id)
                     />
                 ))}
             </div>
+            <div style={{maxWidth: '800px', margin: 'auto', padding: '20px'}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
+                    <h1 style={{fontSize: '2rem', color: '#333'}}>{product.name}</h1>
+                    <img
+                        src={isLiked ? '/image/heart_filled_red.svg' : '/image/heart.svg'}
+                        alt="いいね"
+                        style={{
+                            width: '40px',
+                            height: '40px',
+                            cursor: 'pointer',
+                            marginTop: '10px',
+                            filter: isLiked ? 'hue-rotate(0deg) saturate(1000%) brightness(0.8)' : 'none'
+                        }}
+                        onClick={handleLikeToggle}
+                    />
+                </div>
 
-            <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>詳細</h2>
-            <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{product.description}</p>
-            <h2 style={{ fontSize: '1.5rem', color: '#333', marginTop: '20px' }}>出品者</h2>
-            <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#555' }}>{sellerName || '不明'}</p>
-            <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>
-                <strong>価格:</strong> ¥{product.price.toLocaleString()}
-            </p>
-            <div style={{ textAlign: 'center' }}>
-                <button
-                    onClick={handleAddToCart}
-                    style={{
-                        padding: '12px 24px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        marginRight: '10px'
-                    }}
-                >
-                    カートに追加
-                </button>
-                <button
-                    onClick={purchase}
-                    style={{
-                        padding: '12px 24px',
-                        backgroundColor: '#28a745',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        fontSize: '1rem'
-                    }}
-                >
-                    購入
-                </button>
+                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>詳細</h2>
+                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.description}</p>
+                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>出品者</h2>
+                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{sellerName || '不明'}</p>
+                <p style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#333'}}>
+                    <strong>価格:</strong> ¥{product.price.toLocaleString()}
+                </p>
+                <div style={{textAlign: 'center'}}>
+                    <button
+                        onClick={handleAddToCart}
+                        style={{
+                            padding: '12px 24px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            marginRight: '10px'
+                        }}
+                    >
+                        カートに追加
+                    </button>
+                    <button
+                        onClick={purchase}
+                        style={{
+                            padding: '12px 24px',
+                            backgroundColor: '#28a745',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                            fontSize: '1rem'
+                        }}
+                    >
+                        購入
+                    </button>
+                </div>
             </div>
-        </div>
         </>
     );
 };
-
 
 export default ProductDetail;
