@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useShoppingCart } from 'use-shopping-cart';
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
+import LoadingComponent from '@/components/LoadingComponent';
 
 export default function SelectPaymentMethod() {
     const { cartDetails, cartCount, formattedTotalPrice, emptyCart } = useShoppingCart();
@@ -94,7 +95,7 @@ export default function SelectPaymentMethod() {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingComponent text='ロード中...' />
     }
 
     return (

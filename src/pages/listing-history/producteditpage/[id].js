@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../../firebaseConfig";
 import BackButton from "@/components/BackButton/BackButton";
+import LoadingComponent from '@/components/LoadingComponent';
 
 const ProductEditPage = () => {
     const router = useRouter();
@@ -71,7 +72,7 @@ const ProductEditPage = () => {
         }
     };
 
-    if (!product) return <p style={{ textAlign: "center", fontSize: "18px" }}>Loading...</p>;
+    if (!product) return <LoadingComponent text='ロード中...' />;
 
     return (
         <div style={styles.container}>

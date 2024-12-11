@@ -5,6 +5,7 @@ import { db } from "../../../firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import BackButton from "@/components/BackButton/BackButton";
+import LoadingComponent from '@/components/LoadingComponent';
 
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);
@@ -54,7 +55,7 @@ const LikeList = () => {
     };
 
     if (loading) {
-        return <p style={{ textAlign: "center", marginTop: "20px" }}>Loading...</p>;
+        return <LoadingComponent text='ロード中...' />
     }
 
     if (!user) {

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import BackButton from "@/components/BackButton/BackButton";
 import {db} from '../../../firebaseConfig'
+import LoadingComponent from '@/components/LoadingComponent';
 
 
 const PaymentScreen = () => {
@@ -40,7 +41,7 @@ const PaymentScreen = () => {
     }, [productData]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingComponent text='ロード中...' />
     }
 
     if (!productData) {

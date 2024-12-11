@@ -4,6 +4,7 @@ import { useShoppingCart, clearCart } from 'use-shopping-cart';
 import { collection, doc, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
 import { getAuth } from 'firebase/auth';
+import LoadingComponent from '@/components/LoadingComponent';
 
 const containerStyle = {
   fontFamily: 'Arial, sans-serif',
@@ -94,7 +95,7 @@ export default function SelectPaymentMethod() {
     }, [productId, cartDetails]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingComponent text='ロード中...' />
     }
 
     // 商品データがない場合の表示

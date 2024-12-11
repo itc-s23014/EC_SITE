@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import Link from "next/link";
+import LoadingComponent from '@/components/LoadingComponent';
 
 export default function UserDashboard() {
   const [userData, setUserData] = useState(null);
@@ -60,7 +61,7 @@ export default function UserDashboard() {
   };
 
   if (loading) {
-    return <div>読み込み中...</div>;
+    return <LoadingComponent text='ロード中...' />
   }
 
   return (
