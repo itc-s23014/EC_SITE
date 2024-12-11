@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useShoppingCart } from 'use-shopping-cart';
-import ProductCard from '@/components/ProductCard';
+import ProductList from '@/components/ProductList';
 
 const auth = getAuth();
 
@@ -156,12 +156,7 @@ const Home = () => {
                     </ul>
                 </div>
             )}
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
-                {products.map(product => (
-                    <ProductCard key={product.id} product={product} />
-                ))}
-            </div>
+            <ProductList products={products} />
         </div>
     );
 };
