@@ -1,7 +1,7 @@
 
 import { Inter } from "next/font/google";
 
-import LoginPage from "@/pages/login";
+import Catalog from "@/pages/Catalog";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function pages() {
     return (
         <>
-            <LoginPage/>
+            <Catalog/>
         </>
     );
 }
