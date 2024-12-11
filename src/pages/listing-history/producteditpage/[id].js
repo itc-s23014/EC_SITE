@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../../firebaseConfig";
 import BackButton from "@/components/BackButton/BackButton";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const ProductEditPage = () => {
     const router = useRouter();
@@ -16,6 +17,7 @@ const ProductEditPage = () => {
         imageUrls: [],
     });
     const [newImage, setNewImage] = useState(null);
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
 
     useEffect(() => {

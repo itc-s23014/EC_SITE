@@ -3,11 +3,13 @@ import { useRouter } from "next/router";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../../../firebaseConfig";
 import BackButton from "@/components/BackButton/BackButton";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
     const [user, setUser] = useState(null);
     const router = useRouter();
+    const { user: authUser, loading: authloading } = useAuthGuard(); //認証を強制
 
 
     useEffect(() => {

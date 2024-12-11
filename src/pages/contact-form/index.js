@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BackButton from "@/components/BackButton/BackButton";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const ContactPage = () => {
     const [name, setName] = useState('');
@@ -8,6 +9,7 @@ const ContactPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     const handleSubmit = async (e) => {
         e.preventDefault();

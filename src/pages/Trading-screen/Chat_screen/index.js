@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     const sendMessage = () => {
         if (!input.trim()) return;
