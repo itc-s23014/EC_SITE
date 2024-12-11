@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useShoppingCart } from 'use-shopping-cart';
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function SelectPaymentMethod() {
     const { cartDetails, cartCount, formattedTotalPrice, emptyCart } = useShoppingCart();
@@ -12,6 +13,8 @@ export default function SelectPaymentMethod() {
     const [directProduct, setDirectProduct] = useState(null);
     const router = useRouter();
     const { productId } = router.query;
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
+
 
     const fetchProducts = async () => {
         const productsCollection = collection(db, 'products');

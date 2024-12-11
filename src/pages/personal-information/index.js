@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
 import BackButton from "@/components/BackButton/BackButton";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const EditProfile = () => {
     const [userData, setUserData] = useState(null);
@@ -11,6 +12,7 @@ const EditProfile = () => {
     const [error, setError] = useState(null);
     const [userDocId, setUserDocId] = useState(null);
     const router = useRouter();
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     const [formData, setFormData] = useState({
         fullName: "",

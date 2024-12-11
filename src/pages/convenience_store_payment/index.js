@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import BackButton from "@/components/BackButton/BackButton";
 import {db} from '../../../firebaseConfig'
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 
 const PaymentScreen = () => {
@@ -10,6 +11,7 @@ const PaymentScreen = () => {
     const { productId } = router.query;
     const [productData, setProductData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     useEffect(() => {
         if (!productId) return;

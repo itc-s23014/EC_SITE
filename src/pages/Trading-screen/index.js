@@ -3,12 +3,14 @@ import { useRouter } from 'next/router';
 import Chat from "@/pages/Trading-screen/Chat_screen";
 import { db } from "../../../firebaseConfig";
 import { doc, getDoc, setDoc, addDoc, collection } from "firebase/firestore";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 export default function TradePage() {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [product, setProduct] = useState(null);
     const router = useRouter();
     const { productId } = router.query;
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     useEffect(() => {
         const fetchProductData = async () => {
