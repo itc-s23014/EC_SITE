@@ -1,29 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Chat from "@/pages/Trading-screen/Chat_screen";
 import { db } from "../../../firebaseConfig";
 import { doc, getDoc, setDoc, addDoc, collection } from "firebase/firestore";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-
+import SendMessage from "@/pages/Trading-screen/sendMessage";
 export default function TradePage() {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [product, setProduct] = useState(null);
     const router = useRouter();
     const { productId } = router.query;
     const { user, loading: authloading } = useAuthGuard(); //認証を強制
-
     useEffect(() => {
         const fetchProductData = async () => {
             if (productId) {
                 try {
                     const productDoc = doc(db, "products", productId);
                     const productSnapshot = await getDoc(productDoc);
-
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
-
-
                         await notifySeller(productData);
                     } else {
                         console.log("指定された商品が存在しません。");
@@ -33,7 +28,6 @@ export default function TradePage() {
                 }
             }
         };
-
         const notifySeller = async (productData) => {
             try {
                 const notificationData = {
@@ -48,15 +42,11 @@ export default function TradePage() {
                 console.error("通知送信中にエラーが発生しました:", error);
             }
         };
-
         fetchProductData();
     }, [productId]);
-
     const handleConfirm = async () => {
         if (!product) return;
-
         try {
-
             const purchaseData = {
                 productId: product.id,
                 productName: product.name,
@@ -65,7 +55,6 @@ export default function TradePage() {
                 purchaseDate: new Date().toISOString(),
             };
             await addDoc(collection(db, "purchaseHistory"), purchaseData);
-
             const notificationData = {
                 sellerId: product.sellerId,
                 message: `商品「${product.name}」が購入されました。`,
@@ -73,14 +62,12 @@ export default function TradePage() {
                 read: false,
             };
             await addDoc(collection(db, "notifications"), notificationData);
-
             setIsConfirmed(true);
             console.log("購入履歴と通知が保存されました。");
         } catch (error) {
             console.error("データ保存中にエラーが発生しました:", error);
         }
     };
-
     return (
         <div style={{ padding: '16px', fontFamily: 'Arial, sans-serif' }}>
             <header style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -101,7 +88,7 @@ export default function TradePage() {
                 <div style={{ border: '1px solid #000', height: '50px', marginBottom: '16px', padding: '8px' }}>
                     {product ? product.name : '取引者情報を取得中...'}
                 </div>
-                <Chat />
+                <SendMessage />
             </div>
         </div>
     );
