@@ -8,8 +8,6 @@ import { auth } from '../../../../firebaseConfig';
 import BackButton from "@/components/BackButton/BackButton";
 import Header from "@/components/Header/Header";
 
-
-
 const ProductDetail = () => {
     const router = useRouter();
     const { id } = router.query;
@@ -108,7 +106,7 @@ const ProductDetail = () => {
     };
 
     const handleAddToCart = async () => {
-        if (product && user) {
+        if (product && user && !cart[product.id]) { // Check if the product is already in the cart
             const newCart = {
                 ...cart,
                 [product.id]: {
@@ -184,21 +182,24 @@ const ProductDetail = () => {
                     <strong>価格:</strong> ¥{product.price.toLocaleString()}
                 </p>
                 <div style={{textAlign: 'center'}}>
-                    <button
-                        onClick={handleAddToCart}
-                        style={{
-                            padding: '12px 24px',
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            fontSize: '1rem',
-                            marginRight: '10px'
-                        }}
-                    >
-                        カートに追加
-                    </button>
+                <button
+                    onClick={handleAddToCart}
+                    disabled={cart[product.id]} // Disable the button if the product is already in the cart
+                    style={{
+                        padding: '12px 24px',
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: cart[product.id] ? 'default' : 'pointer',
+                        fontSize: '1rem',
+                        marginRight: '10px',
+                        opacity: cart[product.id] ? 0.5 : 1 // Make the button appear disabled visually
+                    }}
+                >
+                    {cart[product.id] ? '追加済み' : 'カートに追加'}
+                </button>
+
                     <button
                         onClick={purchase}
                         style={{
