@@ -4,6 +4,8 @@ import { useShoppingCart, clearCart } from 'use-shopping-cart';
 import { collection, doc, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
 import { getAuth } from 'firebase/auth';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import LoadingComponent from '@/components/LoadingComponent';
 
 const containerStyle = {
   fontFamily: 'Arial, sans-serif',

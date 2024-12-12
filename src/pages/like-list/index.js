@@ -5,6 +5,8 @@ import { db } from "../../../firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import BackButton from "@/components/BackButton/BackButton";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import LoadingComponent from '@/components/LoadingComponent';
 
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);

@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import BackButton from "@/components/BackButton/BackButton";
 import {db} from '../../../firebaseConfig'
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import LoadingComponent from '@/components/LoadingComponent';
 
 
 const PaymentScreen = () => {
