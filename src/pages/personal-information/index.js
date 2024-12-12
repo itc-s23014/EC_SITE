@@ -104,7 +104,7 @@ const EditProfile = () => {
     };
 
     if (isLoading) {
-        return <LoadingComponent text='ロード中...' />
+        return <LoadingComponent />
     }
 
     if (error) {

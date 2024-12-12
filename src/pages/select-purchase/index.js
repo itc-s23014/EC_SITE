@@ -95,7 +95,7 @@ export default function SelectPaymentMethod() {
     };
 
     if (loading) {
-        return <LoadingComponent text='ロード中...' />
+        return <LoadingComponent />
     }
 
     return (

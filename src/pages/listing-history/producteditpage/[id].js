@@ -72,7 +72,7 @@ const ProductEditPage = () => {
         }
     };
 
-    if (!product) return <LoadingComponent text='ロード中...' />;
+    if (!product) return <LoadingComponent />;
 
     return (
         <div style={styles.container}>

@@ -95,7 +95,7 @@ export default function SelectPaymentMethod() {
     }, [productId, cartDetails]);
 
     if (loading) {
-        return <LoadingComponent text='ロード中...' />
+        return <LoadingComponent />
     }
 
     // 商品データがない場合の表示

@@ -41,7 +41,7 @@ const PaymentScreen = () => {
     }, [productData]);
 
     if (loading) {
-        return <LoadingComponent text='ロード中...' />
+        return <LoadingComponent />
     }
 
     if (!productData) {

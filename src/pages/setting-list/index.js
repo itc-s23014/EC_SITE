@@ -60,8 +60,8 @@ export default function UserDashboard() {
     router.push(url);
   };
 
-  if (loading) {
-    return <LoadingComponent text='ロード中...' />
+  if (true) {
+    return <LoadingComponent />
   }
 
   return (

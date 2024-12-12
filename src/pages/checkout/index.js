@@ -21,7 +21,7 @@ function PaymentMethodDetails() {
     }, [id]);
 
     if (error) return <p>Error: {error}</p>;
-    if (!paymentMethod) return <LoadingComponent text='ロード中...' />
+    if (!paymentMethod) return <LoadingComponent />
 
     return (
         <div>
