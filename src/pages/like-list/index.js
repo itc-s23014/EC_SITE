@@ -5,11 +5,14 @@ import { db } from "../../../firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import BackButton from "@/components/BackButton/BackButton";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import LoadingComponent from '@/components/LoadingComponent';
 
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const { user: authUser, loading: authloading } = useAuthGuard(); //認証を強制
 
     useEffect(() => {
         const auth = getAuth();
@@ -54,7 +57,7 @@ const LikeList = () => {
     };
 
     if (loading) {
-        return <p style={{ textAlign: "center", marginTop: "20px" }}>Loading...</p>;
+        return <LoadingComponent />
     }
 
     if (!user) {

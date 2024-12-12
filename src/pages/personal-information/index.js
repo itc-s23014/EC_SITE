@@ -4,6 +4,8 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
 import BackButton from "@/components/BackButton/BackButton";
+import LoadingComponent from '@/components/LoadingComponent';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const EditProfile = () => {
     const [userData, setUserData] = useState(null);
@@ -11,6 +13,7 @@ const EditProfile = () => {
     const [error, setError] = useState(null);
     const [userDocId, setUserDocId] = useState(null);
     const router = useRouter();
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     const [formData, setFormData] = useState({
         fullName: "",
@@ -103,7 +106,7 @@ const EditProfile = () => {
     };
 
     if (isLoading) {
-        return <p>Loading...</p>;
+        return <LoadingComponent />
     }
 
     if (error) {
@@ -112,7 +115,7 @@ const EditProfile = () => {
 
     return (
         <div style={styles.container}>
-           <BackButton/>
+            <BackButton/>
             <h1 style={styles.title}>プロフィール編集</h1>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <label>

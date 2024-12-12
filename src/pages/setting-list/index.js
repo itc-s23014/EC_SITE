@@ -5,6 +5,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import Link from "next/link";
+import LoadingComponent from '@/components/LoadingComponent';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 export default function UserDashboard() {
   const [userData, setUserData] = useState(null);
@@ -12,6 +14,7 @@ export default function UserDashboard() {
   const [sellerName, setSellerName] = useState("");
   const router = useRouter();
   const auth = getAuth();
+  const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
   useEffect(() => {
     const fetchUserData = async (uid) => {
@@ -60,7 +63,7 @@ export default function UserDashboard() {
   };
 
   if (loading) {
-    return <div>読み込み中...</div>;
+    return <LoadingComponent />
   }
 
   return (

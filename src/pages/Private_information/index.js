@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useRouter } from 'next/router';
 import {getAuth} from "firebase/auth";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const PersonalInfoPage = () => {
     const [fullName, setFullName] = useState('');
@@ -12,6 +13,7 @@ const PersonalInfoPage = () => {
     const [birthDate, setBirthDate] = useState('');
     const router = useRouter();
     const { genUid } = router.query;  // genUidの取得
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     const handleSubmit = async (e) => {
         e.preventDefault();

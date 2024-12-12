@@ -4,6 +4,8 @@ import { useShoppingCart, clearCart } from 'use-shopping-cart';
 import { collection, doc, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
 import { getAuth } from 'firebase/auth';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import LoadingComponent from '@/components/LoadingComponent';
 
 const containerStyle = {
   fontFamily: 'Arial, sans-serif',
@@ -59,6 +61,7 @@ export default function SelectPaymentMethod() {
     const [directProduct, setDirectProduct] = useState(null);
     const router = useRouter();
     const { productId } = router.query;
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     useEffect(() => {
         if (productId) {
@@ -94,7 +97,7 @@ export default function SelectPaymentMethod() {
     }, [productId, cartDetails]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingComponent />
     }
 
     // 商品データがない場合の表示

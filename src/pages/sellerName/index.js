@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useRouter } from 'next/navigation';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const SellerNamePage = () => {
     const [sellerName, setSellerName] = useState('');
     const router = useRouter();
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     const handleSubmit = async (e) => {
         e.preventDefault();

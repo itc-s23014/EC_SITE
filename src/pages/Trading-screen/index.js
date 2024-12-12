@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { db } from "../../../firebaseConfig";
 import { doc, getDoc, setDoc, addDoc, collection } from "firebase/firestore";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import SendMessage from "@/pages/Trading-screen/sendMessage";
 export default function TradePage() {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [product, setProduct] = useState(null);
     const router = useRouter();
     const { productId } = router.query;
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
     useEffect(() => {
         const fetchProductData = async () => {
             if (productId) {

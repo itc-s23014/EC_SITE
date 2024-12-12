@@ -5,6 +5,7 @@ import { db, storage } from '../../../firebaseConfig';
 import { useRouter } from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
 import { getAuth } from 'firebase/auth';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const AddProduct = () => {
     const [name, setName] = useState('');
@@ -14,6 +15,7 @@ const AddProduct = () => {
     const [sellerName, setSellerName] = useState('');
     const router = useRouter();
     const auth = getAuth();
+    const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
     useEffect(() => {
         const fetchSellerName = async () => {
