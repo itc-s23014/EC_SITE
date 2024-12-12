@@ -62,7 +62,7 @@ export default function UserDashboard() {
     router.push(url);
   };
 
-  if (true) {
+  if (loading) {
     return <LoadingComponent />
   }
 
