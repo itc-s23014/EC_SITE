@@ -6,6 +6,7 @@ import { collection, query, where, getDocs, doc, getDoc } from "firebase/firesto
 import { db } from "../../../firebaseConfig";
 import Link from "next/link";
 import LoadingComponent from '@/components/LoadingComponent';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 export default function UserDashboard() {
   const [userData, setUserData] = useState(null);
@@ -13,6 +14,7 @@ export default function UserDashboard() {
   const [sellerName, setSellerName] = useState("");
   const router = useRouter();
   const auth = getAuth();
+  const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
   useEffect(() => {
     const fetchUserData = async (uid) => {

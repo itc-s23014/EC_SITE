@@ -6,6 +6,7 @@ import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import BackButton from "@/components/BackButton/BackButton";
 import LoadingComponent from '@/components/LoadingComponent';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const CartContents = () => {
     const { emptyCart, removeItem } = useShoppingCart();
@@ -14,6 +15,7 @@ const CartContents = () => {
     const [loading, setLoading] = useState(true);
     const auth = getAuth();
     const [user] = useAuthState(auth);
+    const { user: authUser, loading: authloading } = useAuthGuard(); //認証を強制
 
     const fetchProducts = async () => {
         try {

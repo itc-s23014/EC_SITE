@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from "react";
+import { useEffect } from "react";
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { app } from '../../../firebaseConfig';
 import { useRouter } from "next/navigation";
+import {useAuthGuard} from "@/hooks/useAuthGuard"
 
 const auth = getAuth(app);
 
@@ -11,6 +13,13 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
+    const {user, loading} = useAuthGuard();
+
+        useEffect(() => {
+            if (user) {
+                router.push('/Catalog');
+            }
+        }, [user, router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -28,7 +37,13 @@ const LoginPage = () => {
         router.push('/signup');
     };
 
-    return (
+    if(loading) {
+        return <p>Laoding...</p>
+    }
+    if (user) {
+        router.push('/Catalog');
+    } else {
+            return (
         <div className="container" style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '50px' }}>
             <h2 style={{ textAlign: 'center' }}>ログイン</h2>
             <form onSubmit={handleLogin}>
@@ -91,6 +106,8 @@ const LoginPage = () => {
             </form>
         </div>
     );
+    }
+
 };
 
 export default LoginPage;
