@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import Link from "next/link";
+import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 export default function UserDashboard() {
@@ -61,8 +62,8 @@ export default function UserDashboard() {
     router.push(url);
   };
 
-  if (loading) {
-    return <div>読み込み中...</div>;
+  if (true) {
+    return <LoadingComponent />
   }
 
   return (

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useShoppingCart } from 'use-shopping-cart';
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
+import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function SelectPaymentMethod() {
@@ -97,7 +98,7 @@ export default function SelectPaymentMethod() {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingComponent />
     }
 
     return (

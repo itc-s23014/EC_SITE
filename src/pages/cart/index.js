@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import BackButton from "@/components/BackButton/BackButton";
+import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const CartContents = () => {
@@ -65,7 +66,7 @@ const CartContents = () => {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingComponent text='ロード中...' />
     }
 
     return (

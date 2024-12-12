@@ -5,7 +5,6 @@ import { db } from "../../../firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import BackButton from "@/components/BackButton/BackButton";
-import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const LikeList = () => {
     const [likedProducts, setLikedProducts] = useState([]);
@@ -56,7 +55,7 @@ const LikeList = () => {
     };
 
     if (loading) {
-        return <p style={{ textAlign: "center", marginTop: "20px" }}>Loading...</p>;
+        return <LoadingComponent />
     }
 
     if (!user) {

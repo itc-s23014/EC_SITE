@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import LoadingComponent from '@/components/LoadingComponent';
 
 function PaymentMethodDetails() {
     const router = useRouter();
@@ -20,7 +21,7 @@ function PaymentMethodDetails() {
     }, [id]);
 
     if (error) return <p>Error: {error}</p>;
-    if (!paymentMethod) return <p>Loading...</p>;
+    if (!paymentMethod) return <LoadingComponent />
 
     return (
         <div>

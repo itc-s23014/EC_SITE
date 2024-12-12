@@ -1,0 +1,26 @@
+/* オーバーレイ背景 */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* 半透明の背景 */
+    z-index: 999;
+}
+
+/* コンテナ全体 */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    position: relative;
+}
+
+/* コンテンツ */
+.content {
+    position: relative;
+    z-index: 1000; /* オーバーレイの上に表示 */
+}
