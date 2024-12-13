@@ -19,10 +19,9 @@ const SendMessage = ({ productId }) => {
             return;
         }
 
-        const { uid, photoURL, displayName } = user;
+        const {uid, photoURL, displayName} = user;
 
         try {
-            // Firestore の "messages" コレクションに新しいメッセージを追加
             await addDoc(collection(db, "messages"), {
                 text: message.trim(),
                 uid,
@@ -32,7 +31,7 @@ const SendMessage = ({ productId }) => {
                 createdAt: serverTimestamp(),
             });
 
-            // メッセージ入力欄をクリア
+
             setMessage('');
         } catch (error) {
             console.error("メッセージ送信中にエラーが発生しました:", error);
@@ -40,21 +39,63 @@ const SendMessage = ({ productId }) => {
     };
 
     return (
-        <div className="send-message-container">
-            <form onSubmit={sendMessage} className="send-message-form">
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '16px',
+            backgroundColor: '#f9f9f9',
+            borderRadius: '12px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
+            <form
+                onSubmit={sendMessage}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    maxWidth: '600px',
+                    gap: '12px'
+                }}
+            >
                 <input
                     type="text"
                     placeholder="メッセージを入力してください"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="message-input"
+                    style={{
+                        flex: 1,
+                        padding: '12px 16px',
+                        border: '1px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.1)',
+                        transition: 'border-color 0.3s',
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = '#4CAF50')}
+                    onBlur={(e) => (e.target.style.borderColor = '#ddd')}
                 />
-                <button type="submit" className="send-button">
+                <button
+                    type="submit"
+                    style={{
+                        padding: '12px 24px',
+                        backgroundColor: '#4CAF50',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s',
+                    }}
+                    onMouseEnter={(e) => (e.target.style.backgroundColor = '#45a049')}
+                    onMouseLeave={(e) => (e.target.style.backgroundColor = '#4CAF50')}
+                >
                     送信
                 </button>
             </form>
         </div>
     );
-};
+}
 
 export default SendMessage;
