@@ -12,11 +12,11 @@ export default function TradePage() {
     const [product, setProduct] = useState(null);
     const [notifications, setNotifications] = useState([]);
     const router = useRouter();
-    const { productId } = router.query;
-    const { user, loading: authLoading } = useAuthGuard();
+    const {productId} = router.query;
+    const {user, loading: authLoading} = useAuthGuard();
     const auth = getAuth();
     const currentUser = auth.currentUser;
-
+    const [sellername, setsellername] = useState(null);
 
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export default function TradePage() {
                     const productSnapshot = await getDoc(productDoc);
 
                     if (productSnapshot.exists()) {
-                        const productData = { id: productSnapshot.id, ...productSnapshot.data() };
+                        const productData = {id: productSnapshot.id, ...productSnapshot.data()};
                         setProduct(productData);
                         await notifySeller(productData);
                     } else {
@@ -128,14 +128,41 @@ export default function TradePage() {
         if (!authLoading) fetchNotifications();
     }, [authLoading, user]);
 
+    useEffect(() => {
+        const fetchSellers = async () => {
+            try {
+                if (user) {
+                    const  sellersdoc = doc(db, "sellers", product.sellerId);
+                    const sellerSnap = await getDoc(sellersdoc);
+
+                    if (sellerSnap.exists()) {
+                        const sellerData = {id: sellerSnap.id, ...sellerSnap.data()};
+                        setsellername(sellerData.sellerName);
+                        console.log(sellerData.sellerName);
+                    } else {
+                        console.log("指定されたユーザーがいません");
+                    }
+                }
+            } catch (error) {
+                console.error("ユーザーの取得中にエラーが発生しました:", error);
+            }
+        };
+        if (!authLoading) fetchSellers();
+    }, [user]);
     return (
-        <div style={{ padding: '16px', fontFamily: 'Arial, sans-serif' }}>
-            <BackButton />
-            <header style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', height: '200px' }}>
+        <div style={{padding: '16px', fontFamily: 'Arial, sans-serif'}}>
+            <BackButton/>
+            <header style={{display: 'flex', alignItems: 'center', marginBottom: '16px', height: '200px'}}>
                 <h1>取引画面</h1>
             </header>
 
-            <div style={{ backgroundColor: '#ffffe0', padding: '16px', borderRadius: '8px', marginBottom: '16px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
+            <div style={{
+                backgroundColor: '#ffffe0',
+                padding: '16px',
+                borderRadius: '8px',
+                marginBottom: '16px',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }}>
                 <p><strong>※必須</strong> 発送者・受取側はこちらで詳細を確認ください</p>
                 <a href="https://note.com/candy_f_milk/n/ncdbb4e9b98d6" target="_blank" rel="noopener noreferrer">
                     こちらをクリック
@@ -143,28 +170,89 @@ export default function TradePage() {
                 <p>また、URLの共有や取引者様とのやり取りなどは下のチャット機能をご利用ください。</p>
             </div>
 
-            <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '16px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
+            <div style={{
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '16px',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }}>
                 <h2>取引状況: {isConfirmed ? '確認済み' : '未確認'}</h2>
                 {product && currentUser?.uid !== product.sellerId && (
                     <button
-                        style={{ backgroundColor: '#4CAF50', color: '#fff', padding: '8px 16px', border: 'none', borderRadius: '4px', cursor: 'pointer', marginTop: '8px' }}
+                        style={{
+                            backgroundColor: '#4CAF50',
+                            color: '#fff',
+                            padding: '8px 16px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            marginTop: '8px'
+                        }}
                         onClick={handleConfirm}
                     >
                         確認ボタン
                     </button>
                 )}
                 {product && (
-                    <div style={{ marginTop: '16px' }}>
+                    <div style={{marginTop: '16px'}}>
                         <p><strong>商品名:</strong> {product.name}</p>
-                        <p><strong>価格:</strong> ¥{product.price}</p>
+                        <p><strong>価格:</strong>  ¥{product.price}</p>
+                        {/*<p><strong>取引者:</strong> {sellername}</p>*/}
                         {/*{product.imageUrls && <img src={product.imageUrls[0]} alt={product.name} style={{ maxWidth: '100%', marginTop: '8px' }} />}*/}
                     </div>
                 )}
 
                 {!product && <p>商品情報を読み込み中...</p>}
 
-                <SendMessage />
+
+                <div style={{
+                    marginTop: '24px',
+                    padding: '16px',
+                    backgroundColor: '#f9f9f9',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                }}>
+                    <h3 style={{
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        marginBottom: '12px',
+                        color: '#333'
+                    }}>チャット</h3>
+
+                    <div style={{
+                        maxHeight: '300px',
+                        overflowY: 'auto',
+                        marginBottom: '16px',
+                        padding: '8px',
+                        backgroundColor: '#ffffff',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                    }}>
+
+                        <div style={{
+                            height: '100px',
+                            padding: '8px',
+                            marginBottom: '8px',
+                            borderRadius: '8px'
+                        }}>
+                        </div>
+                        <div style={{
+                            padding: '8px',
+                            marginBottom: '8px',
+                            borderRadius: '8px',
+                            alignSelf: 'flex-end'
+                        }}>
+                        </div>
+                    </div>
+
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                        <SendMessage/>
+                    </div>
+
+                </div>
             </div>
         </div>
     );
 }
+
