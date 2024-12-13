@@ -13,7 +13,7 @@ export const useAuthGuard = () => {
       if (user) {
         setUser(user);
       } else {
-        router.push("/login"); // 未ログインの場合はログインページにリダイレクト
+        router.replace("/login"); // 未ログインの場合はログインページにリダイレクト
       }
       setLoading(false);
     });

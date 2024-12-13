@@ -6,6 +6,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { generateUID } from '@/utils/uidGenerator'; // UID生成関数をインポート
 import app from '../../../firebaseConfig'; // Firebase appのインポート
+import BackButton from '@/components/BackButton/BackButton';
 
 const auth = getAuth(app);
 
@@ -48,8 +49,13 @@ const AddUserPage = () => {
         }
     };
 
+    const handleLoginRedirect = () => {
+        router.push('/login');
+    };
+
     return (
         <div className="container" style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '50px' }}>
+            <BackButton destination="/Catalog"/>
             <h2 style={{ textAlign: 'center' }}>ユーザー登録</h2>
             <form onSubmit={handleRegister}>
                 <div className="form-group" style={{ marginBottom: '15px' }}>
@@ -104,6 +110,24 @@ const AddUserPage = () => {
                     登録
                 </button>
             </form>
+            <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                <button
+                    type="button"
+                    onClick={handleLoginRedirect}
+                    className="btn"
+                    style={{
+                        width: '100%',
+                        padding: '10px',
+                        backgroundColor: '#6c757d',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    ログイン
+                </button>
+            </div>
         </div>
     );
 };
