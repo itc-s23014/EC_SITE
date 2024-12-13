@@ -1,5 +1,5 @@
 import { useShoppingCart } from 'use-shopping-cart';
-import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDocs, onSnapshot, updateDoc, deleteField } from 'firebase/firestore';
 import { auth, db } from '../../../firebaseConfig';
 import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
@@ -9,7 +9,6 @@ import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const CartContents = () => {
-    const { emptyCart, removeItem } = useShoppingCart();
     const [products, setProducts] = useState({});
     const [userCart, setUserCart] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -34,6 +33,7 @@ const CartContents = () => {
             console.error('Error fetching products:', error);
         }
     };
+
     const fetchUserCart = () => {
         if (user) {
             const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
@@ -52,6 +52,20 @@ const CartContents = () => {
         }
     };
 
+    const removeItemFromCart = async (productId) => {
+        if (user) {
+            try {
+                const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
+                await updateDoc(userCartRef, {
+                    [`cartDetails.${productId}`]: deleteField(), // カートからアイテムを削除
+                });
+                console.log(`${productId} has been removed from the cart`);
+            } catch (error) {
+                console.error('Error removing item from cart:', error);
+            }
+        }
+    };
+
     useEffect(() => {
         fetchProducts();
     }, []);
@@ -60,18 +74,20 @@ const CartContents = () => {
         const unsubscribe = fetchUserCart();
         return () => unsubscribe && unsubscribe();
     }, [user]);
+
     const handleCheckout = () => {
         alert('購入されました');
+        // 購入後、カートを空にする処理
         emptyCart();
     };
 
     if (loading) {
-        return <LoadingComponent text='ロード中...' />
+        return <LoadingComponent text='ロード中...' />;
     }
 
     return (
         <div style={{ padding: '20px', maxWidth: '900px', margin: 'auto', fontFamily: 'Arial, sans-serif' }}>
-            <BackButton/>
+            <BackButton />
             <h2 style={{ fontSize: '2rem', color: '#333', marginBottom: '20px' }}>カートの中身</h2>
             {userCart && userCart.cartDetails && Object.keys(userCart.cartDetails).length > 0 ? (
                 <ul style={{ padding: '0', listStyleType: 'none' }}>
@@ -102,7 +118,7 @@ const CartContents = () => {
                                     <p style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#333' }}>合計: ¥{(product?.price * item.quantity).toLocaleString()}</p>
                                 </div>
                                 <button
-                                    onClick={() => removeItem(productId)}
+                                    onClick={() => removeItemFromCart(productId)}
                                     style={{
                                         backgroundColor: '#dc3545',
                                         color: 'white',
