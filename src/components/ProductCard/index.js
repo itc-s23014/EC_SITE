@@ -1,7 +1,24 @@
+import { useState, useEffect } from 'react';
+import { auth } from '../../../firebaseConfig';
 import Link from 'next/link';
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({ product }) => {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const currentUser = auth.currentUser;
+        setUser(currentUser);
+        const unsubscribe = auth.onAuthStateChanged(setUser);
+        // コンポーネントがアンマウントされたときに監視を解除
+        return () => unsubscribe();
+    }, []);
+
+    // ログインユーザーと出品者のIDが一致する商品は表示しない
+    if (user && product.sellerId === user.uid) {
+        return null; // 自分が出品した商品は表示しない
+    }
+
     return (
         <div className={styles.card}>
             <Link href={`/Catalog/detail/${product.id}`} passHref>
