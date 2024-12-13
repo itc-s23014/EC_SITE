@@ -6,6 +6,7 @@ import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { app } from '../../../firebaseConfig';
 import { useRouter } from "next/navigation";
 import {useAuthGuard} from "@/hooks/useAuthGuard"
+import BackButton from "@/components/BackButton/BackButton";
 
 const auth = getAuth(app);
 
@@ -45,6 +46,7 @@ const LoginPage = () => {
     } else {
             return (
         <div className="container" style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '50px' }}>
+            <BackButton destination="/Catalog"/>
             <h2 style={{ textAlign: 'center' }}>ログイン</h2>
             <form onSubmit={handleLogin}>
                 <div className="form-group" style={{ marginBottom: '15px' }}>
