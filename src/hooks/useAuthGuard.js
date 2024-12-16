@@ -23,3 +23,6 @@ export const useAuthGuard = () => {
 
   return { user, loading };
 };
+
+
+export default useAuthGuard;
