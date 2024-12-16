@@ -6,32 +6,18 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useShoppingCart } from 'use-shopping-cart';
 import ProductList from '@/components/ProductList';
+import useUser from '@/hooks/useUser';
+import useProducts from '@/hooks/useProducts';
 
 const auth = getAuth();
 
 const Home = () => {
-    const [products, setProducts] = useState([]);
-    const [user, setUser] = useState(null);
+    const user = useUser()
+    const products = useProducts()
     const [notifications, setNotifications] = useState([]);
     const router = useRouter();
-    const { cartCount } = useShoppingCart();
 
     useEffect(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-        });
-
-        const fetchProducts = async () => {
-            const productsCollection = collection(db, 'products');
-            const productsSnapshot = await getDocs(productsCollection);
-            const productsList = productsSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setProducts(productsList);
-        };
-
-        fetchProducts();
 
         if (user) {
             const notificationsQuery = query(
