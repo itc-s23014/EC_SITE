@@ -1,3 +1,9 @@
+/**
+ * 指定されたユーザーに関連する通知をリアルタイムで取得するカスタムフック。
+ *
+ * @returns {Array} 通知のリスト（通知がない場合は空配列）。
+ */
+
 import { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';

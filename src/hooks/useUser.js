@@ -1,3 +1,9 @@
+/**
+ * 現在ログインしているユーザーを取得するカスタムフック。
+ *
+ * @returns {Object|null} 現在のユーザー情報（ログインしていない場合はnull）。
+ */
+
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
