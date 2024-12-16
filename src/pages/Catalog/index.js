@@ -1,42 +1,18 @@
-import { useEffect, useState } from 'react';
-import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useShoppingCart } from 'use-shopping-cart';
 import ProductList from '@/components/ProductList';
 import useUser from '@/hooks/useUser';
 import useProducts from '@/hooks/useProducts';
+import useNotifications from '@/hooks/useNotifications';
 
 const auth = getAuth();
 
 const Home = () => {
     const user = useUser()
     const products = useProducts()
-    const [notifications, setNotifications] = useState([]);
+    const notifications = useNotifications(user);
     const router = useRouter();
-
-    useEffect(() => {
-
-        if (user) {
-            const notificationsQuery = query(
-                collection(db, 'notifications'),
-                where('sellerId', '==', user.uid)
-            );
-
-            const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
-                const notificationsList = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setNotifications(notificationsList);
-            });
-
-            return () => unsubscribe();
-        }
-    }, [user]);
-
     const handleLogout = async () => {
         try {
             await signOut(auth);
@@ -45,6 +21,7 @@ const Home = () => {
             console.error('ログアウトに失敗しました', error);
         }
     };
+
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f9f9f9', position: 'relative' }}>
