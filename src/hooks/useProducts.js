@@ -1,6 +1,8 @@
 /**
  * 指定されたユーザーが出品した商品をFirestoreから取得するカスタムフック。
  * Firestoreの「products」コレクションで、`sellerId` がユーザーのUIDと一致する商品を取得する。
+ *
+ * @returns {Array} products - 商品の配列。各商品はIDとそのデータを含むオブジェクト。
  */
 import { useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
