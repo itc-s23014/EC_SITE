@@ -1,32 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useShoppingCart } from 'use-shopping-cart';
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
+import { useShoppingCart } from 'use-shopping-cart';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import useProducts from '@/hooks/useProducts'; // カスタムフックをインポート
 
 export default function SelectPaymentMethod() {
-    const { cartDetails, cartCount, formattedTotalPrice, emptyCart } = useShoppingCart();
+    const { cartDetails, cartCount, formattedTotalPrice } = useShoppingCart();
     const [selectedMethod, setSelectedMethod] = useState('');
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [directProduct, setDirectProduct] = useState(null);
     const router = useRouter();
     const { productId } = router.query;
-    const { user, loading: authloading } = useAuthGuard(); //認証を強制
-
-
-    const fetchProducts = async () => {
-        const productsCollection = collection(db, 'products');
-        const productsSnapshot = await getDocs(productsCollection);
-        const productsList = productsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-        setProducts(productsList);
-        setLoading(false);
-    };
+    const { user } = useAuthGuard(); //認証を強制
+    const products = useProducts(user);
+    const [loading, setLoading] = useState(true);
 
     const fetchDirectProduct = async () => {
         if (!productId) return;
@@ -37,19 +26,15 @@ export default function SelectPaymentMethod() {
         } else {
             console.error('商品が見つかりませんでした');
         }
+        setLoading(false);
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (productId) {
-                await fetchDirectProduct();
-            } else {
-                await fetchProducts();
-            }
-            setLoading(false); // データの取得が完了したらloadingをfalseにする
-        };
-
-        fetchData();
+        if (productId) {
+            fetchDirectProduct();
+        } else {
+            setLoading(false); // productIdがない場合はすぐにloadingをfalseにする
+        }
     }, [productId]);
 
     const pushed = () => {

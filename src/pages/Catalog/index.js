@@ -1,84 +1,18 @@
-import { useEffect, useState } from 'react';
-import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useShoppingCart } from 'use-shopping-cart';
 import ProductList from '@/components/ProductList';
+import useUser from '@/hooks/useUser';
+import useProducts from '@/hooks/useProducts';
+import useNotifications from '@/hooks/useNotifications';
 
 const auth = getAuth();
 
 const Home = () => {
-    const [products, setProducts] = useState([]);
-    const [user, setUser] = useState(null);
-    const [notifications, setNotifications] = useState([]);
+    const user = useUser()
+    const products = useProducts()
+    const notifications = useNotifications(user);
     const router = useRouter();
-    const { cartCount } = useShoppingCart();
-
-    useEffect(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-        });
-
-        const fetchProducts = async () => {
-            const productsCollection = collection(db, 'products');
-            const productsSnapshot = await getDocs(productsCollection);
-            const productsList = productsSnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setProducts(productsList);
-        };
-
-        fetchProducts();
-
-        if (user) {
-
-            const sellerNotificationsQuery = query(
-                collection(db, 'notifications'),
-                where('sellerId', '==', user.uid)
-            );
-
-
-            const buyerNotificationsQuery = query(
-                collection(db, 'notifications'),
-                where('buyer_id', '==', user.uid)
-            );
-
-
-            const unsubscribeSeller = onSnapshot(sellerNotificationsQuery, (snapshot) => {
-                const sellerNotifications = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setNotifications((prevNotifications) => [
-                    ...prevNotifications.filter((n) => n.sellerId !== user.uid),
-                    ...sellerNotifications,
-                ]);
-            });
-
-            const unsubscribeBuyer = onSnapshot(buyerNotificationsQuery, (snapshot) => {
-                const buyerNotifications = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setNotifications((prevNotifications) => [
-                    ...prevNotifications.filter((n) => n.buyer_id !== user.uid),
-                    ...buyerNotifications,
-                ]);
-            });
-
-            return () => {
-                unsubscribeSeller();
-                unsubscribeBuyer();
-            };
-        }
-    }, [user]);
-
-
-
-
     const handleLogout = async () => {
         try {
             await signOut(auth);
@@ -87,6 +21,7 @@ const Home = () => {
             console.error('ログアウトに失敗しました', error);
         }
     };
+
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f9f9f9', position: 'relative' }}>

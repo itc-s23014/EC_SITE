@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
 import { db } from "../../../firebaseConfig";
-import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
 import BackButton from "@/components/BackButton/BackButton";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useSellerAndUserData } from "@/hooks/useSellerAndUserData";
 
 const EditProfile = () => {
-    const [userData, setUserData] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [userDocId, setUserDocId] = useState(null);
     const router = useRouter();
     const { user, loading: authloading } = useAuthGuard(); //認証を強制
+    const { userData, loading, error } = useSellerAndUserData(user?.uid);
 
     const [formData, setFormData] = useState({
         fullName: "",
@@ -25,54 +22,15 @@ const EditProfile = () => {
     const { fullName, phoneNumber, address, birthDate } = formData;
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const auth = getAuth();
-                const user = auth.currentUser;
-
-                if (user) {
-                    const sellerDocRef = doc(db, "sellers", user.uid);
-                    const sellerDocSnap = await getDoc(sellerDocRef);
-
-                    if (sellerDocSnap.exists()) {
-                        const sellerData = sellerDocSnap.data();
-                        const sellerGenUid = sellerData.genUid;
-
-
-                        const usersQuery = query(collection(db, "users"), where("genId", "==", sellerGenUid));
-                        const usersQuerySnap = await getDocs(usersQuery);
-
-                        if (!usersQuerySnap.empty) {
-                            const matchedUserDoc = usersQuerySnap.docs[0];
-                            const matchedUser = matchedUserDoc.data();
-
-                            setUserDocId(matchedUserDoc.id);
-                            setUserData(matchedUser);
-                            setFormData({
-                                fullName: matchedUser.fullName,
-                                phoneNumber: matchedUser.phoneNumber,
-                                address: matchedUser.address,
-                                birthDate: matchedUser.birthDate,
-                            });
-                        } else {
-                            setError("一致するユーザーが見つかりませんでした。");
-                        }
-                    } else {
-                        setError("Seller not found.");
-                    }
-                } else {
-                    setError("User not logged in.");
-                }
-            } catch (err) {
-                console.error(err);
-                setError("Error fetching data.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchUserData();
-    }, []);
+        if (userData) {
+            setFormData({
+                fullName: userData.fullName || "",
+                phoneNumber: userData.phoneNumber || "",
+                address: userData.address || "",
+                birthDate: userData.birthDate || "",
+            });
+        }
+    }, [userData]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -105,7 +63,7 @@ const EditProfile = () => {
         }
     };
 
-    if (isLoading) {
+    if (authloading) {
         return <LoadingComponent />
     }
 

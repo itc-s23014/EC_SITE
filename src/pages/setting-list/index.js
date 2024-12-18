@@ -1,68 +1,18 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Header from "@/components/Header/Header";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
-import { db } from "../../../firebaseConfig";
-import Link from "next/link";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useUserData } from "@/hooks/useUserData";
 
 export default function UserDashboard() {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [sellerName, setSellerName] = useState("");
   const router = useRouter();
-  const auth = getAuth();
   const { user, loading: authloading } = useAuthGuard(); //認証を強制
-
-  useEffect(() => {
-    const fetchUserData = async (uid) => {
-      try {
-        // usersコレクションからUIDでデータを取得
-        const userQuery = query(collection(db, "users"), where("userId", "==", uid));
-        const userSnapshot = await getDocs(userQuery);
-
-        // sellersコレクションからUIDでデータを取得
-        const sellerDoc = doc(db, "sellers", uid);
-        const sellerSnapshot = await getDoc(sellerDoc);
-
-        if (sellerSnapshot.exists()) {
-          const sellerData = sellerSnapshot.data();
-          setSellerName(sellerData.sellerName); // 名前を設定
-        } else {
-          console.error("セラーデータが見つかりませんでした");
-        }
-
-        if (!userSnapshot.empty) {
-          const userDoc = userSnapshot.docs[0];
-          setUserData({ id: userDoc.id, ...userDoc.data() }); // ドキュメントデータを設定
-        } else {
-          console.error("ユーザーデータが見つかりませんでした");
-        }
-      } catch (error) {
-        console.error("ユーザーデータの取得中にエラーが発生しました", error);
-      } finally {
-        setLoading(false); // ローディング状態を解除
-      }
-    };
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        fetchUserData(user.uid);
-      } else {
-        router.push("/login");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [auth, router]);
-
+  const { userData, sellerName, userloading } = useUserData(user?.uid);
   const handleNavigation = (url) => {
     router.push(url);
   };
 
-  if (loading) {
+  if (userloading) {
     return <LoadingComponent />
   }
 
