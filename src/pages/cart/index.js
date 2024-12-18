@@ -3,7 +3,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import BackButton from "@/components/BackButton/BackButton";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import useCart from '@/hooks/useUserCart';
+import useCart from '@/hooks/useCart';
 
 const CartContents = () => {
     const auth = getAuth();
