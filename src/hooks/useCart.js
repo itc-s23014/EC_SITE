@@ -1,3 +1,10 @@
+/**
+ * ユーザーのカート情報と商品情報を管理するカスタムフック。
+ *
+ * @param {Object} user - 現在のユーザー情報。
+ * @returns {Object} - カート情報、商品情報、ローディング状態、カートからアイテムを削除する関数を含むオブジェクト。
+ */
+
 import { useState, useEffect } from 'react';
 import { collection, doc, getDocs, onSnapshot, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
