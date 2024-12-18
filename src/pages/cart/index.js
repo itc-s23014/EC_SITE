@@ -1,88 +1,22 @@
-import { useShoppingCart } from 'use-shopping-cart';
-import { collection, doc, getDocs, onSnapshot, updateDoc, deleteField } from 'firebase/firestore';
-import { auth, db } from '../../../firebaseConfig';
-import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import BackButton from "@/components/BackButton/BackButton";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import useCart from '@/hooks/useUserCart';
 
 const CartContents = () => {
-    const [products, setProducts] = useState({});
-    const [userCart, setUserCart] = useState(null);
-    const [loading, setLoading] = useState(true);
     const auth = getAuth();
     const [user] = useAuthState(auth);
     const { user: authUser, loading: authloading } = useAuthGuard(); //認証を強制
-
-    const fetchProducts = async () => {
-        try {
-            const productsCollection = collection(db, 'products');
-            const productsSnapshot = await getDocs(productsCollection);
-            const productsList = productsSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            const productMap = productsList.reduce((acc, product) => {
-                acc[product.id] = product;
-                return acc;
-            }, {});
-            setProducts(productMap);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
-
-    const fetchUserCart = () => {
-        if (user) {
-            const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
-            const unsubscribe = onSnapshot(userCartRef, (docSnapshot) => {
-                if (docSnapshot.exists()) {
-                    console.log("カート情報", docSnapshot.data());
-                    setUserCart(docSnapshot.data());
-                } else {
-                    setUserCart(null);
-                }
-                setLoading(false);
-            });
-            return unsubscribe;
-        } else {
-            setLoading(false);
-        }
-    };
-
-    const removeItemFromCart = async (productId) => {
-        if (user) {
-            try {
-                const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
-                await updateDoc(userCartRef, {
-                    [`cartDetails.${productId}`]: deleteField(), // カートからアイテムを削除
-                });
-                console.log(`${productId} has been removed from the cart`);
-            } catch (error) {
-                console.error('Error removing item from cart:', error);
-            }
-        }
-    };
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    useEffect(() => {
-        const unsubscribe = fetchUserCart();
-        return () => unsubscribe && unsubscribe();
-    }, [user]);
+    const { products, userCart, loading, removeItemFromCart } = useCart(user);
 
     const handleCheckout = () => {
         alert('購入されました');
-        // 購入後、カートを空にする処理
-        emptyCart();
     };
 
     if (loading) {
-        return <LoadingComponent text='ロード中...' />;
+        return <LoadingComponent />;
     }
 
     return (
