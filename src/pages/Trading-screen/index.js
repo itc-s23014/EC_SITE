@@ -24,29 +24,40 @@ export default function TradePage() {
             try {
                 let currentProductId = productId;
 
-
                 if (!currentProductId && user) {
-                    const notificationQuery = query(
+
+                    const sellerQuery = query(
                         collection(db, "notifications"),
                         where("sellerId", "==", currentUser.uid)
                     );
-                    const notificationSnapshot = await getDocs(notificationQuery);
 
-                    if (!notificationSnapshot.empty) {
-                        const firstNotification = notificationSnapshot.docs[0].data();
+                    const buyerQuery = query(
+                        collection(db, "notifications"),
+                        where("buyer_id", "==", currentUser.uid)
+                    );
+
+                    const [sellerSnapshot, buyerSnapshot] = await Promise.all([
+                        getDocs(sellerQuery),
+                        getDocs(buyerQuery)
+                    ]);
+
+                    if (!sellerSnapshot.empty) {
+                        const firstNotification = sellerSnapshot.docs[0].data();
                         currentProductId = firstNotification.productId;
-                        console.log(currentProductId);
-                        console.log(currentUser.uid);
+                        console.log("Seller notification found:", currentProductId);
+                    } else if (!buyerSnapshot.empty) {
+                        const firstNotification = buyerSnapshot.docs[0].data();
+                        currentProductId = firstNotification.productId;
+                        console.log("Buyer notification found:", currentProductId);
                     }
                 }
-
 
                 if (currentProductId) {
                     const productDoc = doc(db, "products", currentProductId);
                     const productSnapshot = await getDoc(productDoc);
 
                     if (productSnapshot.exists()) {
-                        const productData = {id: productSnapshot.id, ...productSnapshot.data()};
+                        const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
                         await notifySeller(productData);
                     } else {
@@ -66,6 +77,7 @@ export default function TradePage() {
                     timestamp: new Date().toISOString(),
                     read: false,
                     productId: productId,
+                    buyer_id: currentUser.uid,
                 };
                 await addDoc(collection(db, "notifications"), notificationData);
                 console.log("通知を送信しました。");
@@ -76,6 +88,7 @@ export default function TradePage() {
 
         if (!authLoading) fetchProductData();
     }, [productId, authLoading, user]);
+
 
     const handleConfirm = async () => {
         if (!product) return;
@@ -96,7 +109,11 @@ export default function TradePage() {
                 read: false,
             };
             await addDoc(collection(db, "notifications"), notificationData);
-
+            const points = Math.floor(product.price * 0.1);
+            const pointData = {
+                points: points,
+            };
+            await addDoc(collection(db,'sellers',product.sellerId,'points'),pointData)
             setIsConfirmed(true);
             console.log("購入履歴と通知が保存されました。");
         } catch (error) {

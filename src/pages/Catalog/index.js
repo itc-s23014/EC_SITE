@@ -24,7 +24,7 @@ const Home = () => {
         const fetchProducts = async () => {
             const productsCollection = collection(db, 'products');
             const productsSnapshot = await getDocs(productsCollection);
-            const productsList = productsSnapshot.docs.map(doc => ({
+            const productsList = productsSnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             }));
@@ -34,22 +34,50 @@ const Home = () => {
         fetchProducts();
 
         if (user) {
-            const notificationsQuery = query(
+
+            const sellerNotificationsQuery = query(
                 collection(db, 'notifications'),
                 where('sellerId', '==', user.uid)
             );
 
-            const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
-                const notificationsList = snapshot.docs.map(doc => ({
+
+            const buyerNotificationsQuery = query(
+                collection(db, 'notifications'),
+                where('buyer_id', '==', user.uid)
+            );
+
+
+            const unsubscribeSeller = onSnapshot(sellerNotificationsQuery, (snapshot) => {
+                const sellerNotifications = snapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
-                setNotifications(notificationsList);
+                setNotifications((prevNotifications) => [
+                    ...prevNotifications.filter((n) => n.sellerId !== user.uid),
+                    ...sellerNotifications,
+                ]);
             });
 
-            return () => unsubscribe();
+            const unsubscribeBuyer = onSnapshot(buyerNotificationsQuery, (snapshot) => {
+                const buyerNotifications = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setNotifications((prevNotifications) => [
+                    ...prevNotifications.filter((n) => n.buyer_id !== user.uid),
+                    ...buyerNotifications,
+                ]);
+            });
+
+            return () => {
+                unsubscribeSeller();
+                unsubscribeBuyer();
+            };
         }
     }, [user]);
+
+
+
 
     const handleLogout = async () => {
         try {
