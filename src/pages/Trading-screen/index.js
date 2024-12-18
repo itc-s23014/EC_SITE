@@ -28,7 +28,7 @@ export default function TradePage() {
 
                     const sellerQuery = query(
                         collection(db, "notifications"),
-                        where("sellerId", "==", currentUser.uid)
+                        where("sellerId", "==", user.uid)
                     );
 
                     const buyerQuery = query(
@@ -42,14 +42,22 @@ export default function TradePage() {
                     ]);
 
                     if (!sellerSnapshot.empty) {
+                        console.log('sellerSnapshot.empty:', sellerSnapshot.empty);
                         const firstNotification = sellerSnapshot.docs[0].data();
                         currentProductId = firstNotification.productId;
+                        console.log(firstNotification);
+                        console.log('userid:', user.uid);
                         console.log("Seller notification found:", currentProductId);
                     } else if (!buyerSnapshot.empty) {
+                        console.log('buyerSnapshot.empty:', buyerSnapshot.empty);
                         const firstNotification = buyerSnapshot.docs[0].data();
                         currentProductId = firstNotification.productId;
+                        console.log("sellerproductid", currentProductId);
                         console.log("Buyer notification found:", currentProductId);
+                    } else {
+                        console.log('Both sellerSnapshot and buyerSnapshot are empty.');
                     }
+
                 }
 
                 if (currentProductId) {
@@ -103,10 +111,11 @@ export default function TradePage() {
             await addDoc(collection(db, "purchaseHistory"), purchaseData);
 
             const notificationData = {
-                sellerId: product.sellerId,
                 message: `商品「${product.name}」が購入されました。`,
                 timestamp: new Date().toISOString(),
                 read: false,
+                productId: productId,
+                seller: product.sellerId,
             };
             await addDoc(collection(db, "notifications"), notificationData);
             const points = Math.floor(product.price * 0.1);
