@@ -9,8 +9,11 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 const PersonalInfoPage = () => {
     const [fullName, setFullName] = useState('');
     const [address, setAddress] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [phoneNumber1, setPhoneNumber1] = useState(''); // 090
+    const [phoneNumber2, setPhoneNumber2] = useState(''); // xxxx
+    const [phoneNumber3, setPhoneNumber3] = useState(''); // xxxx
     const [birthDate, setBirthDate] = useState('');
+    const [isPhoneValid, setIsPhoneValid] = useState(true);
     const router = useRouter();
     const { genUid } = router.query;  // genUidの取得
     const { user, loading: authloading } = useAuthGuard(); //認証を強制
@@ -18,12 +21,21 @@ const PersonalInfoPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    const userId = currentUser.uid || genUid;
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+        const userId = currentUser.uid || genUid;
 
         if (!userId) {
             alert('Uidが見つかりませんでした。');
+            return;
+        }
+
+        // 電話番号の検証
+        const phoneRegex = /^0\d{1,4}-\d{1,4}-\d{3,4}$/;
+        const phoneNumber = `${phoneNumber1}-${phoneNumber2}-${phoneNumber3}`;
+
+        if (!phoneRegex.test(phoneNumber)) {
+            setIsPhoneValid(false);
             return;
         }
 
@@ -77,15 +89,48 @@ const PersonalInfoPage = () => {
                 </div>
                 <div className="form-group" style={{ marginBottom: '15px' }}>
                     <label htmlFor="phoneNumber">電話番号:</label>
-                    <input
-                        type="tel"
-                        id="phoneNumber"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        required
-                        className="form-control"
-                        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                    />
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                        <input
+                            type="text"
+                            id="phoneNumber1"
+                            value={phoneNumber1}
+                            onChange={(e) => setPhoneNumber1(e.target.value)}
+                            maxLength="4"
+                            required
+                            className={`form-control ${isPhoneValid ? '' : 'is-invalid'}`}
+                            style={{ width: '30%' }}
+                            placeholder="090"
+                        />
+                        <span>-</span>
+                        <input
+                            type="text"
+                            id="phoneNumber2"
+                            value={phoneNumber2}
+                            onChange={(e) => setPhoneNumber2(e.target.value)}
+                            maxLength="4"
+                            required
+                            className={`form-control ${isPhoneValid ? '' : 'is-invalid'}`}
+                            style={{ width: '30%' }}
+                            placeholder="xxxx"
+                        />
+                        <span>-</span>
+                        <input
+                            type="text"
+                            id="phoneNumber3"
+                            value={phoneNumber3}
+                            onChange={(e) => setPhoneNumber3(e.target.value)}
+                            maxLength="4"
+                            required
+                            className={`form-control ${isPhoneValid ? '' : 'is-invalid'}`}
+                            style={{ width: '30%' }}
+                            placeholder="xxxx"
+                        />
+                    </div>
+                    {!isPhoneValid && (
+                        <div className="invalid-feedback" style={{ color: 'red' }}>
+                            有効な電話番号を入力してください（例: 090-xxxx-xxxx）。
+                        </div>
+                    )}
                 </div>
                 <div className="form-group" style={{ marginBottom: '15px' }}>
                     <label htmlFor="birthDate">生年月日:</label>
