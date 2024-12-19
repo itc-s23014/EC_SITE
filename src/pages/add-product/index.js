@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { addDoc, collection, serverTimestamp, getDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, getDoc, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../../firebaseConfig';
 import { useRouter } from 'next/router';
@@ -53,18 +53,23 @@ const AddProduct = () => {
         try {
             const imageUrls = await uploadImages(files);
 
-
             const user = auth.currentUser;
             const sellerId = user ? user.uid : null;
 
-            await addDoc(collection(db, 'products'), {
+            // 1. doc()を使ってドキュメントIDを生成
+            const docRef = doc(collection(db, 'products'));
+
+            // 2. 生成されたIDをproductIdとして含めたデータをsetDoc()で保存
+            const productId = docRef.id;
+
+            await setDoc(docRef, {
+                productId,
                 name,
                 price: parseFloat(price),
                 description,
                 imageUrls,
                 createdAt: serverTimestamp(),
                 sellerId,
-
             });
 
             alert('商品が追加されました！');
