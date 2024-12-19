@@ -17,8 +17,10 @@ export default function UserDashboard() {
   const { user, loading: authloading } = useAuthGuard(); //認証を強制
 
   useEffect(() => {
-    const fetchUserData = async (uid) => {
+    const fetchUserData = async () => {
       try {
+        const uid = auth.currentUser.uid
+        console.log('uid',uid)
         // usersコレクションからUIDでデータを取得
         const userQuery = query(collection(db, "users"), where("userId", "==", uid));
         const userSnapshot = await getDocs(userQuery);

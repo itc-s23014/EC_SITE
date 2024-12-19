@@ -67,6 +67,8 @@ export default function TradePage() {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
+                        console.log('商品取得できた')
+                        console.log(currentUser.uid)
                         await notifySeller(productData);
                     } else {
                         console.log("指定された商品が存在しません。");
@@ -74,6 +76,7 @@ export default function TradePage() {
                 }
             } catch (error) {
                 console.error("商品の取得中にエラーが発生しました:", error);
+                console.log(product.sellerId)
             }
         };
 
@@ -114,19 +117,22 @@ export default function TradePage() {
                 message: `商品「${product.name}」が購入されました。`,
                 timestamp: new Date().toISOString(),
                 read: false,
-                productId: productId,
+                productId: product.productId,
                 seller: product.sellerId,
             };
             await addDoc(collection(db, "notifications"), notificationData);
             const points = Math.floor(product.price * 0.1);
+            const total = product.price - points
             const pointData = {
-                points: points,
+                points : total
             };
             await addDoc(collection(db,'sellers',product.sellerId,'points'),pointData)
             setIsConfirmed(true);
             console.log("購入履歴と通知が保存されました。");
         } catch (error) {
             console.error("データ保存中にエラーが発生しました:", error);
+            console.log(product.sellerId);
+            console.log(product.productId)
         }
     };
 
@@ -171,6 +177,7 @@ export default function TradePage() {
                 }
             } catch (error) {
                 console.error("ユーザーの取得中にエラーが発生しました:", error);
+
             }
         };
         if (!authLoading) fetchSellers();

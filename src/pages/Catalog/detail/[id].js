@@ -38,6 +38,7 @@ const ProductDetail = () => {
                             if (sellerSnapshot.exists()) {
                                 const sellerData = sellerSnapshot.data();
                                 setSellerName(sellerData.sellerName);
+                                console.log('ユーザー名前:',sellerData.sellerName);
                             } else {
                                 setSellerName('不明');
                             }
