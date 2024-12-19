@@ -117,6 +117,7 @@ const EditProfile = () => {
                         value={birthDate}
                         onChange={handleInputChange}
                         style={styles.input}
+                        max={new Date().toISOString().split("T")[0]}
                     />
                 </label>
 

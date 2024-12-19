@@ -97,6 +97,7 @@ const PersonalInfoPage = () => {
                         required
                         className="form-control"
                         style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                        max={new Date().toISOString().split("T")[0]}
                     />
                 </div>
                 <button
