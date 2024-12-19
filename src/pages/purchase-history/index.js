@@ -1,59 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../../firebaseConfig";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import BackButton from "../../components/BackButton/BackButton";
+import { usePurchaseHistory } from "@/hooks/usePurchaseHistory";
+import useUser from "@/hooks/useUser";
 
 const PurchaseHistory = () => {
-    const [purchasedProducts, setPurchasedProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const auth = getAuth();
-
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            if (currentUser) {
-                fetchPurchasedProducts(currentUser.uid);
-            } else {
-                setLoading(false);
-            }
-        });
-
-        return () => unsubscribe();
-    }, []);
-
-    const fetchPurchasedProducts = async (uid) => {
-        try {
-            // 購入履歴のコレクションを取得
-            const purchasesCollection = collection(db, "purchases");
-            const q = query(purchasesCollection, where("userId", "==", uid));
-            const purchasesSnapshot = await getDocs(q);
-
-            // 購入した商品のIDを取得
-            const purchasedProductIds = purchasesSnapshot.docs.map((doc) => doc.data().productId);
-
-            if (purchasedProductIds.length > 0) {
-                // 購入した商品を取得
-                const productsCollection = collection(db, "products");
-                const productsSnapshot = await getDocs(productsCollection);
-
-                const filteredProducts = productsSnapshot.docs
-                    .map((doc) => ({ id: doc.id, ...doc.data() }))
-                    .filter((product) => purchasedProductIds.includes(product.id));
-
-                setPurchasedProducts(filteredProducts);
-            } else {
-                setPurchasedProducts([]);
-            }
-        } catch (error) {
-            console.error("fetching purchased products:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const {historyUser, purchasedProducts, loading } = usePurchaseHistory();
+    const user = useUser
 
     if (loading) {
         return <p>Loading...</p>;

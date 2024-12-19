@@ -1,46 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { auth, db } from "../../../firebaseConfig";
 import BackButton from "@/components/BackButton/BackButton";
-import { useAuthGuard } from '@/hooks/useAuthGuard';
+import useAuthGuard from '@/hooks/useAuthGuard';
+import useProducts from "@/hooks/useProducts";
 
 const ProductsPage = () => {
-    const [products, setProducts] = useState([]);
-    const [user, setUser] = useState(null);
     const router = useRouter();
     const { user: authUser, loading: authloading } = useAuthGuard(); //認証を強制
+    const products = useProducts(authUser)
 
 
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-            if (currentUser) {
-                setUser(currentUser);
-            } else {
-                router.push("/login");
-            }
-        });
-        return () => unsubscribe();
-    }, [router]);
-
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            if (user) {
-                const q = query(
-                    collection(db, "products"),
-                    where("sellerId", "==", user.uid)
-                );
-                const querySnapshot = await getDocs(q);
-                const productList = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setProducts(productList);
-            }
-        };
-        fetchProducts();
-    }, [user]);
 
     return (
         <div style={styles.container}>

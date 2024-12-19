@@ -1,60 +1,12 @@
-import { useShoppingCart } from "use-shopping-cart";
-import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../../firebaseConfig";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import BackButton from "@/components/BackButton/BackButton";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import LoadingComponent from '@/components/LoadingComponent';
+import { useLikedProducts } from "@/hooks/useLikedProducts";
 
 const LikeList = () => {
-    const [likedProducts, setLikedProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
+    const { likedProducts, loading, user } = useLikedProducts();
     const { user: authUser, loading: authloading } = useAuthGuard(); //認証を強制
-
-    useEffect(() => {
-        const auth = getAuth();
-
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            if (currentUser) {
-                fetchLikedProducts(currentUser.uid);
-            } else {
-                setLoading(false);
-            }
-        });
-
-        return () => unsubscribe();
-    }, []);
-
-    const fetchLikedProducts = async (uid) => {
-        try {
-            const likesCollection = collection(db, "likes");
-            const q = query(likesCollection, where("userId", "==", uid));
-            const likesSnapshot = await getDocs(q);
-
-            const likedProductIds = likesSnapshot.docs.map((doc) => doc.data().productId);
-
-            if (likedProductIds.length > 0) {
-                const productsCollection = collection(db, "products");
-                const productsSnapshot = await getDocs(productsCollection);
-
-                const filteredProducts = productsSnapshot.docs
-                    .map((doc) => ({ id: doc.id, ...doc.data() }))
-                    .filter((product) => likedProductIds.includes(product.id));
-
-                setLikedProducts(filteredProducts);
-            } else {
-                setLikedProducts([]);
-            }
-        } catch (error) {
-            console.error("Error fetching liked products:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     if (loading) {
         return <LoadingComponent />
