@@ -22,6 +22,7 @@ const EditProfile = () => {
     });
 
     const [isPhoneValid, setIsPhoneValid] = useState(true);
+    const [isAddressValid, setIsAddressValid] = useState(true); // 住所の検証結果を管理
 
     const { fullName, phoneNumber1, phoneNumber2, phoneNumber3, address, birthDate } = formData;
 
@@ -39,12 +40,20 @@ const EditProfile = () => {
         }
     }, [userData]);
 
-    const handleInputChange = (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
+
+        // フォームデータの更新
         setFormData((prevState) => ({
             ...prevState,
             [name]: value,
         }));
+
+        // 住所の場合は追加のバリデーションを行う
+        if (name === "address") {
+            const addressRegex = /^[\u4E00-\u9FAF\u3040-\u309F\u30A0-\u30FF0-9０-９\-ー\s]+[都道府県市区町村町村郡]+[\u4E00-\u9FAF0-9０-９\-ー\s]+$/;
+            setIsAddressValid(addressRegex.test(value));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -54,9 +63,22 @@ const EditProfile = () => {
         const phoneRegex = /^0\d{1,4}-\d{1,4}-\d{3,4}$/;
         const phoneNumber = `${phoneNumber1}-${phoneNumber2}-${phoneNumber3}`;
 
+        // 日本の住所検証
+        const addressRegex = /^[ァ-ヶ一-龯々〆〤0-9a-zA-Z\s、，・\-]+$/;
+
+        // 電話番号と住所の検証
         if (!phoneRegex.test(phoneNumber)) {
             setIsPhoneValid(false);
             return;
+        } else {
+            setIsPhoneValid(true); // 電話番号が有効な場合は有効と設定
+        }
+
+        if (!addressRegex.test(address)) {
+            setIsAddressValid(false); // 住所が無効な場合はエラーを表示
+            return;
+        } else {
+            setIsAddressValid(true); // 住所が有効な場合は有効と設定
         }
 
         try {
@@ -98,7 +120,7 @@ const EditProfile = () => {
                         type="text"
                         name="fullName"
                         value={fullName}
-                        onChange={handleInputChange}
+                        onChange={handleChange}
                         required
                         style={styles.input}
                     />
@@ -110,7 +132,7 @@ const EditProfile = () => {
                             type="text"
                             name="phoneNumber1"
                             value={phoneNumber1}
-                            onChange={handleInputChange}
+                            onChange={handleChange}
                             maxLength="4"
                             required
                             style={styles.phoneInput}
@@ -121,7 +143,7 @@ const EditProfile = () => {
                             type="text"
                             name="phoneNumber2"
                             value={phoneNumber2}
-                            onChange={handleInputChange}
+                            onChange={handleChange}
                             maxLength="4"
                             required
                             style={styles.phoneInput}
@@ -132,7 +154,7 @@ const EditProfile = () => {
                             type="text"
                             name="phoneNumber3"
                             value={phoneNumber3}
-                            onChange={handleInputChange}
+                            onChange={handleChange}
                             maxLength="4"
                             required
                             style={styles.phoneInput}
@@ -151,10 +173,15 @@ const EditProfile = () => {
                         type="text"
                         name="address"
                         value={address}
-                        onChange={handleInputChange}
+                        onChange={handleChange}
                         required
                         style={styles.input}
                     />
+                    {!isAddressValid && (
+                        <div style={styles.errorMessage}>
+                            有効な住所を入力してください（例: 東京都渋谷区渋谷1丁目）。
+                        </div>
+                    )}
                 </div>
                 <div className="form-group">
                     <label>生年月日</label>
@@ -162,7 +189,7 @@ const EditProfile = () => {
                         type="date"
                         name="birthDate"
                         value={birthDate}
-                        onChange={handleInputChange}
+                        onChange={handleChange}
                         required
                         style={styles.input}
                         max={new Date().toISOString().split("T")[0]}
@@ -175,6 +202,7 @@ const EditProfile = () => {
         </div>
     );
 };
+
 
 const styles = {
     container: {
