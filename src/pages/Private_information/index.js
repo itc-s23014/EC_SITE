@@ -14,9 +14,17 @@ const PersonalInfoPage = () => {
     const [phoneNumber3, setPhoneNumber3] = useState(''); // xxxx
     const [birthDate, setBirthDate] = useState('');
     const [isPhoneValid, setIsPhoneValid] = useState(true);
+    const [isAddressValid, setIsAddressValid] = useState(true);
     const router = useRouter();
     const { genUid } = router.query;  // genUidの取得
     const { user, loading: authloading } = useAuthGuard(); //認証を強制
+
+    const handleAddressChange = (e) => {
+        const inputAddress = e.target.value;
+        setAddress(inputAddress);
+        const addressRegex = /^[\u4E00-\u9FAF\u3040-\u309F\u30A0-\u30FF0-9０-９\-ー\s]+[都道府県市区町村町村郡]+[\u4E00-\u9FAF0-9０-９\-ー\s]+$/;
+        setIsAddressValid(addressRegex.test(inputAddress));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -81,11 +89,16 @@ const PersonalInfoPage = () => {
                         type="text"
                         id="address"
                         value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        onChange={handleAddressChange}
                         required
-                        className="form-control"
+                        className={`form-control ${isAddressValid ? '' : 'is-invalid'}`}
                         style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                     />
+                    {!isAddressValid && (
+                        <div className="invalid-feedback" style={{ color: 'red' }}>
+                            有効な住所を入力してください。
+                        </div>
+                    )}
                 </div>
                 <div className="form-group" style={{ marginBottom: '15px' }}>
                     <label htmlFor="phoneNumber">電話番号:</label>
