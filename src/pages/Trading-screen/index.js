@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { db } from "../../../firebaseConfig";
-import { doc, getDoc, addDoc, collection, query, where, getDocs } from "firebase/firestore";
+import {doc, getDoc, addDoc, collection, query, where, getDocs, setDoc} from "firebase/firestore";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import SendMessage from '@/pages/Trading-screen/sendMessage';
 import BackButton from "@/components/BackButton/BackButton";
@@ -126,7 +126,8 @@ export default function TradePage() {
             const pointData = {
                 points : total
             };
-            await addDoc(collection(db,'sellers',product.sellerId,'points'),pointData)
+            const userCartRef = doc(db, 'sellers', product.sellerId, 'points', 'allPoint');
+            await setDoc(userCartRef, { point: pointData, timestamp: new Date() });
             setIsConfirmed(true);
             console.log("購入履歴と通知が保存されました。");
         } catch (error) {
