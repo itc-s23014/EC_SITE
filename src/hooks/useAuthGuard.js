@@ -11,6 +11,7 @@
  */
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { auth } from '../../firebaseConfig.js'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export const useAuthGuard = () => {
