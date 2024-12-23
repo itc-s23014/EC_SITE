@@ -82,7 +82,7 @@ export default function UserDashboard() {
             </li>
             <li onClick={() => handleNavigation("/listing-history")}>
               <a href="#">
-                出品履歴・編集 <span className="arrow">▶</span>
+                出品リスト<span className="arrow">▶</span>
               </a>
             </li>
             <li onClick={() => handleNavigation("/purchase-history")}>

@@ -1,12 +1,11 @@
 /**
  * Firestoreから商品情報を取得するカスタムフック。
- * - ユーザーが指定された場合: 指定されたユーザーが出品した商品のみ取得。
- * - ユーザーが指定されない場合: すべての商品を取得。
+ * 商品削除機能を含む。
  *
- * @returns {Array} products - 商品の配列。各商品はIDとそのデータを含むオブジェクト。
+ * @returns {Object} - 商品データ配列と削除関数
  */
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 const useProducts = (user) => {
@@ -14,7 +13,6 @@ const useProducts = (user) => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            // Firestoreクエリを準備
             const productsRef = collection(db, "products");
             let q;
 
@@ -26,7 +24,6 @@ const useProducts = (user) => {
                 q = query(productsRef);
             }
 
-            // Firestoreからデータを取得
             const querySnapshot = await getDocs(q);
             const productList = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
@@ -39,7 +36,25 @@ const useProducts = (user) => {
         fetchProducts();
     }, [user]);
 
-    return products;
+    /**
+     * 商品を削除する関数
+     * @param {string} productId - 削除する商品のID
+     */
+    const deleteProduct = async (productId) => {
+        try {
+            const productDoc = doc(db, "products", productId);
+            await deleteDoc(productDoc);
+
+            // 削除後のデータを更新
+            setProducts((prevProducts) =>
+                prevProducts.filter((product) => product.id !== productId)
+            );
+        } catch (error) {
+            console.error("商品削除中にエラーが発生しました:", error);
+        }
+    };
+
+    return { products, deleteProduct };
 };
 
 export default useProducts;

@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import BackButton from "@/components/BackButton/BackButton";
-import useAuthGuard from '@/hooks/useAuthGuard';
+import useAuthGuard from "@/hooks/useAuthGuard";
 import useProducts from "@/hooks/useProducts";
 
 const ProductsPage = () => {
     const router = useRouter();
-    const { user: authUser, loading: authloading } = useAuthGuard(); //認証を強制
-    const products = useProducts(authUser)
-
-
+    const { user: authUser } = useAuthGuard(); // 認証を強制
+    const { products, deleteProduct } = useProducts(authUser);
 
     return (
         <div style={styles.container}>
@@ -26,14 +24,22 @@ const ProductsPage = () => {
                         <div style={styles.productInfo}>
                             <p style={styles.productName}>商品名: {product.name}</p>
                             <p style={styles.productPrice}>価格: ¥{product.price}</p>
-                            <button
-                                style={styles.editButton}
-                                onClick={() =>
-                                    router.push(`/listing-history/producteditpage/${product.id}`)
-                                }
-                            >
-                                出品編集
-                            </button>
+                            <div style={styles.buttons}>
+                                <button
+                                    style={styles.editButton}
+                                    onClick={() =>
+                                        router.push(`/listing-history/producteditpage/${product.id}`)
+                                    }
+                                >
+                                    出品編集
+                                </button>
+                                <button
+                                    style={styles.deleteButton}
+                                    onClick={() => deleteProduct(product.id)}
+                                >
+                                    削除
+                                </button>
+                            </div>
                         </div>
                     </li>
                 ))}
@@ -51,19 +57,6 @@ const styles = {
         backgroundColor: "#fff",
         borderRadius: "8px",
         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        position: "relative",
-    },
-    backButton: {
-        position: "absolute",
-        top: "20px",
-        left: "20px",
-        padding: "8px 12px",
-        fontSize: "14px",
-        color: "#555",
-        backgroundColor: "#f0f0f0",
-        border: "1px solid #ccc",
-        borderRadius: "4px",
-        cursor: "pointer",
     },
     title: {
         fontSize: "24px",
@@ -106,11 +99,25 @@ const styles = {
         color: "#555",
         marginBottom: "10px",
     },
+    buttons: {
+        display: "flex",
+        justifyContent: "center",
+        gap: "10px",
+    },
     editButton: {
         padding: "8px 16px",
         fontSize: "14px",
         color: "#fff",
         backgroundColor: "#007bff",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+    },
+    deleteButton: {
+        padding: "8px 16px",
+        fontSize: "14px",
+        color: "#fff",
+        backgroundColor: "#dc3545",
         border: "none",
         borderRadius: "4px",
         cursor: "pointer",
