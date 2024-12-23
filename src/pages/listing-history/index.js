@@ -9,9 +9,16 @@ const ProductsPage = () => {
     const { user: authUser } = useAuthGuard(); // 認証を強制
     const { products, deleteProduct } = useProducts(authUser);
 
+    const handleDelete = (productId) => {
+        const isConfirmed = window.confirm("この商品を削除しますか？");
+        if (isConfirmed) {
+            deleteProduct(productId);
+        }
+    };
+
     return (
         <div style={styles.container}>
-            <BackButton/>
+            <BackButton />
             <h1 style={styles.title}>出品リスト</h1>
             <ul style={styles.productList}>
                 {products.map((product) => (
@@ -35,7 +42,7 @@ const ProductsPage = () => {
                                 </button>
                                 <button
                                     style={styles.deleteButton}
-                                    onClick={() => deleteProduct(product.id)}
+                                    onClick={() => handleDelete(product.id)} // 変更点
                                 >
                                     削除
                                 </button>
