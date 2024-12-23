@@ -27,8 +27,9 @@ const Home = () => {
             const productsList = productsSnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
-            }));
-            setProducts(productsList);
+            }))
+                .filter((product) =>!product.isHidden);
+                setProducts(productsList);
         };
 
         fetchProducts();

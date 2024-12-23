@@ -56,10 +56,8 @@ const AddProduct = () => {
             const user = auth.currentUser;
             const sellerId = user ? user.uid : null;
 
-            // 1. doc()を使ってドキュメントIDを生成
             const docRef = doc(collection(db, 'products'));
 
-            // 2. 生成されたIDをproductIdとして含めたデータをsetDoc()で保存
             const productId = docRef.id;
 
             await setDoc(docRef, {
@@ -70,6 +68,7 @@ const AddProduct = () => {
                 imageUrls,
                 createdAt: serverTimestamp(),
                 sellerId,
+                hidden: false
             });
 
             alert('商品が追加されました！');
