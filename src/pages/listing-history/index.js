@@ -20,37 +20,41 @@ const ProductsPage = () => {
         <div style={styles.container}>
             <BackButton />
             <h1 style={styles.title}>出品リスト</h1>
-            <ul style={styles.productList}>
-                {products.map((product) => (
-                    <li key={product.id} style={styles.productCard}>
-                        <img
-                            src={product.imageUrls[0] || "/placeholder.jpg"}
-                            alt={product.name}
-                            style={styles.productImage}
-                        />
-                        <div style={styles.productInfo}>
-                            <p style={styles.productName}>商品名: {product.name}</p>
-                            <p style={styles.productPrice}>価格: ¥{product.price}</p>
-                            <div style={styles.buttons}>
-                                <button
-                                    style={styles.editButton}
-                                    onClick={() =>
-                                        router.push(`/listing-history/producteditpage/${product.id}`)
-                                    }
-                                >
-                                    出品編集
-                                </button>
-                                <button
-                                    style={styles.deleteButton}
-                                    onClick={() => handleDelete(product.id)} // 変更点
-                                >
-                                    削除
-                                </button>
+            {products.length === 0 ? (
+                <p style={styles.noItemsMessage}>現在出品している商品はありません。</p>
+            ) : (
+                <ul style={styles.productList}>
+                    {products.map((product) => (
+                        <li key={product.id} style={styles.productCard}>
+                            <img
+                                src={product.imageUrls[0] || "/placeholder.jpg"}
+                                alt={product.name}
+                                style={styles.productImage}
+                            />
+                            <div style={styles.productInfo}>
+                                <p style={styles.productName}>商品名: {product.name}</p>
+                                <p style={styles.productPrice}>価格: ¥{product.price}</p>
+                                <div style={styles.buttons}>
+                                    <button
+                                        style={styles.editButton}
+                                        onClick={() =>
+                                            router.push(`/listing-history/producteditpage/${product.id}`)
+                                        }
+                                    >
+                                        出品編集
+                                    </button>
+                                    <button
+                                        style={styles.deleteButton}
+                                        onClick={() => handleDelete(product.id)} // 変更点
+                                    >
+                                        削除
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 };
@@ -128,6 +132,11 @@ const styles = {
         border: "none",
         borderRadius: "4px",
         cursor: "pointer",
+    },
+    noItemsMessage: {
+        color: "#777",
+        fontSize: "16px",
+        marginTop: "20px",
     },
 };
 
