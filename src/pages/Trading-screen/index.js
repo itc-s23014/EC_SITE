@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { db } from "../../../firebaseConfig";
-import {doc, getDoc, addDoc, collection, query, where, getDocs, setDoc} from "firebase/firestore";
+import {doc, getDoc, addDoc, collection, query, where, getDocs, setDoc,updateDoc} from "firebase/firestore";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import SendMessage from '@/pages/Trading-screen/sendMessage';
 import BackButton from "@/components/BackButton/BackButton";
@@ -67,6 +67,8 @@ export default function TradePage() {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
+                        await updateDoc(productDoc,{isHidden: true});
+                        console.log("商品非表示")
                         console.log('商品取得できた')
                         console.log(currentUser.uid)
                         await notifySeller(productData);
