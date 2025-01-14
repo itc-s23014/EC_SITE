@@ -13,6 +13,7 @@ const AddProduct = () => {
     const [description, setDescription] = useState('');
     const [files, setFiles] = useState([]);
     const [sellerName, setSellerName] = useState('');
+    const [priceError, setPriceError] = useState(''); // 価格のエラーメッセージ
     const router = useRouter();
     const auth = getAuth();
     const { user, loading: authloading } = useAuthGuard(); //認証を強制
@@ -21,7 +22,6 @@ const AddProduct = () => {
         const fetchSellerName = async () => {
             const user = auth.currentUser;
             if (user) {
-
                 const sellerDoc = doc(db, 'sellers', user.uid);
                 const sellerSnapshot = await getDoc(sellerDoc);
 
@@ -44,6 +44,19 @@ const AddProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // 価格のバリデーション
+        if (price.startsWith('0')) {
+            setPriceError('価格は0から始めることはできません');
+            return;
+        }
+
+        if (parseFloat(price) <= 0 || parseFloat(price) > 10000000) {
+            setPriceError('価格は0より大きく、1000万以下でなければなりません');
+            return;
+        } else {
+            setPriceError('');
+        }
 
         if (files.length === 0) {
             alert('画像を選択してください。');
@@ -98,6 +111,7 @@ const AddProduct = () => {
                     onChange={(e) => setPrice(e.target.value)}
                     required
                 />
+                {priceError && <p style={{ color: 'red' }}>{priceError}</p>} {/* エラーメッセージの表示 */}
 
                 <label>説明:</label>
                 <textarea

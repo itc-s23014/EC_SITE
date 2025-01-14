@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../../firebaseConfig";
@@ -124,7 +125,7 @@ const ProductEditPage = () => {
                     <ul style={styles.imageList}>
                         {formData.imageUrls.map((url, index) => (
                             <li key={index} style={styles.imageListItem}>
-                                <img src={url} alt="商品画像" style={styles.image} />
+                                <Image src={url} alt="商品画像" width={500} height={500} layout="intrinsic" style={styles.image} />
                             </li>
                         ))}
                     </ul>

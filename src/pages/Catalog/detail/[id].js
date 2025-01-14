@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import Image from "next/image";
 import { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
@@ -144,10 +145,12 @@ const ProductDetail = () => {
             <Header title={product.name}/>
             <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
                 {product.imageUrls && product.imageUrls.map((url, index) => (
-                    <img
+                    <Image
                         key={index}
                         src={url}
                         alt={`${product.name} - 画像${index + 1}`}
+                        width={500}
+                        height={500}
                         style={{
                             width: '100%',
                             maxWidth: '250px',
@@ -161,9 +164,11 @@ const ProductDetail = () => {
             <div style={{maxWidth: '800px', margin: 'auto', padding: '20px'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
                     <h1 style={{fontSize: '2rem', color: '#333'}}>{product.name}</h1>
-                    <img
+                    <Image
                         src={isLiked ? '/image/heart_filled_red.svg' : '/image/heart.svg'}
                         alt="いいね"
+                        width={500}
+                        height={500}
                         style={{
                             width: '40px',
                             height: '40px',

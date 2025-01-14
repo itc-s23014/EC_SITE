@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import BackButton from "@/components/BackButton/BackButton";
 import useAuthGuard from "@/hooks/useAuthGuard";
 import useProducts from "@/hooks/useProducts";
@@ -26,9 +27,11 @@ const ProductsPage = () => {
                 <ul style={styles.productList}>
                     {products.map((product) => (
                         <li key={product.id} style={styles.productCard}>
-                            <img
+                            <Image
                                 src={product.imageUrls[0] || "/placeholder.jpg"}
                                 alt={product.name}
+                                width={500}
+                                height={500}
                                 style={styles.productImage}
                             />
                             <div style={styles.productInfo}>
