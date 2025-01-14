@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Image from "next/image";
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
 import { useShoppingCart } from 'use-shopping-cart';
@@ -113,9 +114,12 @@ export default function SelectPaymentMethod() {
 
                                 return (
                                     <div key={item.id} style={{ display: 'flex', marginBottom: '15px', padding: '10px', border: '1px solid #ddd', borderRadius: '10px' }}>
-                                        <img
+                                        <Image
                                             src={imageUrl}
                                             alt={item.name}
+                                            width={500}
+                                            height={500}
+                                            layout='intrinsic'
                                             style={{ width: '60px', height: '60px', marginRight: '15px', borderRadius: '5px' }}
                                         />
                                         <div>

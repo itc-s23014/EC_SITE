@@ -3,6 +3,7 @@ import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestor
 import { db } from '../../../firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Link from 'next/link';
+import Image from "next/image";
 import { useRouter } from 'next/router';
 import { useShoppingCart } from 'use-shopping-cart';
 import ProductList from '@/components/ProductList';
@@ -98,9 +99,11 @@ const Home = () => {
 
             <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '10px' }}>
                 <Link href="/cart" passHref>
-                    <img
+                    <Image
                         src="/image/cart.svg"
                         alt="カート"
+                        width={500}
+                        height={500}
                         style={{
                             width: '60px',
                             height: '60px',
@@ -109,9 +112,11 @@ const Home = () => {
                     />
                 </Link>
                 <Link href="/like-list" passHref>
-                    <img
+                    <Image
                         src="/image/heart.svg"
                         alt="お気に入り"
+                        width={500}
+                        height={500}
                         style={{
                             width: '60px',
                             height: '60px',
@@ -120,9 +125,11 @@ const Home = () => {
                     />
                 </Link>
                 <Link href="/setting-list" passHref>
-                    <img
+                    <Image
                         src="/image/setting.svg"
                         alt="設定"
+                        width={500}
+                        height={500}
                         style={{
                             width: '60px',
                             height: '60px',
