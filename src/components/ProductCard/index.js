@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { auth } from '../../../firebaseConfig';
 import Link from 'next/link';
+import Image from "next/image";
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({ product }) => {
@@ -23,9 +24,11 @@ const ProductCard = ({ product }) => {
         <div className={styles.card}>
             <Link href={`/Catalog/detail/${product.id}`} passHref>
                 <div>
-                    <img
+                    <Image
                         src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : '/placeholder.jpg'}
                         alt={product.name}
+                        width={500}
+                        height={500}
                         className={styles.image}
                     />
                     <div className={styles.content}>

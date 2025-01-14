@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import BackButton from "@/components/BackButton/BackButton";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import LoadingComponent from '@/components/LoadingComponent';
@@ -29,13 +30,15 @@ const LikeList = () => {
                     likedProducts.map((product) => (
                         <Link key={product.id} href={`/Catalog/detail/${product.id}`} passHref>
                             <div style={styles.card}>
-                                <img
+                                <Image
                                     src={
                                         product.imageUrls && product.imageUrls.length > 0
                                             ? product.imageUrls[0]
                                             : "/placeholder.jpg"
                                     }
                                     alt={product.name}
+                                    width={500}
+                                    height={500}
                                     style={styles.productImage}
                                 />
                                 <div style={styles.productInfo}>

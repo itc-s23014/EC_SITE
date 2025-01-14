@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import BackButton from "../../components/BackButton/BackButton";
 import { usePurchaseHistory } from "@/hooks/usePurchaseHistory";
 import useUser from "@/hooks/useUser";
@@ -28,13 +29,16 @@ const PurchaseHistory = () => {
                     purchasedProducts.map((product) => (
                         <Link key={product.id} href={`/Catalog/detail/${product.id}`} passHref>
                             <div style={styles.card}>
-                                <img
+                                <Image
                                     src={
                                         product.imageUrls && product.imageUrls.length > 0
                                             ? product.imageUrls[0]
                                             : "/placeholder.jpg"
                                     }
                                     alt={product.name}
+                                    width={500}
+                                    height={500}
+                                    layout="intrinsic"
                                     style={styles.productImage}
                                 />
                                 <div style={styles.productInfo}>

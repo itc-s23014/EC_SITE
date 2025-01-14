@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import BackButton from "@/components/BackButton/BackButton";
@@ -40,9 +41,11 @@ const CartContents = () => {
                                 borderRadius: '8px',
                                 backgroundColor: '#f9f9f9',
                             }}>
-                                <img
+                                <Image
                                     src={imageUrl}
                                     alt={product?.name}
+                                    width={500}
+                                    height={500}
                                     style={{ width: '80px', height: '80px', objectFit: 'cover', marginRight: '20px', borderRadius: '8px' }}
                                 />
                                 <div style={{ flex: 1 }}>
