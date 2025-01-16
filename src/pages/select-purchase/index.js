@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Image from "next/image";
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
 import { db } from "../../../firebaseConfig";
 import { useShoppingCart } from 'use-shopping-cart';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from "@/hooks/useAuthGuard";
-import useProducts from '@/hooks/useProducts'; // カスタムフックをインポート
+import useProducts from '@/hooks/useProducts';
+import { useSearchParams } from 'next/navigation';
+
 
 export default function SelectPaymentMethod() {
     const { cartDetails, cartCount, formattedTotalPrice } = useShoppingCart();
@@ -22,6 +25,7 @@ export default function SelectPaymentMethod() {
         const productRef = doc(db, 'products', productId);
         const productSnapshot = await getDoc(productRef);
         if (productSnapshot.exists()) {
+            console.log(useSearchParams);
             setDirectProduct({ id: productSnapshot.id, ...productSnapshot.data() });
         } else {
             console.error('商品が見つかりませんでした');
@@ -113,9 +117,12 @@ export default function SelectPaymentMethod() {
 
                                 return (
                                     <div key={item.id} style={{ display: 'flex', marginBottom: '15px', padding: '10px', border: '1px solid #ddd', borderRadius: '10px' }}>
-                                        <img
+                                        <Image
                                             src={imageUrl}
                                             alt={item.name}
+                                            width={500}
+                                            height={500}
+                                            layout='intrinsic'
                                             style={{ width: '60px', height: '60px', marginRight: '15px', borderRadius: '5px' }}
                                         />
                                         <div>
