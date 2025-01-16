@@ -1,45 +1,54 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Image from "next/image";
-import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
-import { db } from "../../../firebaseConfig";
+import Image from 'next/image';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { auth, db } from '../../../firebaseConfig';
 import { useShoppingCart } from 'use-shopping-cart';
 import LoadingComponent from '@/components/LoadingComponent';
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import useProducts from '@/hooks/useProducts';
-import { useSearchParams } from 'next/navigation';
-
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 export default function SelectPaymentMethod() {
-    const { cartDetails, cartCount, formattedTotalPrice } = useShoppingCart();
+    const {cartDetails, cartCount, formattedTotalPrice} = useShoppingCart();
     const [selectedMethod, setSelectedMethod] = useState('');
-    const [directProduct, setDirectProduct] = useState(null);
+    const [cartItems, setCartItems] = useState([]);
     const router = useRouter();
-    const { productId } = router.query;
-    const { user } = useAuthGuard(); //認証を強制
+    const {productId} = router.query;
+    const {user} = useAuthGuard();
     const products = useProducts(user);
     const [loading, setLoading] = useState(true);
+    const [userid] = useAuthState(auth);
 
-    const fetchDirectProduct = async () => {
-        if (!productId) return;
-        const productRef = doc(db, 'products', productId);
-        const productSnapshot = await getDoc(productRef);
-        if (productSnapshot.exists()) {
-            console.log(useSearchParams);
-            setDirectProduct({ id: productSnapshot.id, ...productSnapshot.data() });
-        } else {
-            console.error('商品が見つかりませんでした');
-        }
-        setLoading(false);
-    };
 
     useEffect(() => {
-        if (productId) {
-            fetchDirectProduct();
-        } else {
-            setLoading(false);
+        if (!userid) {
+            console.error('ユーザーが認証されていません');
+            return;
         }
-    }, [productId]);
+
+        const cartRef = doc(db, 'sellers', userid.uid, 'cart', 'currentCart');
+        const unsubscribe = onSnapshot(cartRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                setCartItems(docSnapshot.data().cartDetails || []);
+                console.log(cartItems);
+            } else {
+                setCartItems([]);
+                console.log('nullになりました');
+            }
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [userid, user]);
+
+    useEffect(() => {
+        console.log('現在のcartItems:', cartItems);
+        console.dir(cartItems)
+        console.dir(Object.keys(cartItems))
+        console.dir(Object.keys(cartItems).length)
+        console.log(Object.values(cartItems))
+    }, [cartItems]);
 
     const pushed = () => {
         if (!productId) {
@@ -48,12 +57,15 @@ export default function SelectPaymentMethod() {
         }
         router.push({
             pathname: '/convenience_store_payment',
-            query: { productId },
+            query: {productId},
         });
     };
 
     const handlePurchase = () => {
-        if (!selectedMethod) return;
+        if (!selectedMethod) {
+            alert('支払い方法を選択してください');
+            return;
+        }
         if (selectedMethod === 'credit-card') {
             stripe_handlePurchase();
         } else if (selectedMethod === 'convenience-store') {
@@ -61,19 +73,17 @@ export default function SelectPaymentMethod() {
         } else if (selectedMethod === 'cash-on-delivery') {
             router.push({
                 pathname: '/cash-on-delivery',
-                query: { productId }
+                query: {productId},
             });
-        } else {
-            alert('支払い方法を選択してください');
         }
     };
 
     const stripe_handlePurchase = async () => {
         try {
-            const res = await fetch('/api/checkout_api', {
+            const res = await fetch('/api/cartcheckout_api', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({productId}),
             });
             const data = await res.json();
             if (data.checkout_url) {
@@ -87,46 +97,48 @@ export default function SelectPaymentMethod() {
     };
 
     if (loading) {
-        return <LoadingComponent />
+        return <LoadingComponent/>;
     }
 
     return (
-        <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '20px auto', padding: '20px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' }}>
-            <h1 style={{ textAlign: 'center', fontSize: '1.8rem', marginBottom: '20px', color: '#333' }}>購入手続き</h1>
-            <div style={{ padding: '15px' }}>
-                <div style={{ marginBottom: '20px', fontSize: '1rem' }}>
-                    <p style={{ margin: 0 }}>ポイントの利用</p>
-                    <span style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#007bff' }}>P0</span>
+        <div style={{
+            fontFamily: 'Arial, sans-serif',
+            maxWidth: '800px',
+            margin: '20px auto',
+            padding: '20px',
+            backgroundColor: '#fff',
+            borderRadius: '10px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)'
+        }}>
+            <h1 style={{textAlign: 'center', fontSize: '1.8rem', marginBottom: '20px', color: '#333'}}>購入手続き</h1>
+            <div style={{padding: '15px'}}>
+                <div style={{marginBottom: '20px', fontSize: '1rem'}}>
+                    <p style={{margin: 0}}>ポイントの利用</p>
+                    <span style={{fontWeight: 'bold', fontSize: '1.2rem', color: '#007bff'}}>P0</span>
                 </div>
-                {productId && directProduct ? (
-                    <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ddd', borderRadius: '10px' }}>
-                        <h2>選択された商品</h2>
-                        <p>商品名: {directProduct.name}</p>
-                        <p>価格: ¥{directProduct.price.toLocaleString()}</p>
-                    </div>
-                ) : (
-                    <div style={{ marginBottom: '20px' }}>
+                {Object.keys(cartItems).length > 0 ? (
+                    <div style={{marginBottom: '20px'}}>
                         <h2>カートの中身</h2>
-                        <p>商品数: {cartCount}</p>
-                        <p>合計金額: {formattedTotalPrice}</p>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            {Object.keys(cartDetails).map((key) => {
-                                const item = cartDetails[key];
+                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                            {Object.values(cartItems).map((item) => {
                                 const product = products.find((prod) => prod.id === item.id);
-                                const imageUrl = product?.imageUrls?.[0] || '/placeholder.jpg';
 
                                 return (
-                                    <div key={item.id} style={{ display: 'flex', marginBottom: '15px', padding: '10px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                                    <div key={item.id} style={{
+                                        display: 'flex',
+                                        marginBottom: '15px',
+                                        padding: '10px',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '10px'
+                                    }}>
                                         <Image
-                                            src={imageUrl}
                                             alt={item.name}
-                                            width={500}
-                                            height={500}
-                                            layout='intrinsic'
-                                            style={{ width: '60px', height: '60px', marginRight: '15px', borderRadius: '5px' }}
+                                            width={60}
+                                            height={60}
+                                            style={{marginRight: '15px', borderRadius: '5px'}}
                                         />
                                         <div>
-                                            <h3>{item.name}</h3>
+                                            <h3>{item?.name || '不明な商品'}</h3>
                                             <p>価格: ¥{item.price.toLocaleString()}</p>
                                             <p>数量: {item.quantity}</p>
                                             <p>合計: ¥{(item.price * item.quantity).toLocaleString()}</p>
@@ -136,40 +148,39 @@ export default function SelectPaymentMethod() {
                             })}
                         </div>
                     </div>
+                ) : (
+                    <p>カートが空です。</p>
                 )}
-                <div style={{ marginBottom: '20px', fontSize: '1.1rem' }}>
+                <div style={{marginBottom: '20px', fontSize: '1.1rem'}}>
                     <p>支払い方法</p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <label style={{ fontSize: '1rem' }}>
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                        <label>
                             <input
                                 type="radio"
                                 name="paymentMethod"
                                 value="credit-card"
                                 checked={selectedMethod === 'credit-card'}
                                 onChange={() => setSelectedMethod('credit-card')}
-                                style={{ marginRight: '10px' }}
                             />
                             クレジットカード
                         </label>
-                        <label style={{ fontSize: '1rem' }}>
+                        <label>
                             <input
                                 type="radio"
                                 name="paymentMethod"
                                 value="convenience-store"
                                 checked={selectedMethod === 'convenience-store'}
                                 onChange={() => setSelectedMethod('convenience-store')}
-                                style={{ marginRight: '10px' }}
                             />
                             コンビニ決済
                         </label>
-                        <label style={{ fontSize: '1rem' }}>
+                        <label>
                             <input
                                 type="radio"
                                 name="paymentMethod"
                                 value="cash-on-delivery"
                                 checked={selectedMethod === 'cash-on-delivery'}
                                 onChange={() => setSelectedMethod('cash-on-delivery')}
-                                style={{ marginRight: '10px' }}
                             />
                             代金引換
                         </label>
