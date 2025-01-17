@@ -13,6 +13,7 @@ export default function SelectPaymentMethod() {
     const {cartDetails, cartCount, formattedTotalPrice} = useShoppingCart();
     const [selectedMethod, setSelectedMethod] = useState('');
     const [cartItems, setCartItems] = useState([]);
+    const [points,setpoint] = useState();
     const router = useRouter();
     const {productId} = router.query;
     const {user} = useAuthGuard();
@@ -38,12 +39,23 @@ export default function SelectPaymentMethod() {
             }
             setLoading(false);
         });
+        const pointRef = doc(db, 'sellers', userid.uid, 'points', 'allPoint');
+        const unsubscribepoint = onSnapshot(pointRef, (docSnapshot) => {
+            console.log(docSnapshot.data());
+            if (docSnapshot.exists()) {
+                const data = docSnapshot.data().point.points;
+                setpoint(data)
 
-        return () => unsubscribe();
+            } else {
+                setpoint(0);
+            }
+        });
+        return () => unsubscribe(),unsubscribepoint;
     }, [userid, user]);
 
     useEffect(() => {
         console.log('現在のcartItems:', cartItems);
+        console.log('現在のpoint',points)
         console.dir(cartItems)
         console.dir(Object.keys(cartItems))
         console.dir(Object.keys(cartItems).length)
@@ -114,7 +126,13 @@ export default function SelectPaymentMethod() {
             <div style={{padding: '15px'}}>
                 <div style={{marginBottom: '20px', fontSize: '1rem'}}>
                     <p style={{margin: 0}}>ポイントの利用</p>
-                    <span style={{fontWeight: 'bold', fontSize: '1.2rem', color: '#007bff'}}>P0</span>
+                    <span style={{
+                        fontWeight: 'bold',
+                        fontSize: '1.2rem',
+                        color: points ? '#007bff' : '#999'
+                    }}>
+        {points !== null && points > 0 ? `${points}P` : "ポイントがありません"}
+    </span>
                 </div>
                 {Object.keys(cartItems).length > 0 ? (
                     <div style={{marginBottom: '20px'}}>
