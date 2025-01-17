@@ -6,7 +6,9 @@ import { db } from "../../../firebaseConfig";
 import { useShoppingCart } from 'use-shopping-cart';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from "@/hooks/useAuthGuard";
-import useProducts from '@/hooks/useProducts'; // カスタムフックをインポート
+import useProducts from '@/hooks/useProducts';
+import { useSearchParams } from 'next/navigation';
+
 
 export default function SelectPaymentMethod() {
     const { cartDetails, cartCount, formattedTotalPrice } = useShoppingCart();
@@ -23,6 +25,7 @@ export default function SelectPaymentMethod() {
         const productRef = doc(db, 'products', productId);
         const productSnapshot = await getDoc(productRef);
         if (productSnapshot.exists()) {
+            console.log(useSearchParams);
             setDirectProduct({ id: productSnapshot.id, ...productSnapshot.data() });
         } else {
             console.error('商品が見つかりませんでした');
@@ -34,7 +37,7 @@ export default function SelectPaymentMethod() {
         if (productId) {
             fetchDirectProduct();
         } else {
-            setLoading(false); // productIdがない場合はすぐにloadingをfalseにする
+            setLoading(false);
         }
     }, [productId]);
 

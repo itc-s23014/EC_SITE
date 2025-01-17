@@ -6,7 +6,6 @@ import { db } from '../../../../firebaseConfig';
 import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
-import BackButton from "@/components/BackButton/BackButton";
 import Header from "@/components/Header/Header";
 
 const ProductDetail = () => {
@@ -108,7 +107,7 @@ const ProductDetail = () => {
     };
 
     const handleAddToCart = async () => {
-        if (product && user && !cart[product.id]) { // Check if the product is already in the cart
+            if (product && user && !cart[product.id]) {
             const newCart = {
                 ...cart,
                 [product.id]: {

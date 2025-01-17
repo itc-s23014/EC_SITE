@@ -37,6 +37,7 @@ export const useLikedProducts = () => {
                         .filter((product) => likedProductIds.includes(product.id));
 
                     setLikedProducts(filteredProducts);
+                    console.log(filteredProducts);
                 } else {
                     setLikedProducts([]);
                 }
