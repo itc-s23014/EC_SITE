@@ -8,6 +8,7 @@ import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import useProducts from '@/hooks/useProducts';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import BackButton from "@/components/BackButton/BackButton";
 
 export default function SelectPaymentMethod() {
     const {cartDetails, cartCount, formattedTotalPrice} = useShoppingCart();
@@ -139,7 +140,7 @@ export default function SelectPaymentMethod() {
                         <h2>カートの中身</h2>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             {Object.values(cartItems).map((item) => {
-                                const product = products.find((prod) => prod.id === item.id);
+                                // const product = products.find((prod) => prod.id === item.id);
 
                                 return (
                                     <div key={item.id} style={{
@@ -149,6 +150,7 @@ export default function SelectPaymentMethod() {
                                         border: '1px solid #ddd',
                                         borderRadius: '10px'
                                     }}>
+                                        <BackButton />
                                         <Image
                                             alt={item.name}
                                             width={60}
