@@ -183,27 +183,29 @@ const ProductDetail = () => {
                 <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.description}</p>
                 <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>出品者</h2>
                 <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{sellerName || '不明'}</p>
+                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>Category</h2>
+                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.category}</p>
                 <p style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#333'}}>
                     <strong>価格:</strong> ¥{product.price.toLocaleString()}
                 </p>
                 <div style={{textAlign: 'center'}}>
-                <button
-                    onClick={handleAddToCart}
-                    disabled={cart[product.id]} // Disable the button if the product is already in the cart
-                    style={{
-                        padding: '12px 24px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: cart[product.id] ? 'default' : 'pointer',
-                        fontSize: '1rem',
-                        marginRight: '10px',
-                        opacity: cart[product.id] ? 0.5 : 1 // Make the button appear disabled visually
-                    }}
-                >
-                    {cart[product.id] ? '追加済み' : 'カートに追加'}
-                </button>
+                    <button
+                        onClick={handleAddToCart}
+                        disabled={cart[product.id]} // Disable the button if the product is already in the cart
+                        style={{
+                            padding: '12px 24px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: cart[product.id] ? 'default' : 'pointer',
+                            fontSize: '1rem',
+                            marginRight: '10px',
+                            opacity: cart[product.id] ? 0.5 : 1 // Make the button appear disabled visually
+                        }}
+                    >
+                        {cart[product.id] ? '追加済み' : 'カートに追加'}
+                    </button>
 
                     <button
                         onClick={purchase}
