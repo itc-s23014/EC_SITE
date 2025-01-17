@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot, query, where, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Link from 'next/link';
@@ -77,12 +77,27 @@ const Home = () => {
         }
     }, [user]);
 
+    useEffect(() => {
+        // 商品確認後に通知を削除する
+        const clearNotifications = async () => {
+            if (user && router.pathname === '/Catalog') {
+                // 通知を全て削除する
+                const notificationsToDelete = notifications.map((notification) => {
+                    return deleteDoc(doc(db, 'notifications', notification.id));
+                });
+                await Promise.all(notificationsToDelete);
+                setNotifications([]);  // 状態も空にする
+            }
+        };
+
+        clearNotifications();
+    }, [router.pathname, notifications, user]);
+
     const handleSearch = () => {
         if (!searchTerm.trim()) {
             setFilteredProducts(products);
             return;
         }
-
 
         const filtered = products.filter((product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -103,7 +118,6 @@ const Home = () => {
         <div style={{padding: '20px', backgroundColor: '#f9f9f9', position: 'relative'}}>
             <header style={{textAlign: 'center', marginBottom: '40px'}}>
                 <h1 style={{fontSize: '36px', fontWeight: 'bold', marginBottom: '10px'}}>EC_SITE</h1>
-                {/*<h2 style={{fontSize: '24px', color: '#555'}}>商品一覧</h2>*/}
             </header>
 
             <div style={{marginBottom: '20px', textAlign: 'center'}}>
@@ -230,9 +244,8 @@ const Home = () => {
                     </ul>
                 </div>
             )}
+
             <h2 style={{fontSize: '24px', color: '#555'}}>商品一覧</h2>
-
-
             <ProductList products={filteredProducts}/>
         </div>
     );

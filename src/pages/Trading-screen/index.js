@@ -106,14 +106,16 @@ export default function TradePage() {
     const handleConfirm = async () => {
         if (!product) return;
         try {
+
             const purchaseData = {
                 productId: product.id,
                 productName: product.name,
-                buyerId: "currentBuyerId",
+                buyerId: currentUser.uid,
                 sellerId: product.sellerId,
                 purchaseDate: new Date().toISOString(),
             };
             await addDoc(collection(db, "purchaseHistory"), purchaseData);
+
 
             const notificationData = {
                 message: `商品「${product.name}」が購入されました。`,
@@ -123,21 +125,45 @@ export default function TradePage() {
                 seller: product.sellerId,
             };
             await addDoc(collection(db, "notifications"), notificationData);
+
+
             const points = Math.floor(product.price * 0.1);
-            const total = product.price - points
-            const pointData = {
-                points : total
-            };
+            const total = product.price - points;
+
+
             const userCartRef = doc(db, 'sellers', product.sellerId, 'points', 'allPoint');
-            await setDoc(userCartRef, { point: pointData, timestamp: new Date() });
+            const userCartSnapshot = await getDoc(userCartRef);
+
+            if (userCartSnapshot.exists()) {
+
+                const existingPoints = userCartSnapshot.data().point.points;
+                const newPoints = existingPoints + points;
+
+                await updateDoc(userCartRef, {
+                    point: { points: newPoints },
+                    timestamp: new Date(),
+                });
+                console.log('ポイントを加算しました。');
+            } else {
+
+                const pointData = { points };
+                await setDoc(userCartRef, { point: pointData, timestamp: new Date() });
+                console.log('新しいポイントデータを作成しました。');
+            }
+
             setIsConfirmed(true);
-            console.log("購入履歴と通知が保存されました。");
+            console.log("購入履歴と通知が保存され、ポイントが加算されました。");
+
         } catch (error) {
             console.error("データ保存中にエラーが発生しました:", error);
-            console.log(product.sellerId);
-            console.log(product.productId)
         }
+
+        setTimeout(() => {
+            setIsConfirmed(true);
+            router.push('/Catalog');
+        }, 1000);
     };
+
 
     useEffect(() => {
         const fetchNotifications = async () => {
