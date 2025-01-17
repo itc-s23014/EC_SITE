@@ -14,6 +14,8 @@ const Home = () => {
     const [products, setProducts] = useState([]);
     const [user, setUser] = useState(null);
     const [notifications, setNotifications] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const router = useRouter();
     const { cartCount } = useShoppingCart();
 
@@ -28,26 +30,23 @@ const Home = () => {
             const productsList = productsSnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
-            }))
-                .filter((product) =>!product.isHidden);
-                setProducts(productsList);
+            })).filter((product) => !product.isHidden);
+            setProducts(productsList);
+            setFilteredProducts(productsList);
         };
 
         fetchProducts();
 
         if (user) {
-
             const sellerNotificationsQuery = query(
                 collection(db, 'notifications'),
                 where('sellerId', '==', user.uid)
             );
 
-
             const buyerNotificationsQuery = query(
                 collection(db, 'notifications'),
                 where('buyer_id', '==', user.uid)
             );
-
 
             const unsubscribeSeller = onSnapshot(sellerNotificationsQuery, (snapshot) => {
                 const sellerNotifications = snapshot.docs.map((doc) => ({
@@ -78,8 +77,18 @@ const Home = () => {
         }
     }, [user]);
 
+    const handleSearch = () => {
+        if (!searchTerm.trim()) {
+            setFilteredProducts(products);
+            return;
+        }
 
 
+        const filtered = products.filter((product) =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+    };
 
     const handleLogout = async () => {
         try {
@@ -92,10 +101,39 @@ const Home = () => {
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f9f9f9', position: 'relative' }}>
-            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '10px' }}>EC_SITE</h1>
-                <h2 style={{ fontSize: '24px', color: '#555' }}>商品一覧</h2>
+            <header style={{textAlign: 'center', marginBottom: '40px'}}>
+                <h1 style={{fontSize: '36px', fontWeight: 'bold', marginBottom: '10px'}}>EC_SITE</h1>
+                <h2 style={{fontSize: '24px', color: '#555'}}>商品一覧</h2>
             </header>
+
+            <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="商品名を検索"
+                    style={{
+                        padding: '10px',
+                        width: '80%',
+                        borderRadius: '5px',
+                        border: '1px solid #ddd',
+                    }}
+                />
+                <button
+                    onClick={handleSearch}
+                    style={{
+                        marginLeft: '10px',
+                        padding: '10px 20px',
+                        border: 'none',
+                        backgroundColor: '#007bff',
+                        color: '#fff',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                    }}
+                >
+                    検索
+                </button>
+            </div>
 
             <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '10px' }}>
                 <Link href="/cart" passHref>
@@ -192,7 +230,9 @@ const Home = () => {
                     </ul>
                 </div>
             )}
-            <ProductList products={products} />
+
+
+            <ProductList products={filteredProducts} />
         </div>
     );
 };
