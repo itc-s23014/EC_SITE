@@ -1,10 +1,9 @@
 'use client'
-import React, { useState } from 'react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useRouter } from 'next/router';
-import {getAuth} from "firebase/auth";
-import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { getAuth } from "firebase/auth";
 
 const PersonalInfoPage = () => {
     const [fullName, setFullName] = useState('');
@@ -15,9 +14,25 @@ const PersonalInfoPage = () => {
     const [birthDate, setBirthDate] = useState('');
     const [isPhoneValid, setIsPhoneValid] = useState(true);
     const [isAddressValid, setIsAddressValid] = useState(true);
+    const [genUid, setGenUid] = useState('');
     const router = useRouter();
-    const { genUid } = router.query;  // genUidの取得
-    const { user, loading: authloading } = useAuthGuard(); //認証を強制
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    useEffect(() => {
+        const fetchGenUid = async () => {
+            if (currentUser) {
+                const userDoc = await getDoc(doc(db, 'sellers', currentUser.uid));
+                if (userDoc.exists()) {
+                    setGenUid(userDoc.data().genUid);
+                } else {
+                    console.error('ユーザードキュメントが見つかりません');
+                }
+            }
+        };
+
+        fetchGenUid();
+    }, [currentUser]);
 
     const handleAddressChange = (e) => {
         const inputAddress = e.target.value;
@@ -29,9 +44,7 @@ const PersonalInfoPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const auth = getAuth();
-        const currentUser = auth.currentUser;
-        const userId = currentUser.uid || genUid;
+        const userId = currentUser?.uid || genUid;
 
         if (!userId) {
             alert('Uidが見つかりませんでした。');
@@ -56,7 +69,7 @@ const PersonalInfoPage = () => {
                 birthDate,
                 createdAt: serverTimestamp(),
                 genId: genUid,
-                userId,// genUidをFirestoreに保存
+                userId,
             });
 
             alert('個人情報が保存されました');
