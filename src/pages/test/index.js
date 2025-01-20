@@ -1,6 +1,31 @@
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './style.module.css';
 
 export default function Home() {
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    if (dropdownVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownVisible]);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -9,8 +34,15 @@ export default function Home() {
         <div className={styles.navIcons}>
           <span>🛒</span>
           <span>❤️</span>
-          <span>⚙</span>
+          <span onClick={toggleDropdown} className={styles.settingsIcon}>⚙</span>
           <span>12,000 pt</span>
+          {dropdownVisible && (
+            <div ref={dropdownRef} className={styles.dropdownMenu}>
+              <div className={styles.dropdownItem}>ログイン</div>
+              <div className={styles.dropdownItem}>設定</div>
+              <div className={styles.dropdownItem}>ログアウト</div>
+            </div>
+          )}
         </div>
       </header>
 
