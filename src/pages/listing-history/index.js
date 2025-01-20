@@ -48,7 +48,7 @@ const ProductsPage = () => {
                                     </button>
                                     <button
                                         style={styles.deleteButton}
-                                        onClick={() => handleDelete(product.id)} // 変更点
+                                        onClick={() => handleDelete(product.id)}
                                     >
                                         削除
                                     </button>
