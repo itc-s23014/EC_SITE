@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { db } from "../../../firebaseConfig";
-import {doc, getDoc, addDoc, collection, query, where, getDocs, setDoc,updateDoc} from "firebase/firestore";
+import { doc, getDoc, addDoc, collection, query, where, getDocs, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import SendMessage from '@/pages/Trading-screen/sendMessage';
 import BackButton from "@/components/BackButton/BackButton";
-import {getAuth} from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import useProducts from "@/hooks/useProducts";
 
 export default function TradePage() {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [product, setProduct] = useState(null);
     const [notifications, setNotifications] = useState([]);
     const router = useRouter();
-    const {productId} = router.query;
-    const {user, loading: authLoading} = useAuthGuard();
+    const { productId } = router.query;
+    const { user, loading: authLoading } = useAuthGuard();
     const auth = getAuth();
     const currentUser = auth.currentUser;
     const [sellername, setsellername] = useState(null);
-
+    const { products, deleteProduct } = useProducts(currentUser);
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -25,7 +26,6 @@ export default function TradePage() {
                 let currentProductId = productId;
 
                 if (!currentProductId && user) {
-
                     const sellerQuery = query(
                         collection(db, "notifications"),
                         where("sellerId", "==", user.uid)
@@ -42,22 +42,12 @@ export default function TradePage() {
                     ]);
 
                     if (!sellerSnapshot.empty) {
-                        console.log('sellerSnapshot.empty:', sellerSnapshot.empty);
                         const firstNotification = sellerSnapshot.docs[0].data();
                         currentProductId = firstNotification.productId;
-                        console.log(firstNotification);
-                        console.log('userid:', user.uid);
-                        console.log("Seller notification found:", currentProductId);
                     } else if (!buyerSnapshot.empty) {
-                        console.log('buyerSnapshot.empty:', buyerSnapshot.empty);
                         const firstNotification = buyerSnapshot.docs[0].data();
                         currentProductId = firstNotification.productId;
-                        console.log("sellerproductid", currentProductId);
-                        console.log("Buyer notification found:", currentProductId);
-                    } else {
-                        console.log('Both sellerSnapshot and buyerSnapshot are empty.');
                     }
-
                 }
 
                 if (currentProductId) {
@@ -67,10 +57,7 @@ export default function TradePage() {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
-                        await updateDoc(productDoc,{isHidden: true});
-                        console.log("商品非表示")
-                        console.log('商品取得できた')
-                        console.log(currentUser.uid)
+                        await updateDoc(productDoc, { isHidden: true });
                         await notifySeller(productData);
                     } else {
                         console.log("指定された商品が存在しません。");
@@ -78,7 +65,6 @@ export default function TradePage() {
                 }
             } catch (error) {
                 console.error("商品の取得中にエラーが発生しました:", error);
-                console.log(product.sellerId)
             }
         };
 
@@ -89,7 +75,7 @@ export default function TradePage() {
                     message: `商品「${productData.name}」の取引ページが開かれました。`,
                     timestamp: new Date().toISOString(),
                     read: false,
-                    productId: productId,
+                    productId: productData.id,
                     buyer_id: currentUser.uid,
                 };
                 await addDoc(collection(db, "notifications"), notificationData);
@@ -102,10 +88,21 @@ export default function TradePage() {
         if (!authLoading) fetchProductData();
     }, [productId, authLoading, user]);
 
-
     const handleConfirm = async () => {
         if (!product) return;
         try {
+
+            const purchaseQuery = query(
+                collection(db, "purchaseHistory"),
+                where("productId", "==", product.id),
+                where("buyerId", "==", currentUser.uid)
+            );
+            const purchaseSnapshot = await getDocs(purchaseQuery);
+
+            if (!purchaseSnapshot.empty) {
+                console.log("This purchase has already been recorded.");
+                return;
+            }
 
             const purchaseData = {
                 productId: product.id,
@@ -116,26 +113,20 @@ export default function TradePage() {
             };
             await addDoc(collection(db, "purchaseHistory"), purchaseData);
 
-
             const notificationData = {
                 message: `商品「${product.name}」が購入されました。`,
                 timestamp: new Date().toISOString(),
                 read: false,
-                productId: product.productId,
+                productId: product.id,
                 seller: product.sellerId,
             };
             await addDoc(collection(db, "notifications"), notificationData);
 
-
             const points = Math.floor(product.price * 0.1);
-            const total = product.price - points;
-
-
             const userCartRef = doc(db, 'sellers', product.sellerId, 'points', 'allPoint');
             const userCartSnapshot = await getDoc(userCartRef);
 
             if (userCartSnapshot.exists()) {
-
                 const existingPoints = userCartSnapshot.data().point.points;
                 const newPoints = existingPoints + points;
 
@@ -143,17 +134,25 @@ export default function TradePage() {
                     point: { points: newPoints },
                     timestamp: new Date(),
                 });
-                console.log('ポイントを加算しました。');
             } else {
-
                 const pointData = { points };
                 await setDoc(userCartRef, { point: pointData, timestamp: new Date() });
-                console.log('新しいポイントデータを作成しました。');
             }
+
+            const notificationsQuery = query(
+                collection(db, 'notifications'),
+                where('productId', '==', product.id)
+            );
+            const notificationsSnapshot = await getDocs(notificationsQuery);
+
+            const deletePromises = notificationsSnapshot.docs.map((docSnapshot) => {
+                return deleteDoc(doc(db, 'notifications', docSnapshot.id));
+            });
+
+            await Promise.all(deletePromises);
 
             setIsConfirmed(true);
             console.log("購入履歴と通知が保存され、ポイントが加算されました。");
-
         } catch (error) {
             console.error("データ保存中にエラーが発生しました:", error);
         }
@@ -164,6 +163,9 @@ export default function TradePage() {
         }, 1000);
     };
 
+    const handleDelete = (productId) => {
+        deleteProduct(productId);
+    };
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -193,28 +195,27 @@ export default function TradePage() {
         const fetchSellers = async () => {
             try {
                 if (user) {
-                    const  sellersdoc = doc(db, "sellers", product.sellerId);
+                    const sellersdoc = doc(db, "sellers", product.sellerId);
                     const sellerSnap = await getDoc(sellersdoc);
 
                     if (sellerSnap.exists()) {
-                        const sellerData = {id: sellerSnap.id, ...sellerSnap.data()};
+                        const sellerData = { id: sellerSnap.id, ...sellerSnap.data() };
                         setsellername(sellerData.sellerName);
-                        console.log(sellerData.sellerName);
                     } else {
                         console.log("指定されたユーザーがいません");
                     }
                 }
             } catch (error) {
                 console.error("ユーザーの取得中にエラーが発生しました:", error);
-
             }
         };
         if (!authLoading) fetchSellers();
     }, [user]);
+
     return (
-        <div style={{padding: '16px', fontFamily: 'Arial, sans-serif'}}>
-            <BackButton/>
-            <header style={{display: 'flex', alignItems: 'center', marginBottom: '16px', height: '200px'}}>
+        <div style={{ padding: '16px', fontFamily: 'Arial, sans-serif' }}>
+            <BackButton />
+            <header style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', height: '200px' }}>
                 <h1>取引画面</h1>
             </header>
 
@@ -256,16 +257,13 @@ export default function TradePage() {
                     </button>
                 )}
                 {product && (
-                    <div style={{marginTop: '16px'}}>
+                    <div style={{ marginTop: '16px' }}>
                         <p><strong>商品名:</strong> {product.name}</p>
-                        <p><strong>価格:</strong>  ¥{product.price}</p>
-                        {/*<p><strong>取引者:</strong> {sellername}</p>*/}
-                        {/*{product.imageUrls && <img src={product.imageUrls[0]} alt={product.name} style={{ maxWidth: '100%', marginTop: '8px' }} />}*/}
+                        <p><strong>価格:</strong> ¥{product.price}</p>
                     </div>
                 )}
 
                 {!product && <p>商品情報を読み込み中...</p>}
-
 
                 <div style={{
                     marginTop: '24px',
@@ -291,7 +289,6 @@ export default function TradePage() {
                         border: '1px solid #ddd',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                     }}>
-
                         <div style={{
                             height: '100px',
                             padding: '8px',
@@ -308,13 +305,11 @@ export default function TradePage() {
                         </div>
                     </div>
 
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                        <SendMessage/>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <SendMessage />
                     </div>
-
                 </div>
             </div>
         </div>
     );
 }
-
