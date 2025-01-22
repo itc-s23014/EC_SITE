@@ -85,6 +85,15 @@
     border-left: solid 5px #494949;
   }
 
+  .sectionTitle {
+    font-size: 18px;
+    margin-bottom: 10px;
+    padding: 0.25em 0.5em;
+    color: #494949;
+    background: transparent;
+    border-left: solid 5px #494949;
+  }
+
   .itemList, .categoryList, .rankList {
     display: flex;
     flex-wrap: wrap;
