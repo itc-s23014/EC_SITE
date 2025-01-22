@@ -18,6 +18,7 @@ const AddProduct = () => {
     const router = useRouter();
     const auth = getAuth();
     const { user, loading: authloading } = useAuthGuard();
+    const [videoLink, setVideoLink] = useState('');
 
     const categories = [
         'ファッション',
@@ -110,6 +111,7 @@ const AddProduct = () => {
                 description,
                 category: selectedCategory,
                 imageUrls,
+                videoLink,
                 createdAt: serverTimestamp(),
                 sellerId,
                 hidden: false
@@ -126,7 +128,8 @@ const AddProduct = () => {
     return (
         <div style={{ padding: '20px' }}>
             <h1>商品を追加する</h1>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
+            <form onSubmit={handleSubmit}
+                  style={{display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto'}}>
                 <label>商品名:</label>
                 <input
                     type="text"
@@ -142,7 +145,7 @@ const AddProduct = () => {
                     onChange={(e) => setPrice(e.target.value)}
                     required
                 />
-                {priceError && <p style={{ color: 'red' }}>{priceError}</p>}
+                {priceError && <p style={{color: 'red'}}>{priceError}</p>}
 
                 <label>カテゴリー:</label>
                 <select
@@ -173,8 +176,22 @@ const AddProduct = () => {
                     accept="image/*"
                     required
                 />
+                <label>動画リンク:</label>
+                <input
+                    type="text"
+                    value={videoLink}
+                    onChange={(e) => setVideoLink(e.target.value)}
+                    placeholder="動画の埋め込みリンクを入力してください"
+                />
 
-                <button type="submit" style={{ marginTop: '20px', padding: '10px', backgroundColor: '#0070f3', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                <button type="submit" style={{
+                    marginTop: '20px',
+                    padding: '10px',
+                    backgroundColor: '#0070f3',
+                    color: '#fff',
+                    border: 'none',
+                    cursor: 'pointer'
+                }}>
                     商品を追加する
                 </button>
             </form>
