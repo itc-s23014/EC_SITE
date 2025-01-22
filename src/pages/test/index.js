@@ -3,6 +3,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import Image from 'next/image';
 import styles from './style.module.css';
+import Carousel from '@/components/Carousel';
 
 const TestPage = () => {
   const [products, setProducts] = useState([]);
@@ -146,9 +147,7 @@ const TestPage = () => {
       </div>
     </header>
 
-      <div className={styles.carousel}>
-        <div className={styles.carouselItem}></div>
-      </div>
+<Carousel />
 
       <section className={styles.section}>
   <h2 className={styles.sectionTitle}>クーポン利用可能な商品</h2>
