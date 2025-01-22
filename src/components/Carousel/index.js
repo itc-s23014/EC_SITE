@@ -4,11 +4,10 @@ import Image from 'next/image';
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    '/docs/images/carousel/carousel-1.svg',
-    '/docs/images/carousel/carousel-2.svg',
-    '/docs/images/carousel/carousel-3.svg',
-    '/docs/images/carousel/carousel-4.svg',
-    '/docs/images/carousel/carousel-5.svg',
+    'https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg',
+    'https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg',
+    'https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg',
+    'https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg',
   ];
 
   const goToSlide = (index) => {
@@ -28,22 +27,22 @@ const Carousel = () => {
   return (
     <div id="default-carousel" className="relative w-full" data-carousel="slide">
       <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
-        {images.map((src, index) => (
-          <div
-            key={index}
-            className={`${
-              currentIndex === index ? 'block' : 'hidden'
-            } duration-700 ease-in-out`}
-            data-carousel-item>
-            <Image
-              src={src}
-              layout="fill"
-              objectFit="cover"
-              className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-              alt={`Carousel image ${index + 1}`}
-            />
-          </div>
-        ))}
+      {images.map((src, index) => (
+  <div
+    key={index}
+    className={`absolute inset-0 transition-transform duration-500 ease-in-out transform ${
+      index === currentIndex ? 'translate-x-0' : 'translate-x-full'
+    }`}
+  >
+    <Image
+      src={src}
+      alt={`Slide ${index}`}
+      layout="fill"
+      objectFit="cover"
+      className="w-full h-full"
+    />
+  </div>
+))}
       </div>
 
       <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
