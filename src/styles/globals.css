@@ -1,18 +1,17 @@
+/* Import Tailwind CSS directives */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* 既存のスタイルをTailwind CSSで再現する例 */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f9f9f9;
+  @apply font-sans m-0 p-0 bg-gray-100;
 }
 
 h1 {
-  text-align: center;
-  margin: 20px 0;
+  @apply text-center my-5;
 }
 
 .product {
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin: 10px;
-  text-align: center;
+  @apply border border-gray-300 p-2 m-2 text-center;
 }
