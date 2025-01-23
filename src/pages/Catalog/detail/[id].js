@@ -6,8 +6,8 @@ import { db } from '../../../../firebaseConfig';
 import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
-import BackButton from "@/components/BackButton/BackButton";
 import Header from "@/components/Header/Header";
+import TwitterEmbed from "@/hooks/twitter";
 
 const ProductDetail = () => {
     const router = useRouter();
@@ -15,10 +15,12 @@ const ProductDetail = () => {
     const [product, setProduct] = useState(null);
     const [sellerName, setSellerName] = useState('');
     const [user] = useAuthState(auth);
+    const [twitterUserId, setTwitterUserId] = useState('');
+    const [twitterStatusId, setTwitterStatusId] = useState('');
     const { addItem, cartDetails } = useShoppingCart();
     const [cart, setCart] = useState({});
     const [isLiked, setIsLiked] = useState(false);
-    console.log(id)
+    const [videoLink, setVideoLink] = useState('');
 
     useEffect(() => {
         const fetchProductAndSeller = async () => {
@@ -30,7 +32,15 @@ const ProductDetail = () => {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
-
+                        setVideoLink(productData.videoLink);
+                        console.log(productData.videoLink);
+                        const twitter = productData.videoLink.match(/https:\/\/twitter.com\/\w+\/status\/\d+/) || "";
+                        console.log(twitter);
+                        const twitterData = twitter[0].split('/');
+                        setTwitterUserId(twitterData[3])
+                        setTwitterStatusId(twitterData[5])
+                        console.log(twitterData[3]);
+                        console.log(twitterData[5]);
                         const sellerId = productData.sellerId;
                         if (sellerId) {
                             const sellerDoc = doc(db, 'sellers', sellerId);
@@ -39,7 +49,6 @@ const ProductDetail = () => {
                             if (sellerSnapshot.exists()) {
                                 const sellerData = sellerSnapshot.data();
                                 setSellerName(sellerData.sellerName);
-                                console.log('ユーザー名前:',sellerData.sellerName);
                             } else {
                                 setSellerName('不明');
                             }
@@ -84,6 +93,8 @@ const ProductDetail = () => {
         fetchLikeStatus();
     }, [user, id]);
 
+
+
     const handleLikeToggle = async () => {
         if (!user) {
             alert('いいねするにはログインしてください！');
@@ -108,7 +119,7 @@ const ProductDetail = () => {
     };
 
     const handleAddToCart = async () => {
-        if (product && user && !cart[product.id]) { // Check if the product is already in the cart
+        if (product && user && !cart[product.id]) {
             const newCart = {
                 ...cart,
                 [product.id]: {
@@ -140,6 +151,8 @@ const ProductDetail = () => {
         return <div>読み込み中...</div>;
     }
 
+
+
     return (
         <>
             <Header title={product.name}/>
@@ -159,6 +172,7 @@ const ProductDetail = () => {
                             margin: '10px'
                         }}
                     />
+
                 ))}
             </div>
             <div style={{maxWidth: '800px', margin: 'auto', padding: '20px'}}>
@@ -184,27 +198,38 @@ const ProductDetail = () => {
                 <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.description}</p>
                 <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>出品者</h2>
                 <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{sellerName || '不明'}</p>
+                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>Category</h2>
+                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.category}</p>
                 <p style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#333'}}>
                     <strong>価格:</strong> ¥{product.price.toLocaleString()}
                 </p>
+               <TwitterEmbed videoLink={videoLink} twitterStatusId={twitterStatusId} twitterUserId={twitterUserId} />
+                {/*<div id="twitter">*/}
+                {/*    <blockquote className="twitter-tweet" data-media-max-width="560">*/}
+                {/*        <a href={`https://twitter.com/${twitterUserId}/status/${twitterStatusId}?ref_src=twsrc%5Etfw`}></a>*/}
+                {/*    </blockquote>*/}
+                {/*    <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>*/}
+                {/*</div>*/}
+
+
                 <div style={{textAlign: 'center'}}>
-                <button
-                    onClick={handleAddToCart}
-                    disabled={cart[product.id]} // Disable the button if the product is already in the cart
-                    style={{
-                        padding: '12px 24px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: cart[product.id] ? 'default' : 'pointer',
-                        fontSize: '1rem',
-                        marginRight: '10px',
-                        opacity: cart[product.id] ? 0.5 : 1 // Make the button appear disabled visually
-                    }}
-                >
-                    {cart[product.id] ? '追加済み' : 'カートに追加'}
-                </button>
+                    <button
+                        onClick={handleAddToCart}
+                        disabled={cart[product.id]}
+                        style={{
+                            padding: '12px 24px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: cart[product.id] ? 'default' : 'pointer',
+                            fontSize: '1rem',
+                            marginRight: '10px',
+                            opacity: cart[product.id] ? 0.5 : 1
+                        }}
+                    >
+                        {cart[product.id] ? '追加済み' : 'カートに追加'}
+                    </button>
 
                     <button
                         onClick={purchase}
