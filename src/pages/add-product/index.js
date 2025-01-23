@@ -12,11 +12,38 @@ const AddProduct = () => {
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [files, setFiles] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [sellerName, setSellerName] = useState('');
-    const [priceError, setPriceError] = useState(''); // 価格のエラーメッセージ
+    const [priceError, setPriceError] = useState('');
     const router = useRouter();
     const auth = getAuth();
-    const { user, loading: authloading } = useAuthGuard(); //認証を強制
+    const { user, loading: authloading } = useAuthGuard();
+    const [videoLink, setVideoLink] = useState('');
+
+    const categories = [
+        'ファッション',
+        'ベビー・キッズ',
+        'ゲーム・おもちゃ・グッズ',
+        'ホビー・楽器・アート',
+        'チケット',
+        '本・雑誌・漫画',
+        'CD・DVD・ブルーレイ',
+        'スマホ・タブレット・パソコン',
+        'テレビ・オーディオ・カメラ',
+        '生活家電・空調',
+        'スポーツ',
+        'アウトドア・釣り・旅行用品',
+        'コスメ・美容',
+        'ダイエット・健康',
+        '食品・飲料・酒',
+        'キッチン・日用品・その他',
+        '家具・インテリア',
+        'ペット用品',
+        'DIY・工具',
+        'フラワー・ガーデニング',
+        'ハンドメイド・手芸',
+        '車・バイク・自転車'
+    ];
 
     useEffect(() => {
         const fetchSellerName = async () => {
@@ -45,7 +72,6 @@ const AddProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 価格のバリデーション
         if (price.startsWith('0')) {
             setPriceError('価格は0から始めることはできません');
             return;
@@ -60,6 +86,11 @@ const AddProduct = () => {
 
         if (files.length === 0) {
             alert('画像を選択してください。');
+            return;
+        }
+
+        if (!selectedCategory) {
+            alert('カテゴリーを選択してください。');
             return;
         }
 
@@ -78,7 +109,9 @@ const AddProduct = () => {
                 name,
                 price: parseFloat(price),
                 description,
+                category: selectedCategory,
                 imageUrls,
+                videoLink,
                 createdAt: serverTimestamp(),
                 sellerId,
                 hidden: false
@@ -95,7 +128,8 @@ const AddProduct = () => {
     return (
         <div style={{ padding: '20px' }}>
             <h1>商品を追加する</h1>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
+            <form onSubmit={handleSubmit}
+                  style={{display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto'}}>
                 <label>商品名:</label>
                 <input
                     type="text"
@@ -111,7 +145,21 @@ const AddProduct = () => {
                     onChange={(e) => setPrice(e.target.value)}
                     required
                 />
-                {priceError && <p style={{ color: 'red' }}>{priceError}</p>} {/* エラーメッセージの表示 */}
+                {priceError && <p style={{color: 'red'}}>{priceError}</p>}
+
+                <label>カテゴリー:</label>
+                <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    required
+                >
+                    <option value="" disabled>カテゴリーを選択してください</option>
+                    {categories.map((category) => (
+                        <option key={category} value={category}>
+                            {category}
+                        </option>
+                    ))}
+                </select>
 
                 <label>説明:</label>
                 <textarea
@@ -128,8 +176,22 @@ const AddProduct = () => {
                     accept="image/*"
                     required
                 />
+                <label>動画リンク:</label>
+                <input
+                    type="text"
+                    value={videoLink}
+                    onChange={(e) => setVideoLink(e.target.value)}
+                    placeholder="動画の埋め込みリンクを入力してください"
+                />
 
-                <button type="submit" style={{ marginTop: '20px', padding: '10px', backgroundColor: '#0070f3', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                <button type="submit" style={{
+                    marginTop: '20px',
+                    padding: '10px',
+                    backgroundColor: '#0070f3',
+                    color: '#fff',
+                    border: 'none',
+                    cursor: 'pointer'
+                }}>
                     商品を追加する
                 </button>
             </form>

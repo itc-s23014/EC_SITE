@@ -5,6 +5,7 @@ import BackButton from "@/components/BackButton/BackButton";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import useCart from '@/hooks/useCart';
+import {router} from "next/client";
 
 const CartContents = () => {
     const auth = getAuth();
@@ -13,7 +14,7 @@ const CartContents = () => {
     const { products, userCart, loading, removeItemFromCart } = useCart(user);
 
     const handleCheckout = () => {
-        alert('購入されました');
+        router.push("/select-purchase/index2");
     };
 
     if (loading) {
