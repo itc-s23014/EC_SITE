@@ -75,11 +75,6 @@ export default function UserDashboard() {
         {/* セクション1 */}
         <section className="section">
           <ul>
-            <li onClick={() => handleNavigation("/like-list")}>
-              <a href="#">
-                いいねリスト <span className="arrow">▶</span>
-              </a>
-            </li>
             <li onClick={() => handleNavigation("/listing-history")}>
               <a href="#">
                 出品リスト<span className="arrow">▶</span>
@@ -106,11 +101,11 @@ export default function UserDashboard() {
                 ポイント残高 <span className="arrow">▶</span>
               </a>
             </li>
-            <li onClick={() => handleNavigation("/contact-form")}>
-              <a href="#">
-                お問い合わせフォーム <span className="arrow">▶</span>
-              </a>
-            </li>
+            {/*<li onClick={() => handleNavigation("/contact-form")}>*/}
+            {/*  <a href="#">*/}
+            {/*    お問い合わせフォーム <span className="arrow">▶</span>*/}
+            {/*  </a>*/}
+            {/*</li>*/}
           </ul>
         </section>
 
