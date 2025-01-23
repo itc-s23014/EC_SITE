@@ -1,17 +1,39 @@
-import AvatarDropdown from "../AvatarDropdown";
+import React, { useState, useEffect, useRef } from 'react';
 
 const SearchBar = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="flex items-center gap-x-6 gap-y-4 ml-auto">
+    <div className="flex items-center gap-x-2 gap-y-4 ml-auto relative" ref={dropdownRef}>
       <div className="flex bg-gray-50 border focus-within:bg-transparent focus-within:border-gray-400 rounded-full px-4 py-2.5 overflow-hidden max-w-76 max-lg:hidden relative">
         {/* カテゴリドロップダウンをトグルするボタン */}
-        <button aria-label="Toggle Category Dropdown" className="mr-2">
+        <button aria-label="Toggle Category Dropdown" className="mr-2" onClick={handleDropdownToggle}>
+          {/* カテゴリドロップダウンをトグルするSVG */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             width="24px"
             height="24px"
+            className="cursor-pointer"
           >
             <path
               d="M3 6C3 4.34315 4.34315 3 6 3H7C8.65685 3 10 4.34315 10 6V7C10 8.65685 8.65685 10 7 10H6C4.34315 10 3 8.65685 3 7V6Z"
@@ -59,6 +81,29 @@ const SearchBar = () => {
           </svg>
         </button>
       </div>
+
+      {/* ドロップダウンメニュー */}
+      {isDropdownOpen && (
+        <div className="absolute top-full left-0 z-10 mt-2 bg-white divide-y divide-gray-200 rounded-lg shadow-lg w-44 border border-gray-300">
+          <ul className="py-2 text-sm text-gray-700">
+            <li>
+              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+                メニュー項目1
+              </a>
+            </li>
+            <li>
+              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+                メニュー項目2
+              </a>
+            </li>
+            <li>
+              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+                メニュー項目3
+              </a>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
