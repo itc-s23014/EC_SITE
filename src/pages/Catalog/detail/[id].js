@@ -7,7 +7,6 @@ import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
 import Header from "@/components/Header/Header";
-import Twitter from "@/hooks/twitter";
 import TwitterEmbed from "@/hooks/twitter";
 
 const ProductDetail = () => {
@@ -211,6 +210,7 @@ const ProductDetail = () => {
                 {/*    </blockquote>*/}
                 {/*    <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>*/}
                 {/*</div>*/}
+
 
                 <div style={{textAlign: 'center'}}>
                     <button
