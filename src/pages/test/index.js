@@ -1,16 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import Image from 'next/image';
 import styles from './style.module.css';
 import Carousel from '@/components/Carousel';
 import AvatarDropdown from '@/components/AvatarDropdown';
 import SearchBar from '@/components/SearchBar';
+import { useRouter } from 'next/router';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const TestPage = () => {
   const [products, setProducts] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const dropdownRef = useRef(null);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [sellerName, setSellerName] = useState("");
+  const [userdata, setUserdata] = useState(null);
+  const router = useRouter();
+  const auth = getAuth();
+  const [email, setEmail] = useState('');
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
@@ -35,19 +44,64 @@ const TestPage = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-        const productsCollection = collection(db, 'products');
-        const productsSnapshot = await getDocs(productsCollection);
-        const productsList = productsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }))
-            .filter((product) => !product.isHidden);
-        setProducts(productsList);
+      const productsCollection = collection(db, 'products');
+      const productsSnapshot = await getDocs(productsCollection);
+      const productsList = productsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })).filter((product) => !product.isHidden);
+      setProducts(productsList);
     };
 
     fetchProducts();
-}, []);
+  }, []);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const uid = auth.currentUser.uid;
+        console.log('uid', uid);
+
+        const userQuery = query(collection(db, "users"), where("userId", "==", uid));
+        const userSnapshot = await getDocs(userQuery);
+        console.log('userSnapshot', userSnapshot.docs[0].data());
+        setUserdata(userSnapshot.docs[0].data());
+
+
+        const sellerDoc = doc(db, "sellers", uid);
+        const sellerSnapshot = await getDoc(sellerDoc);
+
+        if (sellerSnapshot.exists()) {
+          const sellerData = sellerSnapshot.data();
+          setSellerName(sellerData.sellerName);
+          setEmail(sellerData.email);
+        } else {
+          console.error("セラーデータが見つかりませんでした");
+        }
+
+        if (!userSnapshot.empty) {
+          const userDoc = userSnapshot.docs[0];
+          setUserData({ id: userDoc.id, ...userDoc.data() });
+        } else {
+          console.error("ユーザーデータが見つかりませんでした");
+        }
+      } catch (error) {
+        console.error("ユーザーデータの取得中にエラーが発生しました", error);
+      } finally {
+        setLoading(false); // ローディング状態を解除
+      }
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUserData(user.uid);
+      } else {
+        router.push("/login");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [auth, router]);
 
   return (
     <div className={styles.container}>
@@ -83,52 +137,46 @@ const TestPage = () => {
                     In</button>
                 </div>
               </li>
-              <li class='max-lg:border-b max-lg:py-3 px-3'><a href='javascript:void(0)'
-                class='text-[#007bff] hover:text-[#007bff] text-[15px] block font-semibold'>New</a></li>
-              <li class='max-lg:border-b max-lg:py-3 px-3'><a href='javascript:void(0)'
-                class='text-[#333] hover:text-[#007bff] text-[15px] block font-semibold'>Men</a></li>
-              <li class='max-lg:border-b max-lg:py-3 px-3'><a href='javascript:void(0)'
-                class='text-[#333] hover:text-[#007bff] text-[15px] block font-semibold'>Women</a></li>
-              <li class='max-lg:border-b max-lg:py-3 px-3'><a href='javascript:void(0)'
-                class='text-[#333] hover:text-[#007bff] text-[15px] block font-semibold'>Kids</a></li>
             </ul>
+
           </div>
 
           <SearchBar />
 
-            <div class='flex items-center sm:space-x-8 space-x-6'>
-              <div class="flex flex-col items-center justify-center gap-0.5 cursor-pointer">
-                <div class="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="cursor-pointer fill-[#333] inline w-5 h-5"
-                    viewBox="0 0 64 64">
-                    <path
+          <div class='flex items-center sm:space-x-8 space-x-6'>
+            <div class="flex flex-col items-center justify-center gap-0.5 cursor-pointer"onClick={() => router.push('/like-list')}>
+              <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="cursor-pointer fill-[#333] inline w-5 h-5"
+                     viewBox="0 0 64 64">
+                  <path
                       d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"
                       data-original="#000000" />
-                  </svg>
-                  <span class="absolute left-auto -ml-1 top-0 rounded-full bg-red-500 px-1 py-0 text-xs text-white">0</span>
-                </div>
-                <span class="text-[13px] font-semibold text-[#333]">Wishlist</span>
+                </svg>
+                <span class="absolute left-auto -ml-1 top-0 rounded-full bg-red-500 px-1 py-0 text-xs text-white">0</span>
               </div>
-              <div class="flex flex-col items-center justify-center gap-0.5 cursor-pointer">
-                <div class="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" class="cursor-pointer fill-[#333] inline"
-                    viewBox="0 0 512 512">
-                    <path
+              <span class="text-[13px] font-semibold text-[#333]">Wishlist</span>
+            </div>
+            <div class="flex flex-col items-center justify-center gap-0.5 cursor-pointer" onClick={() => router.push('/cart')}>
+              <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" class="cursor-pointer fill-[#333] inline"
+                     viewBox="0 0 512 512">
+                  <path
                       d="M164.96 300.004h.024c.02 0 .04-.004.059-.004H437a15.003 15.003 0 0 0 14.422-10.879l60-210a15.003 15.003 0 0 0-2.445-13.152A15.006 15.006 0 0 0 497 60H130.367l-10.722-48.254A15.003 15.003 0 0 0 105 0H15C6.715 0 0 6.715 0 15s6.715 15 15 15h77.969c1.898 8.55 51.312 230.918 54.156 243.71C131.184 280.64 120 296.536 120 315c0 24.812 20.188 45 45 45h272c8.285 0 15-6.715 15-15s-6.715-15-15-15H165c-8.27 0-15-6.73-15-15 0-8.258 6.707-14.977 14.96-14.996zM477.114 90l-51.43 180H177.032l-40-180zM150 405c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm167 15c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm0 0"
                       data-original="#000000"></path>
-                  </svg>
-                  <span class="absolute left-auto -ml-1 top-0 rounded-full bg-red-500 px-1 py-0 text-xs text-white">0</span>
-                </div>
-                <span class="text-[13px] font-semibold text-[#333]">Cart</span>
+                </svg>
+                <span class="absolute left-auto -ml-1 top-0 rounded-full bg-red-500 px-1 py-0 text-xs text-white">0</span>
               </div>
+              <span class="text-[13px] font-semibold text-[#333]">Cart</span>
+            </div>
 
-              <AvatarDropdown />
+
+            <AvatarDropdown sellerName={sellerName} email={email}/>
 
               <button id="toggleOpen" class='lg:hidden'>
                 <svg class="w-7 h-7" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd"
-                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clip-rule="evenodd"></path>
+                        d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                        clip-rule="evenodd"></path>
                 </svg>
               </button>
             </div>
@@ -136,10 +184,10 @@ const TestPage = () => {
         </div>
     </header>
 
-<Carousel />
+      <Carousel/>
 
       <section className={styles.section}>
-  <h2 className={styles.sectionTitle}>クーポン利用可能な商品</h2>
+        <h2 className={styles.sectionTitle}>クーポン利用可能な商品</h2>
   <div className="font-sans px-4 py-8">
     <div className="mx-auto lg:max-w-6xl md:max-w-4xl">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
