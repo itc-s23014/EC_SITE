@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const SearchBar = () => {
+const SearchBar = ({products}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -13,6 +16,17 @@ const SearchBar = () => {
       setIsDropdownOpen(false);
     }
   };
+  // const handleSearch = () => {
+  //   const term = searchTerm.trim().toLowerCase();
+  //   console.log("products", products);
+  //   const filtered = products.filter((product) =>
+  //       product.name.toLowerCase().includes(term) &&
+  //       (selectedCategory ? product.category === selectedCategory : true)
+  //   );
+  //   setFilteredProducts(filtered);
+  // };
+
+
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
