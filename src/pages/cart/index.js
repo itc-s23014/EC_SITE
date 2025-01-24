@@ -25,11 +25,11 @@ const CartContents = () => {
         }, 0);
     };
 
-    const subtotal = Math.floor(calculateSubtotal()); // 小数点以下切り捨て
-    const shipping = 5.0; // 固定値、または動的に計算
+    const subtotal = Math.floor(calculateSubtotal());
+    const shipping = 5.0;
     const taxRate = 0.1; // 税率 10%
-    const tax = Math.floor(subtotal * taxRate); // 小数点以下切り捨て
-    const total = Math.floor(subtotal + shipping + tax); // 小数点以下切り捨て
+    const tax = Math.floor(subtotal * taxRate);
+    const total = Math.floor(subtotal + shipping + tax);
 
     const handleCheckout = () => {
         router.push("/select-purchase/index2");
