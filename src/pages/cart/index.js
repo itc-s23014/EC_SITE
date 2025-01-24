@@ -28,7 +28,6 @@ const CartContents = () => {
     const subtotal = Math.floor(calculateSubtotal()); // 小数点以下切り捨て
     const shipping = 5.0; // 固定値、または動的に計算
     const taxRate = 0.1; // 税率 10%
-    const commission = 0.05; // 手数料 5%
     const tax = Math.floor(subtotal * taxRate); // 小数点以下切り捨て
     const total = Math.floor(subtotal + shipping + tax); // 小数点以下切り捨て
 
