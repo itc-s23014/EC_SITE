@@ -390,6 +390,7 @@ const TestPage = () => {
               </div>
             </div>
           </div>
+          </div>
         </header>
 
         <Carousel/>
