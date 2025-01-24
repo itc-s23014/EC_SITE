@@ -5,7 +5,7 @@ import BackButton from "@/components/BackButton/BackButton";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import useCart from '@/hooks/useCart';
-import {router} from "next/client";
+import {router} from "next/router";
 
 const CartContents = () => {
     const auth = getAuth();
