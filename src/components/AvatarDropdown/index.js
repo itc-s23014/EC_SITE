@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getAuth, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-const AvatarDropdown = ({email,sellerName}) => {
+const AvatarDropdown = ({ email, sellerName }) => {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const auth = getAuth();
     const [user] = useAuthState(auth);
+    const dropdownRef = useRef(null); // ドロップダウン要素を参照するためのRef
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -27,8 +28,23 @@ const AvatarDropdown = ({email,sellerName}) => {
         }
     };
 
+    // 外側クリック時にドロップダウンを閉じる処理
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
             <div
                 id="avatarButton"
                 className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200"
@@ -68,7 +84,7 @@ const AvatarDropdown = ({email,sellerName}) => {
                             </a>
                         </li>
                     </ul>
-                    <ul className='py-2 text-sm text-gray-700' aria-labelledby='avatarButton'>
+                    <ul className="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
                         <li>
                             <a
                                 href="#"
