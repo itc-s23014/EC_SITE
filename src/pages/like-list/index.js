@@ -18,39 +18,47 @@ const LikeList = () => {
     }
 
     return (
-        <div style={styles.container}>
-            <BackButton/>
+        <div className="font-sans px-4 py-8" style={styles.container}>
+            <BackButton />
             <header style={styles.header}>
                 <h1 style={styles.title}>Like List</h1>
                 <h2 style={styles.subtitle}>あなたが「いいね」した商品</h2>
             </header>
 
-            <div style={styles.gridContainer}>
-                {likedProducts.length > 0 ? (
-                    likedProducts.map((product) => (
-                        <Link key={product.id} href={`/Catalog/detail/${product.id}`} passHref>
-                            <div style={styles.card}>
-                                <Image
-                                    src={
-                                        product.imageUrls && product.imageUrls.length > 0
-                                            ? product.imageUrls[0]
-                                            : "/placeholder.jpg"
-                                    }
-                                    alt={product.name}
-                                    width={500}
-                                    height={500}
-                                    style={styles.productImage}
-                                />
-                                <div style={styles.productInfo}>
-                                    <h2 style={styles.productName}>{product.name}</h2>
-                                    <p style={styles.productPrice}>¥{product.price.toLocaleString()}</p>
-                                </div>
-                            </div>
-                        </Link>
-                    ))
-                ) : (
-                    <p style={styles.noItemsMessage}>「いいね」した商品がありません。</p>
-                )}
+            <div className="mx-auto lg:max-w-6xl md:max-w-4xl">
+            <h2 className="sectionTitle" style={styles.sectionTitle}>お気に入り商品</h2>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {likedProducts.length > 0 ? (
+                        likedProducts.map((product) => {
+                            if (user && product.sellerId === user.uid) {
+                                return null;
+                            }
+                            return (
+                                <Link href={`/Catalog/detail/${product.id}`} passHref key={product.id}>
+                                    <div
+                                        className="bg-white p-3 cursor-pointer shadow-sm rounded-md hover:scale-[1.03] transition-all">
+                                        <div className="w-full overflow-hidden mx-auto">
+                                            <Image
+                                                src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : "/placeholder.jpg"}
+                                                alt={product.name}
+                                                width={500}
+                                                height={500}
+                                                className="aspect-[108/82] w-full object-contain"
+                                            />
+                                        </div>
+                                        <div className="text-center mt-4">
+                                            <h3 className="text-sm font-bold text-gray-800">{product.name}</h3>
+                                            <h4 className="text-sm text-blue-600 font-bold mt-2">¥{product.price.toLocaleString()}</h4>
+                                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        })
+                    ) : (
+                        <p style={styles.noItemsMessage}>「いいね」した商品がありません。</p>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -62,17 +70,6 @@ const styles = {
         backgroundColor: "#f5f5f5",
         minHeight: "100vh",
         position: "relative",
-    },
-    backButton: {
-        position: "absolute",
-        top: "20px",
-        left: "20px",
-        padding: "8px 12px",
-        fontSize: "14px",
-        backgroundColor: "#f0f0f0",
-        border: "1px solid #ccc",
-        borderRadius: "4px",
-        cursor: "pointer",
     },
     header: {
         textAlign: "center",
@@ -87,42 +84,16 @@ const styles = {
         fontSize: "24px",
         color: "#555",
     },
-    gridContainer: {
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-        gap: "20px",
-    },
-    card: {
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        overflow: "hidden",
-        backgroundColor: "#fff",
-        cursor: "pointer",
-        transition: "transform 0.2s ease, box-shadow 0.2s ease",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    },
-    productImage: {
-        width: "auto",
-        height: "150px",
-        maxWidth: "100%",
-        objectFit: "cover",
-        borderBottom: "1px solid #ddd",
-        display: "block",
-        margin: "0 auto",
-    },
-
-    productInfo: {
-        padding: "16px",
-        textAlign: "center",
-    },
-    productName: {
+    sectionTitle: {
         fontSize: "18px",
+        marginBottom: "10px",
+        padding: "0.25em 0.5em",
+        color: "#494949",
+        background: "transparent",
+        borderLeft: "solid 5px #494949",
+        textAlign: "left",
         fontWeight: "bold",
-        margin: "0 0 8px",
-    },
-    productPrice: {
-        fontSize: "16px",
-        color: "#666",
+        fontFamily: "Arial, sans-serif",
     },
     noItemsMessage: {
         textAlign: "center",
