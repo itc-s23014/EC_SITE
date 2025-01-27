@@ -77,8 +77,8 @@ const AddProduct = () => {
             return;
         }
 
-        if (parseFloat(price) <= 0 || parseFloat(price) > 10000000) {
-            setPriceError('価格は0より大きく、1000万以下でなければなりません');
+        if (parseFloat(price) < 1000 || parseFloat(price) > 10000000) {
+            setPriceError('価格は1000円より大きく、1000万以下でなければなりません');
             return;
         } else {
             setPriceError('');

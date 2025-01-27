@@ -42,6 +42,7 @@ const ProductDetail = () => {
                         console.log(twitterData[3]);
                         console.log(twitterData[5]);
                         const sellerId = productData.sellerId;
+                        console.log(sellerId)
                         if (sellerId) {
                             const sellerDoc = doc(db, 'sellers', sellerId);
                             const sellerSnapshot = await getDoc(sellerDoc);
