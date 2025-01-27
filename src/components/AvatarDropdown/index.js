@@ -57,6 +57,18 @@ const AvatarDropdown = ({email,sellerName}) => {
                         <div>{sellerName}</div>
                         <div className="font-medium truncate text-gray-600">{email}</div>
                     </div>
+
+                    <ul className="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
+                        <li>
+                            <a
+                                href="#"
+                                className="block px-4 py-2 hover:bg-gray-100"
+                                onClick={() => handleNavigation('/add-product')}
+                            >
+                                出品
+                            </a>
+                        </li>
+                    </ul>
                     <ul className="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
                         <li>
                             <a
