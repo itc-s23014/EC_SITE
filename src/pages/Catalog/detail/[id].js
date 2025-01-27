@@ -34,14 +34,8 @@ const ProductDetail = () => {
                         setProduct(productData);
                         setVideoLink(productData.videoLink);
                         console.log(productData.videoLink);
-                        const twitter = productData.videoLink.match(/https:\/\/twitter.com\/\w+\/status\/\d+/) || "";
-                        console.log(twitter);
-                        const twitterData = twitter[0].split('/');
-                        setTwitterUserId(twitterData[3])
-                        setTwitterStatusId(twitterData[5])
-                        console.log(twitterData[3]);
-                        console.log(twitterData[5]);
                         const sellerId = productData.sellerId;
+                        console.log(sellerId)
                         if (sellerId) {
                             const sellerDoc = doc(db, 'sellers', sellerId);
                             const sellerSnapshot = await getDoc(sellerDoc);
