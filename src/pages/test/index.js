@@ -6,6 +6,7 @@ import styles from './style.module.css';
 import Carousel from '@/components/Carousel';
 import AvatarDropdown from '@/components/AvatarDropdown';
 import SearchBar from '@/components/SearchBar';
+import NotificationDropdown from '@/components/NotificationDropdown';
 import { useRouter } from 'next/router';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Link from "next/link";
@@ -320,6 +321,7 @@ const TestPage = () => {
               {/*  </div>*/}
 
               <div class='flex items-center sm:space-x-8 space-x-6'>
+
                 <div
                     className="flex flex-col items-center justify-center gap-0.5 cursor-pointer"
                     onClick={() => router.push('/')}
@@ -395,6 +397,9 @@ const TestPage = () => {
                   </button>
                 </div>
 
+          <div class='flex items-center sm:space-x-8 space-x-6'>
+
+            <NotificationDropdown/>
 
                 <AvatarDropdown sellerName={sellerName} email={email}/>
 
