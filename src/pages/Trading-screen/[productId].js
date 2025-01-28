@@ -8,6 +8,7 @@ import BackButton from "@/components/BackButton/BackButton";
 import { getAuth } from "firebase/auth";
 import useProducts from "@/hooks/useProducts";
 
+
 export default function TradePage() {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [product, setProduct] = useState(null);
@@ -19,6 +20,7 @@ export default function TradePage() {
     const currentUser = auth.currentUser;
     const [sellername, setsellername] = useState(null);
     const { products, deleteProduct } = useProducts(currentUser);
+    const [tradingPageId,settradingPageId] = useState(null)
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -70,6 +72,7 @@ export default function TradePage() {
 
         const notifySeller = async (productData) => {
             try {
+                // 通知データの基本情報
                 const notificationData = {
                     sellerId: productData.sellerId,
                     message: `商品「${productData.name}」の取引ページが開かれました。`,
@@ -77,9 +80,23 @@ export default function TradePage() {
                     read: false,
                     productId: productData.id,
                     buyer_id: currentUser.uid,
+                    tradingPageId: tradingPageId.crypto.randomUUID()
                 };
-                await addDoc(collection(db, "notifications"), notificationData);
-                console.log("通知を送信しました。");
+
+
+                const notificationsQuery = query(
+                    collection(db, "notifications"),
+                    where("productId", "==", productData.id),
+                );
+
+                const querySnapshot = await getDocs(notificationsQuery);
+
+                if (querySnapshot.empty) {
+                    await addDoc(collection(db, "notifications"), notificationData);
+                    console.log("通知を送信しました。");
+                } else {
+                    console.log("通知は既に存在しています。");
+                }
             } catch (error) {
                 console.error("通知送信中にエラーが発生しました:", error);
             }

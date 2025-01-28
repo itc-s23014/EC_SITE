@@ -289,73 +289,6 @@ const TestPage = () => {
                     </div>
                 )}
               </div>
-              {/*<div class='flex items-center sm:space-x-8 space-x-6'>*/}
-              {/*  <div class="flex flex-col items-center justify-center gap-0.5 cursor-pointer"*/}
-              {/*       onClick={() => router.push('/like-list')}>*/}
-              {/*    <div class="relative">*/}
-              {/*      <svg xmlns="http://www.w3.org/2000/svg" class="cursor-pointer fill-[#333] inline w-5 h-5"*/}
-              {/*           viewBox="0 0 64 64">*/}
-              {/*        <path*/}
-              {/*            d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"*/}
-              {/*            data-original="#000000"/>*/}
-              {/*      </svg>*/}
-              {/*      <span*/}
-              {/*          class="absolute left-auto -ml-1 top-0 rounded-full bg-red-500 px-1 py-0 text-xs text-white">0</span>*/}
-              {/*    </div>*/}
-              {/*    <span class="text-[13px] font-semibold text-[#333]">Wishlist</span>*/}
-              {/*  </div>*/}
-              {/*  <div class="flex flex-col items-center justify-center gap-0.5 cursor-pointer"*/}
-              {/*       onClick={() => router.push('/cart')}>*/}
-              {/*    <div class="relative">*/}
-              {/*      <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px"*/}
-              {/*           class="cursor-pointer fill-[#333] inline"*/}
-              {/*           viewBox="0 0 512 512">*/}
-              {/*        <path*/}
-              {/*            d="M164.96 300.004h.024c.02 0 .04-.004.059-.004H437a15.003 15.003 0 0 0 14.422-10.879l60-210a15.003 15.003 0 0 0-2.445-13.152A15.006 15.006 0 0 0 497 60H130.367l-10.722-48.254A15.003 15.003 0 0 0 105 0H15C6.715 0 0 6.715 0 15s6.715 15 15 15h77.969c1.898 8.55 51.312 230.918 54.156 243.71C131.184 280.64 120 296.536 120 315c0 24.812 20.188 45 45 45h272c8.285 0 15-6.715 15-15s-6.715-15-15-15H165c-8.27 0-15-6.73-15-15 0-8.258 6.707-14.977 14.96-14.996zM477.114 90l-51.43 180H177.032l-40-180zM150 405c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm167 15c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm0 0"*/}
-              {/*            data-original="#000000"></path>*/}
-              {/*      </svg>*/}
-              {/*      <span*/}
-              {/*          class="absolute left-auto -ml-1 top-0 rounded-full bg-red-500 px-1 py-0 text-xs text-white">0</span>*/}
-              {/*    </div>*/}
-              {/*    <span class="text-[13px] font-semibold text-[#333]">Cart</span>*/}
-              {/*  </div>*/}
-
-    {/*          <div class='flex items-center sm:space-x-8 space-x-6'>*/}
-
-    {/*            <div*/}
-    {/*                className="flex flex-col items-center justify-center gap-0.5 cursor-pointer"*/}
-    {/*                onClick={() => router.push('/')}*/}
-    {/*            >*/}
-    {/*              <button*/}
-    {/*                  className="py-4 px-1 relative border-2 border-transparent text-gray-800 rounded-full hover:text-gray-400 focus:outline-none focus:text-gray-500 transition duration-150 ease-in-out"*/}
-    {/*                  aria-label="Notifications">*/}
-    {/*                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6">*/}
-    {/*                  <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>*/}
-    {/*                  <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>*/}
-    {/*                  <g id="SVGRepo_iconCarrier">*/}
-    {/*                    <g clipPath="url(#clip0_15_159)">*/}
-    {/*                      <rect width="24" height="24" fill="white"></rect>*/}
-    {/*                      <path*/}
-    {/*                          d="M9.5 19C8.89555 19 7.01237 19 5.61714 19C4.87375 19 4.39116 18.2177 4.72361 17.5528L5.57771 15.8446C5.85542 15.2892 6 14.6774 6 14.0564C6 13.2867 6 12.1434 6 11C6 9 7 5 12 5C17 5 18 9 18 11C18 12.1434 18 13.2867 18 14.0564C18 14.6774 18.1446 15.2892 18.4223 15.8446L19.2764 17.5528C19.6088 18.2177 19.1253 19 18.382 19H14.5M9.5 19C9.5 21 10.5 22 12 22C13.5 22 14.5 21 14.5 19M9.5 19C11.0621 19 14.5 19 14.5 19"*/}
-    {/*                          stroke="#000000" strokeLinejoin="round"></path>*/}
-    {/*                      <path d="M12 5V3" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></path>*/}
-    {/*                    </g>*/}
-    {/*                    <defs>*/}
-    {/*                      <clipPath id="clip0_15_159">*/}
-    {/*                        <rect width="24" height="24" fill="white"></rect>*/}
-    {/*                      </clipPath>*/}
-    {/*                    </defs>*/}
-    {/*                  </g>*/}
-    {/*                </svg>*/}
-    {/*                <span className="absolute inset-0 object-right-top -mr-6">*/}
-    {/*  <div*/}
-    {/*      className="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">*/}
-    {/*    6*/}
-    {/*  </div>*/}
-    {/*</span>*/}
-    {/*              </button>*/}
-    {/*            </div>*/}
-
                 <div className="flex flex-col items-center justify-center gap-0.5 cursor-pointer"
                      onClick={() => router.push('/like-list')}>
                   <button
@@ -369,12 +302,6 @@ const TestPage = () => {
                             d="M433.601,67.001c-24.7-24.7-57.4-38.2-92.3-38.2s-67.7,13.6-92.4,38.3l-12.9,12.9l-13.1-13.1 c-24.7-24.7-57.6-38.4-92.5-38.4c-34.8,0-67.6,13.6-92.2,38.2c-24.7,24.7-38.3,57.5-38.2,92.4c0,34.9,13.7,67.6,38.4,92.3 l187.8,187.8c2.6,2.6,6.1,4,9.5,4c3.4,0,6.9-1.3,9.5-3.9l188.2-187.5c24.7-24.7,38.3-57.5,38.3-92.4 C471.801,124.501,458.301,91.701,433.601,67.001z M414.401,232.701l-178.7,178l-178.3-178.3c-19.6-19.6-30.4-45.6-30.4-73.3 s10.7-53.7,30.3-73.2c19.5-19.5,45.5-30.3,73.1-30.3c27.7,0,53.8,10.8,73.4,30.4l22.6,22.6c5.3,5.3,13.8,5.3,19.1,0l22.4-22.4 c19.6-19.6,45.7-30.4,73.3-30.4c27.6,0,53.6,10.8,73.2,30.3c19.6,19.6,30.3,45.6,30.3,73.3 C444.801,187.101,434.001,213.101,414.401,232.701z"></path>
                       </g>
                     </svg>
-    {/*                <span className="absolute inset-0 object-right-top -mr-6">*/}
-    {/*  <div*/}
-    {/*      className="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">*/}
-    {/*    6*/}
-    {/*  </div>*/}
-    {/*</span>*/}
                   </button>
                 </div>
 
@@ -388,12 +315,6 @@ const TestPage = () => {
                       <path
                           d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
-                {/*    <span class="absolute inset-0 object-right-top -mr-6">*/}
-                {/*  <div*/}
-                {/*      class="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">*/}
-                {/*    6*/}
-                {/*  </div>*/}
-                {/*</span>*/}
                   </button>
                 </div>
 
@@ -594,19 +515,6 @@ const TestPage = () => {
             </div>
           </div>
         </section>
-
-        {/*<section className={styles.section}>*/}
-        {/*  <h2>カテゴリから探す</h2>*/}
-        {/*  <div className={styles.categoryList}>*/}
-        {/*    {[...Array(8)].map((_, i) => (*/}
-        {/*        <div key={i} className={styles.category}>*/}
-        {/*          <div className={styles.categoryIcon}></div>*/}
-        {/*          <p>カテゴリ名</p>*/}
-        {/*          <span>&gt;</span>*/}
-        {/*        </div>*/}
-        {/*    ))}*/}
-        {/*  </div>*/}
-        {/*</section>*/}
 
         <section className={styles.section}>
           <h2>ランキング</h2>
