@@ -18,7 +18,7 @@ const LoginPage = () => {
 
         useEffect(() => {
             if (user) {
-                router.push('/Catalog');
+                router.push('/');
             }
         }, [user, router]);
 
@@ -27,7 +27,7 @@ const LoginPage = () => {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            router.push('/Catalog');
+            router.push('/');
             console.log('ok');
         } catch (error) {
             console.log('error');
@@ -42,7 +42,7 @@ const LoginPage = () => {
         return <p>Laoding...</p>
     }
     if (user) {
-        router.push('/Catalog');
+        router.push('/');
     } else {
             return (
         <div className="container" style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '50px' }}>

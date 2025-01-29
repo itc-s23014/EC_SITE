@@ -32,23 +32,28 @@ const ProductDetail = () => {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
-                        setVideoLink(productData.videoLink);
-                        console.log(productData.videoLink);
-                        const twitter = productData.videoLink.match(/https:\/\/twitter.com\/\w+\/status\/\d+/) || "";
-                        console.log(twitter);
-                        const twitterData = twitter[0].split('/');
-                        setTwitterUserId(twitterData[3])
-                        setTwitterStatusId(twitterData[5])
-                        console.log(twitterData[3]);
-                        console.log(twitterData[5]);
+                        if (productData.videoLink) {
+                            setVideoLink(productData.videoLink);
+                            console.log(productData.videoLink);
+                            const twitter = productData.videoLink.match(/https:\/\/twitter.com\/\w+\/status\/\d+/) || "";
+                            console.log(twitter);
+                            const twitterData = twitter[0].split('/');
+                            setTwitterUserId(twitterData[3])
+                            setTwitterStatusId(twitterData[5])
+                            console.log(twitterData[3]);
+                            console.log(twitterData[5]);
+                        }else {
+                            console.log('動画が見つかりません')
+                        }
                         const sellerId = productData.sellerId;
-                        console.log(sellerId)
+                        console.log('sellerId',sellerId)
                         if (sellerId) {
                             const sellerDoc = doc(db, 'sellers', sellerId);
                             const sellerSnapshot = await getDoc(sellerDoc);
 
                             if (sellerSnapshot.exists()) {
                                 const sellerData = sellerSnapshot.data();
+                                console.log(sellerData)
                                 setSellerName(sellerData.sellerName);
                             } else {
                                 setSellerName('不明');
@@ -61,6 +66,8 @@ const ProductDetail = () => {
                     }
                 } catch (error) {
                     console.error('商品取得エラー:', error);
+
+
                 }
             }
         };
