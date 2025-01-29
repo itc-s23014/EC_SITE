@@ -170,8 +170,8 @@ const TestPage = () => {
             className='flex bg-white border-b py-3 sm:px-6 px-4 font-[sans-serif] min-h-[75px] tracking-wide relative z-50'>
           <div className='flex max-w-screen-xl mx-auto w-full'>
             <div className='flex flex-wrap items-center lg:gap-y-2 gap-4 w-full'>
-              <a href="javascript:void(0)" class="max-sm:hidden"><img src="https://readymadeui.com/readymadeui.svg"
-                                                                      alt="logo" class='w-36'/>
+              <a href="javascript:void(0)" class="max-sm:hidden">
+
               </a>
               <a href="javascript:void(0)" class="hidden max-sm:block"><img
                   src="https://readymadeui.com/readymadeui-short.svg" alt="logo" class='w-9'/>
