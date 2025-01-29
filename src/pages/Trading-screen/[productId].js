@@ -7,7 +7,7 @@ import SendMessage from '@/pages/Trading-screen/sendMessage';
 import BackButton from "@/components/BackButton/BackButton";
 import { getAuth } from "firebase/auth";
 import useProducts from "@/hooks/useProducts";
-
+import BackButtonHome from "@/components/BackButton/BackButtonHome";
 
 export default function TradePage() {
     const [isConfirmed, setIsConfirmed] = useState(false);
@@ -176,7 +176,7 @@ export default function TradePage() {
 
         setTimeout(() => {
             setIsConfirmed(true);
-            router.push('/Catalog');
+            router.push('/');
         }, 1000);
     };
 
@@ -231,7 +231,7 @@ export default function TradePage() {
 
     return (
         <div style={{ padding: '16px', fontFamily: 'Arial, sans-serif' }}>
-            <BackButton />
+            <BackButtonHome />
             <header style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', height: '200px' }}>
                 <h1>取引画面</h1>
             </header>
