@@ -39,6 +39,12 @@ const TestPage = () => {
       setDropdownVisible(false);
     }
   };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutsides);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsides);
+    };
+  }, []);
 
   useEffect(() => {
     if (dropdownVisible) {
@@ -154,14 +160,6 @@ const TestPage = () => {
     );
     setFilteredProducts(filtered);
   };
-
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutsides);
-        return () => {
-        document.removeEventListener('mousedown', handleClickOutsides);
-        };
-    }, []);
 
 
   return (
