@@ -1,11 +1,10 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import { db } from '../../../firebaseConfig';
+import { db,app } from '../../../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { generateUID } from '@/utils/uidGenerator'; // UID生成関数をインポート
-import app from '../../../firebaseConfig'; // Firebase appのインポート
 import BackButton from '@/components/BackButton/BackButton';
 
 const auth = getAuth(app);
