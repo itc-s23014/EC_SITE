@@ -10,7 +10,7 @@ import useProducts from '@/hooks/useProducts';
 import { useSearchParams } from 'next/navigation';
 
 
-export default function SelectPaymentMethod() {
+const SelectPaymentMethod = () => {
     const { cartDetails, cartCount, formattedTotalPrice } = useShoppingCart();
     const [selectedMethod, setSelectedMethod] = useState('');
     const [directProduct, setDirectProduct] = useState(null);
@@ -194,3 +194,4 @@ export default function SelectPaymentMethod() {
         </div>
     );
 }
+export default SelectPaymentMethod;

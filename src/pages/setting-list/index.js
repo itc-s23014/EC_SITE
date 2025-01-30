@@ -8,7 +8,7 @@ import Link from "next/link";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
-export default function UserDashboard() {
+const  UserDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sellerName, setSellerName] = useState("");
@@ -162,3 +162,4 @@ export default function UserDashboard() {
       </div>
   );
 }
+export default UserDashboard;

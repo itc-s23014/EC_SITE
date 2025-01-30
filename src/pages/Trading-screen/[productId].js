@@ -9,7 +9,7 @@ import { getAuth } from "firebase/auth";
 import useProducts from "@/hooks/useProducts";
 import BackButtonHome from "@/components/BackButton/BackButtonHome";
 
-export default function TradePage() {
+const  TradePage = () => {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [product, setProduct] = useState(null);
     const [notifications, setNotifications] = useState([]);
@@ -329,4 +329,5 @@ export default function TradePage() {
             </div>
         </div>
     );
-}
+};
+export default TradePage;

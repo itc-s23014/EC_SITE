@@ -53,7 +53,7 @@ const buttonStyle = {
   cursor: 'pointer',
 };
 
-export default function SelectPaymentMethod() {
+const SelectPaymentMethod =() => {
     const { cartDetails, cartCount, formattedTotalPrice, clearCart } = useShoppingCart();
     const [selectedMethod, setSelectedMethod] = useState('');
     const [products, setProducts] = useState([]);
@@ -185,3 +185,4 @@ export default function SelectPaymentMethod() {
         </div>
     );
 }
+export default SelectPaymentMethod;
