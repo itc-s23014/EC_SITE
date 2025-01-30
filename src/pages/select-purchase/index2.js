@@ -10,7 +10,7 @@ import useProducts from '@/hooks/useProducts';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import BackButton from "@/components/BackButton/BackButton";
 
-export default function SelectPaymentMethod() {
+const SelectPaymentMethod = () => {
     const {cartDetails, cartCount, formattedTotalPrice} = useShoppingCart();
     const [selectedMethod, setSelectedMethod] = useState('');
     const [cartItems, setCartItems] = useState([]);
@@ -225,3 +225,4 @@ export default function SelectPaymentMethod() {
         </div>
     );
 }
+export default SelectPaymentMethod;

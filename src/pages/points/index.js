@@ -4,7 +4,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
 
-export default function Home() {
+const Home = () => {
     const [points, setPoints] = useState(null);
     const [sellerName, setSellerName] = useState("");
     const auth = getAuth();
@@ -88,3 +88,4 @@ const styles = {
         transition: "background-color 0.3s",
     },
 };
+export default Home;
