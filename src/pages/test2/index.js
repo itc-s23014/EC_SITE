@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import Header from "@/components/Header/Header";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import Link from "next/link";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { usePurchaseHistory } from "@/hooks/usePurchaseHistory";
+import useUser from "@/hooks/useUser";
 
 export default function UserDashboard() {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [sellerName, setSellerName] = useState("");
   const router = useRouter();
   const auth = getAuth();
-  const { user, loading: authloading } = useAuthGuard();
+  const { user: authuser, loading: authloading } = useAuthGuard();
+  const { purchasedProducts, loading: purchaseHistoryLoading } = usePurchaseHistory();
+  const user = useUser();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -45,7 +47,6 @@ export default function UserDashboard() {
       } catch (error) {
         console.error("ユーザーデータの取得中にエラーが発生しました", error);
       } finally {
-        setLoading(false);
       }
     };
 
@@ -60,142 +61,85 @@ export default function UserDashboard() {
     return () => unsubscribe();
   }, [auth, router]);
 
-  const handleNavigation = (url) => {
-    router.push(url);
-  };
 
-  if (loading) {
+  if (authloading || purchaseHistoryLoading) {
     return <LoadingComponent />
   }
 
   return (
       <div className="container">
-        <Header title={sellerName || "ダッシュボード"} />
 
         {/* セクション1 */}
-        <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
-      <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
-        <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
-          <h2 className="pl-3 mb-4 text-2xl font-semibold">設定</h2>
-          <a href="#" className="flex items-center px-3 py-2.5 font-bold bg-white text-indigo-900 border rounded-full">
-            アカウント設定
-          </a>
-          <a href="#" className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full">
-            購入履歴
-          </a>
-          <a href="#" className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full">
-            出品中の商品
-          </a>
-          <a href="#" className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full">
-            ポイント残高
-          </a>
-        </div>
-      </aside>
+        <div className=" w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
+        <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
+      <div className="sticky flex flex-col gap-3 p-5 text-sm border-r border-indigo-100 top-12">
+        <h2 className="pl-3 mb-5 text-2xl font-bold text-gray-900">設定</h2>
+        <button
+          onClick={() => router.push("/personal-information")}
+          className="flex items-center px-4 py-3 text-gray-700 font-medium border border-transparent rounded-lg transition-all duration-200 hover:text-indigo-900 hover:border-gray-300"
+        >
+          アカウント設定
+        </button>
+        <button
+          onClick={() => router.push("/purchase-history")}
+          className="flex items-center px-4 py-3 font-bold border border-gray-400 rounded-lg transition-all duration-200"
+        >
+          購入履歴
+        </button>
+        <button
+          onClick={() => router.push("/listing-history")}
+          className="flex items-center px-4 py-3 text-gray-700 font-medium border border-transparent rounded-lg transition-all duration-200 hover:text-indigo-900 hover:border-gray-300"
+        >
+          出品中の商品
+        </button>
+        <button
+          onClick={() => router.push("/points")}
+          className="flex items-center px-4 py-3 text-gray-700 font-medium border border-transparent rounded-lg transition-all duration-200 hover:text-indigo-900 hover:border-gray-300"
+        >
+          ポイント残高
+        </button>
+      </div>
+    </aside>
+
 
       {/* セクション2 */}
       <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
-        <div className="p-2 md:p-4">
-          <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
-            <h2 className="pl-6 text-2xl font-bold sm:text-xl">Public Profile</h2>
-            <div className="grid max-w-2xl mx-auto mt-8">
-              <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
-                <img
-                  className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300"
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
-                  alt="Bordered avatar"
-                />
-                <div className="flex flex-col space-y-5 sm:ml-8">
-                  <button
-                    type="button"
-                    className="py-3.5 px-7 text-base font-medium text-indigo-100 bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:ring-4 focus:ring-indigo-200"
-                  >
-                    Change picture
-                  </button>
-                  <button
-                    type="button"
-                    className="py-3.5 px-7 text-base font-medium text-indigo-900 bg-white rounded-lg border border-indigo-200 hover:bg-indigo-100 hover:text-[#202142] focus:ring-4 focus:ring-indigo-200"
-                  >
-                    Delete picture
-                  </button>
-                </div>
-              </div>
-              <div className="items-center mt-8 text-[#202142]">
-                <div className="flex flex-col sm:flex-row sm:space-x-4 sm:mb-6">
-                  <div className="w-full">
-                    <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-indigo-900">
-                      Your first name
-                    </label>
-                    <input
-                      type="text"
-                      id="first_name"
-                      className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                      placeholder="Your first name"
-                      value="John"
-                      required
+      <div className="p-2 md:p-4">
+        <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
+          <h2 className="pl-6 text-2xl font-bold sm:text-xl">アカウント設定</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {purchasedProducts.length > 0 ? (
+        purchasedProducts.map((product) => (
+            <Link key={product.id} href={`/Catalog/detail/${product.id}`} passHref>
+                <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                    <Image
+                        src={
+                            product.imageUrls && product.imageUrls.length > 0
+                                ? product.imageUrls[0]
+                                : "/placeholder.jpg"
+                        }
+                        alt={product.name}
+                        width={500}
+                        height={500}
+                        className="w-full h-48 object-cover mb-4 rounded"
                     />
-                  </div>
-                  <div className="w-full">
-                    <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-indigo-900">
-                      Your last name
-                    </label>
-                    <input
-                      type="text"
-                      id="last_name"
-                      className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                      placeholder="Your last name"
-                      value="Ferguson"
-                      required
-                    />
-                  </div>
+                    <div className="text-center">
+                        <h2 className="text-xl font-bold mb-2">{product.name}</h2>
+                        <p className="text-lg text-gray-700">¥{product.price.toLocaleString()}</p>
+                    </div>
                 </div>
-                <div className="mb-6">
-                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-indigo-900">
-                    Your email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                    placeholder="your.email@mail.com"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label htmlFor="profession" className="block mb-2 text-sm font-medium text-indigo-900">
-                    Profession
-                  </label>
-                  <input
-                    type="text"
-                    id="profession"
-                    className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                    placeholder="your profession"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label htmlFor="message" className="block mb-2 text-sm font-medium text-indigo-900">
-                    Bio
-                  </label>
-                  <textarea
-                    id="message"
-                    rows="4"
-                    className="block p-2.5 w-full text-sm text-indigo-900 bg-indigo-50 rounded-lg border border-indigo-300 focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Write your bio here..."
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    className="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+            </Link>
+        ))
+    ) : (
+        <div className="col-span-full text-center text-gray-600 mt-6">
+            <p>まだ何も購入していません。</p>
         </div>
-      </main>
+    )}
+</div>
+
+        </div>
+      </div>
+    </main>
     </div>
 
         <style jsx>{`
@@ -203,49 +147,6 @@ export default function UserDashboard() {
           font-family: Arial, sans-serif;
           margin: 0 auto;
           padding: 0 10px;
-          background-color: #f9f9f9;
-        }
-        header {
-          text-align: center;
-          margin-bottom: 20px;
-        }
-        .section {
-          margin-top: 10px;
-          background-color: #fff;
-          border-top: 1px solid #ccc;
-          border-bottom: 1px solid #ccc;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        ul {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
-        li {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px 15px;
-          border-bottom: 1px solid #ddd;
-          cursor: pointer;
-        }
-        li:last-child {
-          border-bottom: none;
-        }
-        a {
-          text-decoration: none;
-          color: #333;
-          font-size: 18px;
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-        }
-        li:hover {
-          background-color: #e0f7fa;
-        }
-        .arrow {
-          color: #666;
-          font-size: 16px;
         }
       `}</style>
       </div>
