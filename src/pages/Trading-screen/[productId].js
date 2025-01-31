@@ -80,13 +80,13 @@ const  TradePage = () => {
                     read: false,
                     productId: productData.id,
                     buyer_id: currentUser.uid,
-                    tradingPageId: tradingPageId.crypto.randomUUID()
+                    // tradingPageId: tradingPageId.crypto.randomUUID()
                 };
 
 
                 const notificationsQuery = query(
                     collection(db, "notifications"),
-                    where("productId", "==", productData.id),
+                    where("productId", "==", product.id),
                 );
 
                 const querySnapshot = await getDocs(notificationsQuery);
@@ -94,11 +94,13 @@ const  TradePage = () => {
                 if (querySnapshot.empty) {
                     await addDoc(collection(db, "notifications"), notificationData);
                     console.log("通知を送信しました。");
+                    console.log("productId",product.id)
                 } else {
                     console.log("通知は既に存在しています。");
                 }
             } catch (error) {
                 console.error("通知送信中にエラーが発生しました:", error);
+                console.log("productId",product.id)
             }
         };
 
