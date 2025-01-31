@@ -67,7 +67,7 @@ const ProductsPage = () => {
             {products.length === 0 ? (
     <p className="text-gray-600 text-lg mt-4">現在出品している商品はありません。</p>
 ) : (
-    <div className="grid bg-white rounded-md  shadow-[0_2px_12px_-3px_rgba(61,63,68,0.3)] grid-cols-1 gap-6">
+    <div className="grid rounded-md grid-cols-1 gap-6">
     {products.map((product) => {
         const imageUrl = product.imageUrls[0] || "/placeholder.jpg";
 
