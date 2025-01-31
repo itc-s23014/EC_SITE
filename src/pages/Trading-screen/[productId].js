@@ -112,7 +112,7 @@ const  TradePage = () => {
             const purchaseQuery = query(
                 collection(db, "purchaseHistory"),
                 where("productId", "==", product.id),
-                where("buyerId", "==", currentUser.uid)
+                where("buyer_id", "==", currentUser.uid)
             );
             const purchaseSnapshot = await getDocs(purchaseQuery);
 
@@ -170,6 +170,19 @@ const  TradePage = () => {
 
             setIsConfirmed(true);
             console.log("購入履歴と通知が保存され、ポイントが加算されました。");
+
+            const notificationToDeletedQuery = query(
+                collection(db, 'notifications'),
+                where('productId', '==', product.id),
+                where('buyer_id', '==', currentUser.uid)
+            );
+            const notificationToDeletedSnapshot = await getDocs(notificationToDeletedQuery);
+
+            const deleteNotificationPromises = notificationToDeletedSnapshot.docs.map((docSnapshot) => {
+                return deleteDoc(doc(db, 'notifications', docSnapshot.id));
+            });
+            await Promise.all(deleteNotificationPromises);
+            console.log('通知データ消去。');
         } catch (error) {
             console.error("データ保存中にエラーが発生しました:", error);
         }
