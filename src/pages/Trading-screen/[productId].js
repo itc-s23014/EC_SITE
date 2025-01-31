@@ -80,6 +80,7 @@ const  TradePage = () => {
                     read: false,
                     productId: productData.id,
                     buyer_id: currentUser.uid,
+
                 };
 
 
