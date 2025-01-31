@@ -38,9 +38,22 @@ const useCart = (user) => {
         const fetchUserCart = () => {
             if (user) {
                 const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
-                const unsubscribe = onSnapshot(userCartRef, (docSnapshot) => {
+                const unsubscribe = onSnapshot(userCartRef, async (docSnapshot) => {
                     if (docSnapshot.exists()) {
-                        setUserCart(docSnapshot.data());
+                        const cartData = docSnapshot.data();
+                        setUserCart(cartData);
+
+                        // isHidden が true の商品を削除
+                        const hiddenProductIds = Object.keys(cartData.cartDetails || {}).filter(
+                            (productId) => products[productId]?.isHidden
+                        );
+                        if (hiddenProductIds.length > 0) {
+                            const updates = {};
+                            hiddenProductIds.forEach((productId) => {
+                                updates[`cartDetails.${productId}`] = deleteField();
+                            });
+                            await updateDoc(userCartRef, updates);
+                        }
                     } else {
                         setUserCart(null);
                     }
@@ -52,10 +65,10 @@ const useCart = (user) => {
             }
         };
 
-        fetchProducts();
+        fetchProducts().then(fetchUserCart);
         const unsubscribe = fetchUserCart();
         return () => unsubscribe && unsubscribe();
-    }, [user]);
+    }, [user, products]);
 
     // カートからアイテムを削除する
     const removeItemFromCart = async (productId) => {
