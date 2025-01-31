@@ -35,8 +35,8 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost:3000/Trading-screen/${productId}`,
-      cancel_url: 'http://localhost:3000/select-purchase',
+      success_url: `https://ec-site-three.vercel.app/Trading-screen/${productId}`,
+      cancel_url: 'https://ec-site-three.vercel.app/select-purchase',
     });
 
     res.status(200).json({ checkout_url: session.url });
