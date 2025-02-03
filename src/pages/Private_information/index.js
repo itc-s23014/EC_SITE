@@ -73,7 +73,7 @@ const PersonalInfoPage = () => {
             });
 
             alert('個人情報が保存されました');
-            router.push('/Catalog');
+            router.push('/');
         } catch (error) {
             console.error('個人情報の保存に失敗しました: ', error);
             alert('保存に失敗しました。もう一度お試しください。');
