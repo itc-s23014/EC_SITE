@@ -79,7 +79,7 @@ const  TradePage = () => {
                     timestamp: new Date().toISOString(),
                     read: false,
                     productId: productData.id,
-                    buyer_id: currentUser.uid,
+                    buyer_id: auth.currentUser.uid,
 
                 };
 
@@ -129,6 +129,8 @@ const  TradePage = () => {
                 buyerId: currentUser.uid,
                 sellerId: product.sellerId,
                 purchaseDate: new Date().toISOString(),
+                price: product.price,
+                img: product.imageUrls
             };
             await addDoc(collection(db, "purchaseHistory"), purchaseData);
 
