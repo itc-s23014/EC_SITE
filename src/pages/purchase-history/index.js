@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import Header from "@/components/Header/Header";
+import Header from "@/components/Header";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
@@ -80,6 +80,7 @@ const  UserDashboard =() => {
 
     return (
         <div className="container">
+            <Header />
 
             {/* セクション1 */}
             <div className=" w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
