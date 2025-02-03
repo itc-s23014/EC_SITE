@@ -79,14 +79,14 @@ const  TradePage = () => {
                     timestamp: new Date().toISOString(),
                     read: false,
                     productId: productData.id,
-                    buyer_id: currentUser.uid,
-                    tradingPageId: tradingPageId.crypto.randomUUID()
+                    buyer_id: auth.currentUser.uid,
+
                 };
 
 
                 const notificationsQuery = query(
                     collection(db, "notifications"),
-                    where("productId", "==", productData.id),
+                    where("productId", "==", productData.productId),
                 );
 
                 const querySnapshot = await getDocs(notificationsQuery);
@@ -94,11 +94,13 @@ const  TradePage = () => {
                 if (querySnapshot.empty) {
                     await addDoc(collection(db, "notifications"), notificationData);
                     console.log("通知を送信しました。");
+                    console.log("productId",productData.id)
                 } else {
                     console.log("通知は既に存在しています。");
                 }
             } catch (error) {
                 console.error("通知送信中にエラーが発生しました:", error);
+                console.log("productId",productData.id)
             }
         };
 
@@ -127,6 +129,8 @@ const  TradePage = () => {
                 buyerId: currentUser.uid,
                 sellerId: product.sellerId,
                 purchaseDate: new Date().toISOString(),
+                price: product.price,
+                img: product.imageUrls
             };
             await addDoc(collection(db, "purchaseHistory"), purchaseData);
 

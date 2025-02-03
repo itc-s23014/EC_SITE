@@ -90,7 +90,7 @@ const AvatarDropdown = ({ email, sellerName }) => {
                             <a
                                 href="#"
                                 className="block px-4 py-2 hover:bg-gray-100"
-                                onClick={() => handleNavigation('/setting-list')}
+                                onClick={() => handleNavigation('/personal-information')}
                             >
                                 設定
                             </a>
