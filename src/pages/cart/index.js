@@ -91,7 +91,7 @@ const CartContents = () => {
                     <div className="mt-8 space-y-2">
                         <button type="button" className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide ${
         subtotal > 0 ? "bg-gray-800 hover:bg-gray-900 text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"} rounded-md`} onClick={handleCheckout} disabled={subtotal <= 0}>購入</button>
-                        <button type="button" className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-md" onClick={() => router.push("/Catalog")}>買い物を続ける</button>
+                        <button type="button" className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-md" onClick={() => router.push("/")}>買い物を続ける</button>
                     </div>
                 </div>
             </div>
