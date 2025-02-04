@@ -5,17 +5,18 @@ import AvatarDropdown from '@/components/AvatarDropdown';
 import NotificationDropdown from '@/components/NotificationDropdown';
 import { useRouter } from 'next/router';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useSellerAndUserData } from '@/hooks/useSellerAndUserData';
 
 const Header = () => {
   const [products, setProducts] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const dropdownRef = useRef(null);
-  const [sellerName, setSellerName] = useState("");
   const router = useRouter();
   const auth = getAuth();
-  const [email, setEmail] = useState('');
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { userData, sellerData, sellerName, loading: userLoading } = useSellerAndUserData(user?.uid);
+  const sellerEmail = sellerData?.email;
 
 
   const handleClickOutside = (event) => {
@@ -40,22 +41,6 @@ const Header = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [dropdownVisible]);
-
-
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const productsCollection = collection(db, 'products');
-      const productsSnapshot = await getDocs(productsCollection);
-      const productsList = productsSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })).filter((product) => !product.isHidden);
-      setProducts(productsList);
-    };
-
-    fetchProducts();
-  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -109,10 +94,6 @@ const Header = () => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
     return () => unsubscribe();
   }, []);
-
-  if (user && products.sellerId === user.uid) {
-    return null;
-  }
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -202,7 +183,7 @@ const Header = () => {
 
                 <NotificationDropdown/>
 
-                <AvatarDropdown sellerName={sellerName} email={email}/>
+                <AvatarDropdown sellerName={sellerName} email={sellerEmail}/>
 
                 <button id="toggleOpen" class='lg:hidden'>
                   <svg class="w-7 h-7" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
