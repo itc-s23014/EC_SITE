@@ -66,7 +66,6 @@ const NotificationDropdown = () => {
       };
     }
   }, [user]);
-
   // ドロップダウン外のクリックを検出
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -112,11 +111,13 @@ const NotificationDropdown = () => {
               </g>
             </g>
           </svg>
-          <span className="absolute inset-0 object-right-top -mr-6">
-          <div className="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">
-            {notifications.length}
-          </div>
-        </span>
+          {notifications.length > 0 && (
+            <span className="absolute inset-0 object-right-top -mr-6">
+              <div className="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">
+                {notifications.length}
+              </div>
+            </span>
+          )}
         </button>
 
         {isOpen && (
