@@ -20,7 +20,7 @@ const SellerNamePage = () => {
                 createdAt: serverTimestamp()
             });
             alert('出品者名が保存されました');
-            router.push('/Catalog');
+            router.push('/');
         } catch (error) {
             console.error('出品者名の保存に失敗しました: ', error);
             alert('保存に失敗しました。もう一度お試しください。');
