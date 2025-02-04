@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Header from "@/components/Header/Header";
+import Header from "@/components/Header";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
@@ -156,6 +156,8 @@ const handleSubmit = async (e) => {
   }
 
   return (
+    <div>
+      <Header />
       <div className="container">
 
         {/* セクション1 */}
@@ -334,6 +336,7 @@ const handleSubmit = async (e) => {
         </div>
       </main>
     </div>
+  </div>
 
         <style jsx>{`
         .container {

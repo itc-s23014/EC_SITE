@@ -54,7 +54,7 @@ const AddUserPage = () => {
 
     return (
         <div className="container" style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '50px' }}>
-            <BackButton destination="/Catalog"/>
+            <BackButton destination="/"/>
             <h2 style={{ textAlign: 'center' }}>ユーザー登録</h2>
             <form onSubmit={handleRegister}>
                 <div className="form-group" style={{ marginBottom: '15px' }}>
