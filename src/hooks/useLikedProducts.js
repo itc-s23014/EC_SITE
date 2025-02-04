@@ -12,7 +12,8 @@ import useUser from "./useUser";
 export const useLikedProducts = () => {
     const [likedProducts, setLikedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const  user  = useUser();
+    const user = useUser();
+    const likeItemCount = likedProducts.length;
 
     useEffect(() => {
         if (!user) {
@@ -51,5 +52,5 @@ export const useLikedProducts = () => {
         fetchLikedProducts();
     }, [user]);
 
-    return { likedProducts, loading, user };
+    return { likedProducts, likeItemCount, loading, user };
 };
