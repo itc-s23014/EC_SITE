@@ -26,7 +26,6 @@ export const useLikedProducts = () => {
                 const likesCollection = collection(db, "likes");
                 const q = query(likesCollection, where("userId", "==", user.uid));
                 const likesSnapshot = await getDocs(q);
-
                 const likedProductIds = likesSnapshot.docs.map((doc) => doc.data().productId);
 
                 if (likedProductIds.length > 0) {
@@ -38,7 +37,6 @@ export const useLikedProducts = () => {
                         .filter((product) => likedProductIds.includes(product.id));
 
                     setLikedProducts(filteredProducts);
-                    console.log(filteredProducts);
                 } else {
                     setLikedProducts([]);
                 }
@@ -50,7 +48,7 @@ export const useLikedProducts = () => {
         };
 
         fetchLikedProducts();
-    }, [user]);
+    }, [user, likedProducts]);
 
     return { likedProducts, likeItemCount, loading, user };
 };
