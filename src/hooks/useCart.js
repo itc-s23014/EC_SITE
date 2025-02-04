@@ -2,7 +2,7 @@
  * ユーザーのカート情報と商品情報を管理するカスタムフック。
  *
  * @param {Object} user - 現在のユーザー情報。
- * @returns {Object} - カート情報、商品情報、ローディング状態、カートからアイテムを削除する関数を含むオブジェクト。
+ * @returns {Object} - カート情報、商品情報、ローディング状態、カート内の合計アイテム数、カートからアイテムを削除する関数を含むオブジェクト。
  */
 
 import { useState, useEffect } from 'react';
@@ -13,6 +13,7 @@ const useCart = (user) => {
     const [products, setProducts] = useState({});
     const [userCart, setUserCart] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [cartItemCount, setCartItemCount] = useState(0);
 
     useEffect(() => {
         // 商品の情報を取得する
@@ -54,8 +55,16 @@ const useCart = (user) => {
                             });
                             await updateDoc(userCartRef, updates);
                         }
+
+                        // カート内の商品数を計算
+                        const totalItems = Object.values(cartData.cartDetails || {}).reduce(
+                            (sum, item) => sum + (item.quantity || 1),
+                            0
+                        );
+                        setCartItemCount(totalItems);
                     } else {
                         setUserCart(null);
+                        setCartItemCount(0);
                     }
                     setLoading(false);
                 });
@@ -85,7 +94,7 @@ const useCart = (user) => {
         }
     };
 
-    return { products, userCart, loading, removeItemFromCart };
+    return { products, userCart, loading, cartItemCount, removeItemFromCart };
 };
 
 export default useCart;
