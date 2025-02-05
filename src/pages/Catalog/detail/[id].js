@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
-import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
 import Header from "@/components/Header";
@@ -17,7 +16,6 @@ const ProductDetail = () => {
     const [user] = useAuthState(auth);
     const [twitterUserId, setTwitterUserId] = useState('');
     const [twitterStatusId, setTwitterStatusId] = useState('');
-    const { addItem, cartDetails } = useShoppingCart();
     const [cart, setCart] = useState({});
     const [isLiked, setIsLiked] = useState(false);
     const [videoLink, setVideoLink] = useState('');
@@ -163,7 +161,7 @@ const ProductDetail = () => {
 
     return (
         <>
-            <Header title={product.name}/>
+            <Header />
             <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
                 {product.imageUrls && product.imageUrls.map((url, index) => (
                     <Image
