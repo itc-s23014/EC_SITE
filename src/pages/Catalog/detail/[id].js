@@ -19,7 +19,7 @@ const ProductDetail = () => {
     const [cart, setCart] = useState({});
     const [isLiked, setIsLiked] = useState(false);
     const [videoLink, setVideoLink] = useState('');
-    const [mainImage, setMainImage] = useState(product?.imageUrls ? product.imageUrls[0] : "");
+    const [mainImage, setMainImage] = useState("");
     useEffect(() => {
         const fetchProductAndSeller = async () => {
             if (id) {
@@ -30,6 +30,9 @@ const ProductDetail = () => {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
+                        if (productData.imageUrls && productData.imageUrls.length > 0) {
+                            setMainImage(productData.imageUrls[0]);
+                        }
                         if (productData.videoLink) {
                             setVideoLink(productData.videoLink);
                             console.log(productData.videoLink);
