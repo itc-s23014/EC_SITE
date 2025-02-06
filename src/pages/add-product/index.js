@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
 import { getAuth } from 'firebase/auth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import BackButtonHome from "@/components/BackButton/BackButtonHome";
 
 const AddProduct = () => {
     const [name, setName] = useState('');
@@ -127,6 +128,7 @@ const AddProduct = () => {
 
     return (
         <div style={{ padding: '20px' }}>
+            <BackButtonHome />
             <h1>商品を追加する</h1>
             <form onSubmit={handleSubmit}
                   style={{display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto'}}>
