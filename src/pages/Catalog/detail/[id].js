@@ -263,8 +263,8 @@ const ProductDetail = () => {
 
             <div className="px-4 py-10 rounded shadow-md relative">
               <Image src={mainImage} alt="Product" width={500} height={500} className="w-4/5 aspect-[251/171] rounded object-cover mx-auto" />
-              <button type="button" className="absolute top-4 right-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill="#ccc" className="mr-1 hover:fill-[#333]" viewBox="0 0 64 64">
+              <button type="button" className="absolute top-4 right-4" onClick={handleLikeToggle}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill={isLiked ? "red" : "#ccc"}   className={`mr-1 ${isLiked ? "hover:fill-red-500" : "hover:fill-[#333]"}`} viewBox="0 0 64 64">
                   <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
                 </svg>
               </button>
@@ -297,8 +297,8 @@ const ProductDetail = () => {
 
 
             <div className="flex gap-4 mt-12 max-w-md">
-            <button type="button" className="w-full px-4 py-2.5 outline-none border border-blue-600 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded">カートに追加</button>
-              <button type="button" className="w-full px-4 py-2.5 outline-none border border-blue-600 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded">購入</button>
+            <button type="button" className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-200 text-gray-800 border border-gray-300 rounded-md" onClick={() => router.push("/")}>カートに追加する</button>
+            <button type="button" className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md`}>購入</button>
             </div>
           </div>
         </div>
