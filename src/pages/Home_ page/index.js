@@ -168,12 +168,12 @@ const TestPage = () => {
             className='flex bg-white border-b py-3 sm:px-6 px-4 font-[sans-serif] min-h-[75px] tracking-wide relative z-50'>
           <div className='flex max-w-screen-xl mx-auto w-full'>
             <div className='flex flex-wrap items-center lg:gap-y-2 gap-4 w-full'>
-              <a href="javascript:void(0)" class="max-sm:hidden">
-
-              </a>
-              <a href="javascript:void(0)" class="hidden max-sm:block"><img
-                  src="https://readymadeui.com/readymadeui-short.svg" alt="logo" class='w-9'/>
-              </a>
+              <a href="javascript:void(0)" className="max-sm:hidden" onClick={() => router.push('/')}>
+  <h1 className="text-4xl font-bold text-gray-900 my-0 py-0">Logo</h1>
+</a>
+<a href="javascript:void(0)" className="hidden max-sm:block" onClick={() => router.push('/')}>
+  <span className="text-3xl font-semibold text-blue-600 my-0 py-0">Logo</span>
+</a>
 
               <div id="collapseMenu"
                    class='lg:ml-6 max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50'>

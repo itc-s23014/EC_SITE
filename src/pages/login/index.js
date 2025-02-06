@@ -46,7 +46,7 @@ const LoginPage = () => {
     } else {
             return (
         <div className="container" style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '50px' }}>
-            <BackButton destination="/Catalog"/>
+            <BackButton destination="/"/>
             <h2 style={{ textAlign: 'center' }}>ログイン</h2>
             <form onSubmit={handleLogin}>
                 <div className="form-group" style={{ marginBottom: '15px' }}>

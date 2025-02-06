@@ -143,7 +143,7 @@ const  TradePage = () => {
             };
             await addDoc(collection(db, "notifications"), notificationData);
 
-            const points = Math.floor(product.price * 0.1);
+            const points = product.price -(Math.floor(product.price * 0.1));
             const userCartRef = doc(db, 'sellers', product.sellerId, 'points', 'allPoint');
             const userCartSnapshot = await getDoc(userCartRef);
 
