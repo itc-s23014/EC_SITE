@@ -165,99 +165,8 @@ const ProductDetail = () => {
     return (
         <>
             <Header />
-            <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
-                {product.imageUrls && product.imageUrls.map((url, index) => (
-                    <Image
-                        key={index}
-                        src={url}
-                        alt={`${product.name} - 画像${index + 1}`}
-                        width={500}
-                        height={500}
-                        style={{
-                            width: '100%',
-                            maxWidth: '250px',
-                            height: 'auto',
-                            borderRadius: '8px',
-                            margin: '10px'
-                        }}
-                    />
-
-                ))}
-            </div>
-            <div style={{maxWidth: '800px', margin: 'auto', padding: '20px'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
-                    <h1 style={{fontSize: '2rem', color: '#333'}}>{product.name}</h1>
-                    <Image
-                        src={isLiked ? '/image/heart_filled_red.svg' : '/image/heart.svg'}
-                        alt="いいね"
-                        width={500}
-                        height={500}
-                        style={{
-                            width: '40px',
-                            height: '40px',
-                            cursor: 'pointer',
-                            marginTop: '10px',
-                            filter: isLiked ? 'hue-rotate(0deg) saturate(1000%) brightness(0.8)' : 'none'
-                        }}
-                        onClick={handleLikeToggle}
-                    />
-                </div>
-
-                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>詳細</h2>
-                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.description}</p>
-                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>出品者</h2>
-                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{sellerName || '不明'}</p>
-                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>Category</h2>
-                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.category}</p>
-                <p style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#333'}}>
-                    <strong>価格:</strong> ¥{product.price.toLocaleString()}
-                </p>
-               <TwitterEmbed videoLink={videoLink} twitterStatusId={twitterStatusId} twitterUserId={twitterUserId} />
-                {/*<div id="twitter">*/}
-                {/*    <blockquote className="twitter-tweet" data-media-max-width="560">*/}
-                {/*        <a href={`https://twitter.com/${twitterUserId}/status/${twitterStatusId}?ref_src=twsrc%5Etfw`}></a>*/}
-                {/*    </blockquote>*/}
-                {/*    <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>*/}
-                {/*</div>*/}
-
-
-                <div style={{textAlign: 'center'}}>
-                    <button
-                        onClick={handleAddToCart}
-                        disabled={cart[product.id]}
-                        style={{
-                            padding: '12px 24px',
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: cart[product.id] ? 'default' : 'pointer',
-                            fontSize: '1rem',
-                            marginRight: '10px',
-                            opacity: cart[product.id] ? 0.5 : 1
-                        }}
-                    >
-                        {cart[product.id] ? '追加済み' : 'カートに追加'}
-                    </button>
-
-                    <button
-                        onClick={purchase}
-                        style={{
-                            padding: '12px 24px',
-                            backgroundColor: '#28a745',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            fontSize: '1rem'
-                        }}
-                    >
-                        購入
-                    </button>
-                </div>
-            </div>
             <div className="font-san">
-      <div className="p-4 lg:max-w-7xl max-w-4xl mx-auto mt-8">
+      <div className="p-4 lg:max-w-7xl max-w-4xl mx-auto mt-16">
         <div className="grid items-start grid-cols-1 lg:grid-cols-5 gap-12">
           <div className="lg:col-span-3 w-full lg:sticky top-0 text-center">
 
@@ -282,12 +191,13 @@ const ProductDetail = () => {
                         onClick={() => setMainImage(url)}
                     />
                 ))}
+                <TwitterEmbed videoLink={videoLink} twitterStatusId={twitterStatusId} twitterUserId={twitterUserId} />
             </div>
           </div>
 
           <div className="lg:col-span-2">
           <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-200 text-gray-500">{product.category}</span>
-          <h3 className="text-xl font-bold text-gray-800 mt-2">{product.name}</h3>
+          <h3 className="text-xl font-bold text-gray-800 mt-4">{product.name}</h3>
 
           {/* 出品者情報 */}
 <div className="flex items-center mt-2 text-gray-600 text-sm">
@@ -318,7 +228,7 @@ const ProductDetail = () => {
             <p className="text-s text-gray-500 mt-4">{product.description}</p>
 
             <div className="flex flex-wrap gap-4 mt-6">
-              <p className="text-gray-800 text-2xl font-bold">¥{product.price.toLocaleString()}</p>
+              <p className="text-gray-800 text-2xl font-bold">¥ {product.price.toLocaleString()}</p>
             </div>
 
 
