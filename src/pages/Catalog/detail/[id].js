@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
-import { useShoppingCart } from 'use-shopping-cart';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../../../firebaseConfig';
 import Header from "@/components/Header";
@@ -17,11 +16,10 @@ const ProductDetail = () => {
     const [user] = useAuthState(auth);
     const [twitterUserId, setTwitterUserId] = useState('');
     const [twitterStatusId, setTwitterStatusId] = useState('');
-    const { addItem, cartDetails } = useShoppingCart();
     const [cart, setCart] = useState({});
     const [isLiked, setIsLiked] = useState(false);
     const [videoLink, setVideoLink] = useState('');
-
+    const [mainImage, setMainImage] = useState("");
     useEffect(() => {
         const fetchProductAndSeller = async () => {
             if (id) {
@@ -32,6 +30,9 @@ const ProductDetail = () => {
                     if (productSnapshot.exists()) {
                         const productData = { id: productSnapshot.id, ...productSnapshot.data() };
                         setProduct(productData);
+                        if (productData.imageUrls && productData.imageUrls.length > 0) {
+                            setMainImage(productData.imageUrls[0]);
+                        }
                         if (productData.videoLink) {
                             setVideoLink(productData.videoLink);
                             console.log(productData.videoLink);
@@ -140,7 +141,7 @@ const ProductDetail = () => {
             setCart(newCart);
             const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
             await setDoc(userCartRef, { cartDetails: newCart, timestamp: new Date() });
-            alert(`${product.name} をカートに追加しました`);
+            // alert(`${product.name} をカートに追加しました`);
         }
     };
 
@@ -163,98 +164,82 @@ const ProductDetail = () => {
 
     return (
         <>
-            <Header title={product.name}/>
-            <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
-                {product.imageUrls && product.imageUrls.map((url, index) => (
+            <Header />
+            <div className="font-san">
+      <div className="p-4 lg:max-w-7xl max-w-4xl mx-auto mt-16">
+        <div className="grid items-start grid-cols-1 lg:grid-cols-5 gap-12">
+          <div className="lg:col-span-3 w-full lg:sticky top-0 text-center">
+
+            <div className="px-4 py-10 rounded shadow-md relative">
+              <Image src={mainImage} alt="Product" width={500} height={500} className="w-4/5 aspect-[251/171] rounded object-cover mx-auto" />
+              <button type="button" className="absolute top-4 right-4" onClick={handleLikeToggle}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill={isLiked ? "red" : "#ccc"}   className={`mr-1 ${isLiked ? "hover:fill-red-500" : "hover:fill-[#333]"}`} viewBox="0 0 64 64">
+                  <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-wrap justify-center gap-4 mx-auto">
+              {product.imageUrls && product.imageUrls.map((url, index) => (
                     <Image
                         key={index}
                         src={url}
                         alt={`${product.name} - 画像${index + 1}`}
                         width={500}
                         height={500}
-                        style={{
-                            width: '100%',
-                            maxWidth: '250px',
-                            height: 'auto',
-                            borderRadius: '8px',
-                            margin: '10px'
-                        }}
+                        className="w-2o h16 sm:w-24 sm:h-20 flex items-center justify-center rounded p-2 shadow-md cursor-pointer"
+                        onClick={() => setMainImage(url)}
                     />
-
                 ))}
+                <TwitterEmbed videoLink={videoLink} twitterStatusId={twitterStatusId} twitterUserId={twitterUserId} />
             </div>
-            <div style={{maxWidth: '800px', margin: 'auto', padding: '20px'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
-                    <h1 style={{fontSize: '2rem', color: '#333'}}>{product.name}</h1>
-                    <Image
-                        src={isLiked ? '/image/heart_filled_red.svg' : '/image/heart.svg'}
-                        alt="いいね"
-                        width={500}
-                        height={500}
-                        style={{
-                            width: '40px',
-                            height: '40px',
-                            cursor: 'pointer',
-                            marginTop: '10px',
-                            filter: isLiked ? 'hue-rotate(0deg) saturate(1000%) brightness(0.8)' : 'none'
-                        }}
-                        onClick={handleLikeToggle}
-                    />
-                </div>
+          </div>
 
-                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>詳細</h2>
-                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.description}</p>
-                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>出品者</h2>
-                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{sellerName || '不明'}</p>
-                <h2 style={{fontSize: '1.5rem', color: '#333', marginTop: '20px'}}>Category</h2>
-                <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: '#555'}}>{product.category}</p>
-                <p style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#333'}}>
-                    <strong>価格:</strong> ¥{product.price.toLocaleString()}
-                </p>
-               <TwitterEmbed videoLink={videoLink} twitterStatusId={twitterStatusId} twitterUserId={twitterUserId} />
-                {/*<div id="twitter">*/}
-                {/*    <blockquote className="twitter-tweet" data-media-max-width="560">*/}
-                {/*        <a href={`https://twitter.com/${twitterUserId}/status/${twitterStatusId}?ref_src=twsrc%5Etfw`}></a>*/}
-                {/*    </blockquote>*/}
-                {/*    <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>*/}
-                {/*</div>*/}
+          <div className="lg:col-span-2">
+          <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-200 text-gray-500">{product.category}</span>
+          <h3 className="text-xl font-bold text-gray-800 mt-4">{product.name}</h3>
+
+          {/* 出品者情報 */}
+<div className="flex items-center mt-2 text-gray-600 text-sm">
+  {/* 背景付きアイコン */}
+  <div className="mt-1 relative w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full">
+    <svg
+      className="w-7 h-7 text-gray-500"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+        clipRule="evenodd"
+      />
+    </svg>
+  </div>
+
+  {/* 出品者ラベル + 名前 */}
+  <div className="ml-2">
+    <span className="text-xs text-gray-500">出品者</span>
+    <p className="text-base font-semibold text-gray-800">{sellerName}</p>
+  </div>
+</div>
 
 
-                <div style={{textAlign: 'center'}}>
-                    <button
-                        onClick={handleAddToCart}
-                        disabled={cart[product.id]}
-                        style={{
-                            padding: '12px 24px',
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: cart[product.id] ? 'default' : 'pointer',
-                            fontSize: '1rem',
-                            marginRight: '10px',
-                            opacity: cart[product.id] ? 0.5 : 1
-                        }}
-                    >
-                        {cart[product.id] ? '追加済み' : 'カートに追加'}
-                    </button>
+            <p className="text-s text-gray-500 mt-4">{product.description}</p>
 
-                    <button
-                        onClick={purchase}
-                        style={{
-                            padding: '12px 24px',
-                            backgroundColor: '#28a745',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            fontSize: '1rem'
-                        }}
-                    >
-                        購入
-                    </button>
-                </div>
+            <div className="flex flex-wrap gap-4 mt-6">
+              <p className="text-gray-800 text-2xl font-bold">¥ {product.price.toLocaleString()}</p>
             </div>
+
+
+            <div className="flex gap-4 mt-12 max-w-md">
+            <button type="button" className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide border border-gray-300 rounded-md ${cart[product.id] ? "bg-gray-200 text-gray-500 opacity-50 cursor-not-allowed" : "bg-transparent hover:bg-gray-200 text-gray-800"}`} onClick={handleAddToCart} disabled={cart[product.id]}>{cart[product.id] ? '追加済み' : 'カートに追加'}</button>
+            <button type="button" className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md`} onClick={purchase}>購入</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
         </>
     );
 };

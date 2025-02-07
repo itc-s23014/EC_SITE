@@ -123,7 +123,7 @@ const TestPage = () => {
       if (user) {
         fetchUserData(user.uid);
       } else {
-        router.push("/login");
+        // router.push("/login");
       }
     });
 
