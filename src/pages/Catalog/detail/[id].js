@@ -141,7 +141,7 @@ const ProductDetail = () => {
             setCart(newCart);
             const userCartRef = doc(db, 'sellers', user.uid, 'cart', 'currentCart');
             await setDoc(userCartRef, { cartDetails: newCart, timestamp: new Date() });
-            alert(`${product.name} をカートに追加しました`);
+            // alert(`${product.name} をカートに追加しました`);
         }
     };
 
@@ -297,8 +297,8 @@ const ProductDetail = () => {
 
 
             <div className="flex gap-4 mt-12 max-w-md">
-            <button type="button" className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-200 text-gray-800 border border-gray-300 rounded-md" onClick={() => router.push("/")}>カートに追加する</button>
-            <button type="button" className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md`}>購入</button>
+            <button type="button" className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide border border-gray-300 rounded-md ${cart[product.id] ? "bg-gray-200 text-gray-500 opacity-50 cursor-not-allowed" : "bg-transparent hover:bg-gray-200 text-gray-800"}`} onClick={handleAddToCart} disabled={cart[product.id]}>{cart[product.id] ? '追加済み' : 'カートに追加'}</button>
+            <button type="button" className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md`} onClick={purchase}>購入</button>
             </div>
           </div>
         </div>
