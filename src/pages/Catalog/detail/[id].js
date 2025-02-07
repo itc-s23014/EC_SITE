@@ -289,6 +289,32 @@ const ProductDetail = () => {
           <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-200 text-gray-500">{product.category}</span>
           <h3 className="text-xl font-bold text-gray-800 mt-2">{product.name}</h3>
 
+          {/* 出品者情報 */}
+<div className="flex items-center mt-2 text-gray-600 text-sm">
+  {/* 背景付きアイコン */}
+  <div className="mt-1 relative w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full">
+    <svg
+      className="w-7 h-7 text-gray-500"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+        clipRule="evenodd"
+      />
+    </svg>
+  </div>
+
+  {/* 出品者ラベル + 名前 */}
+  <div className="ml-2">
+    <span className="text-xs text-gray-500">出品者</span>
+    <p className="text-base font-semibold text-gray-800">{sellerName}</p>
+  </div>
+</div>
+
+
             <p className="text-s text-gray-500 mt-4">{product.description}</p>
 
             <div className="flex flex-wrap gap-4 mt-6">
