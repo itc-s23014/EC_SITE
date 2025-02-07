@@ -20,6 +20,7 @@ const ProductDetail = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [videoLink, setVideoLink] = useState('');
     const [mainImage, setMainImage] = useState("");
+    const [mainVideo, setMainVideo] = useState("");
     useEffect(() => {
         const fetchProductAndSeller = async () => {
             if (id) {
@@ -170,33 +171,53 @@ const ProductDetail = () => {
         <div className="grid items-start grid-cols-1 lg:grid-cols-5 gap-12">
           <div className="lg:col-span-3 w-full lg:sticky top-0 text-center">
 
-            <div className="px-4 py-10 rounded shadow-md relative">
-              <Image src={mainImage} alt="Product" width={500} height={500} className="w-4/5 aspect-[251/171] rounded object-cover mx-auto" />
-              <button type="button" className="absolute top-4 right-4" onClick={handleLikeToggle}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill={isLiked ? "red" : "#ccc"}   className={`mr-1 ${isLiked ? "hover:fill-red-500" : "hover:fill-[#333]"}`} viewBox="0 0 64 64">
-                  <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
-                </svg>
-              </button>
-            </div>
+              <div className="px-4 py-10 rounded shadow-md relative">
+                  <div style={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      position: 'relative'
+                  }}>
+                      <Image
+                          src={isLiked ? '/image/heart_filled_red.svg' : '/image/heart.svg'}
+                          alt="いいね"
+                          width={40}
+                          height={40}
+                          style={{
+                              position: 'absolute',
+                              top: '10px',
+                              right: '10px',
+                              cursor: 'pointer',
+                              filter: isLiked ? 'hue-rotate(0deg) saturate(1000%) brightness(0.8)' : 'none'
+                          }}
+                          onClick={handleLikeToggle}
+                      />
+                  </div>
 
-            <div className="mt-4 flex flex-wrap justify-center gap-4 mx-auto">
-              {product.imageUrls && product.imageUrls.map((url, index) => (
-                    <Image
-                        key={index}
-                        src={url}
-                        alt={`${product.name} - 画像${index + 1}`}
-                        width={500}
-                        height={500}
-                        className="w-2o h16 sm:w-24 sm:h-20 flex items-center justify-center rounded p-2 shadow-md cursor-pointer"
-                        onClick={() => setMainImage(url)}
-                    />
-                ))}
-                <TwitterEmbed videoLink={videoLink} twitterStatusId={twitterStatusId} twitterUserId={twitterUserId} />
-            </div>
+                  <Image src={mainImage} alt="Product" width={500} height={500}
+                         className="w-4/5 aspect-[251/171] rounded object-cover mx-auto"/>
+
+
+              </div>
+
+              <div className="mt-4 flex flex-wrap justify-center gap-4 mx-auto">
+                  {product.imageUrls && product.imageUrls.map((url, index) => (
+                      <Image
+                          key={index}
+                          src={url}
+                          alt={`${product.name} - 画像${index + 1}`}
+                          width={500}
+                          height={500}
+                          className="w-2o h16 sm:w-24 sm:h-20 flex items-center justify-center rounded p-2 shadow-md cursor-pointer"
+                          onClick={() => setMainImage(url)}
+                      />
+                  ))}
+                  <TwitterEmbed videoLink={videoLink} twitterStatusId={twitterStatusId} twitterUserId={twitterUserId}/>
+              </div>
           </div>
 
-          <div className="lg:col-span-2">
-          <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-200 text-gray-500">{product.category}</span>
+            <div className="lg:col-span-2">
+                <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-200 text-gray-500">{product.category}</span>
           <h3 className="text-xl font-bold text-gray-800 mt-4">{product.name}</h3>
 
           {/* 出品者情報 */}
