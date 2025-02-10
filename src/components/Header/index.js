@@ -84,8 +84,6 @@ const Header = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         fetchUserData(user.uid);
-      } else {
-        router.push("/login");
       }
     });
 
