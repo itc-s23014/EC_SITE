@@ -5,7 +5,7 @@ import { db,app } from '../../../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { generateUID } from '@/utils/uidGenerator'; // UID生成関数をインポート
-import BackButton from '@/components/BackButton/BackButton';
+import Header from '@/components/Header';
 
 const auth = getAuth(app);
 
@@ -53,6 +53,8 @@ const AddUserPage = () => {
     };
 
     return (
+        <>
+        <Header />
         <section className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
             <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0">
                 <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -114,6 +116,7 @@ const AddUserPage = () => {
                 </div>
             </div>
         </section>
+        </>
     );
 };
 
