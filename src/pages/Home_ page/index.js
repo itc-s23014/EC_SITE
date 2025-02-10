@@ -392,26 +392,23 @@ const TestPage = () => {
                   }
                   return (
                       <Link href={`/Catalog/detail/${product.id}`} passHref key={product.id}>
-                        <div
-                            className="p-2 cursor-pointer shadow-md rounded-md hover:scale-[1.03] transition-transform">
-                          <div className="w-full h-[160px] overflow-hidden mx-auto rounded-md">
+                        <div className="bg-white p-3 cursor-pointer shadow-sm rounded-md hover:scale-[1.03] transition-all">
+                          <div className="w-full overflow-hidden mx-auto">
                             <Image
                                 src={product.imageUrls[0] || '/placeholder.jpg'}
                                 alt={product.name}
                                 width={160}
                                 height={160}
-                                className="w-full h-full object-cover rounded-md"
+                                className="aspect-[108/82] w-full object-contain"
                             />
                           </div>
-                          <div className="text-center mt-2">
-                            <h3 className="text-xs font-bold text-gray-800">
-                              {product.name.length > 15 ? `${product.name.slice(0, 15)}...` : product.name}
+                          <div className="text-center mt-4">
+                            <h3 className="text-sm font-bold text-gray-800 truncate">
+                              {product.name}
                             </h3>
-                            <h4 className="text-xs text-blue-600 font-bold mt-1">${product.price}</h4>
+                            <h4 className="text-sm text-blue-600 font-bold mt-2">${product.price}</h4>
                           </div>
                         </div>
-
-
                       </Link>
                   )
                       ;
