@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
-import TwitterEmbed from "@/hooks/twitter";
 import { FaHeart, FaComment, FaShare } from "react-icons/fa";
+import TwitterEmbeds from "@/hooks/twitters";
 
 export default function VideoList() {
     const [videos, setVideos] = useState([]);
@@ -14,11 +14,11 @@ export default function VideoList() {
                 .map((doc) => doc.data().videoLink)
                 .filter((link) => link);
             setVideos(videoLinks);
+            console.log(videoLinks)
         };
         fetchVideos();
     }, []);
 
-    // Twitterリンクの解析関数
     const parseTwitterLink = (url) => {
         const match = url.match(/https:\/\/twitter.com\/(\w+)\/status\/(\d+)/);
         if (match) {
@@ -38,22 +38,26 @@ export default function VideoList() {
 
                 return (
                     <div key={index} className="relative h-screen w-full flex justify-center items-center snap-center">
-                        {twitterData ? (
-                            <TwitterEmbed
-                                videoLink={twitterData.videoLink}
-                                twitterUserId={twitterData.twitterUserId}
-                                twitterStatusId={twitterData.twitterStatusId}
-                            />
-                        ) : (
-                            <video
-                                src={video}
-                                controls
-                                autoPlay
-                                loop
-                                playsInline
-                                className="w-full h-full object-cover"
-                            />
-                        )}
+                        <div className="absolute inset-y-0 left-0 bg-black w-4/12"></div>
+                        <div className="absolute inset-y-0 right-0 bg-black w-4/12"></div>
+                        <div className="relative h-full w-4/12 flex justify-center items-center">
+                            {twitterData ? (
+                                <TwitterEmbeds
+                                    videoLink={twitterData.videoLink}
+                                    twitterUserId={twitterData.twitterUserId}
+                                    twitterStatusId={twitterData.twitterStatusId}
+                                />
+                            ) : (
+                                <video
+                                    src={video}
+                                    controls
+                                    autoPlay
+                                    loop
+                                    playsInline
+                                    className="w-full h-full object-contain"
+                                />
+                            )}
+                        </div>
                         <div className="absolute bottom-10 left-5 text-white">
                             <p className="text-lg font-bold">@username</p>
                             <p className="text-sm">#Hashtag #Shorts</p>
