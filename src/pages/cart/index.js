@@ -7,6 +7,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import useCart from "@/hooks/useCart";
 import { useRouter } from "next/router";
+import Header from "@/components/Header";
 
 const CartContents = () => {
     const auth = getAuth();
@@ -40,6 +41,8 @@ const CartContents = () => {
     }
 
     return (
+        <>
+        <Header />
         <div className="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4">
             <BackButton />
             <h1 className="text-2xl font-bold text-gray-800">カート</h1>
@@ -96,6 +99,7 @@ const CartContents = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

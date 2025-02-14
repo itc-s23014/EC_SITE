@@ -3,6 +3,7 @@ import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import Image from "next/image";
 import useProducts from "@/hooks/useProducts";
+import Header from "@/components/Header";
 
 
 const ProductsPage = () => {
@@ -23,8 +24,9 @@ const ProductsPage = () => {
   }
 
   return (
+    <>
+    <Header />
     <div className="container">
-
     {/* セクション1 */}
     <div className=" w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
     <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
@@ -120,6 +122,7 @@ const ProductsPage = () => {
     }
     `}</style>
     </div>
+    </>
   );
 }
 

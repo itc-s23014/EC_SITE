@@ -8,6 +8,7 @@ import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import useProducts from '@/hooks/useProducts';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import Header from '@/components/Header';
 import BackButton from "@/components/BackButton/BackButton";
 
 const SelectPaymentMethod = () => {
@@ -114,6 +115,8 @@ const SelectPaymentMethod = () => {
     }
 
     return (
+        <>
+        <Header />
         <div style={{
             fontFamily: 'Arial, sans-serif',
             maxWidth: '800px',
@@ -223,6 +226,7 @@ const SelectPaymentMethod = () => {
                 </button>
             </div>
         </div>
+        </>
     );
 }
 export default SelectPaymentMethod;

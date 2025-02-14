@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BackButton from "@/components/BackButton/BackButton";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import Header from '@/components/Header';
 
 const ContactPage = () => {
     const [name, setName] = useState('');
@@ -40,6 +41,8 @@ const ContactPage = () => {
     };
 
     return (
+        <>
+        <Header />
         <div style={{
             display: 'flex',
             flexDirection: 'column',
@@ -135,6 +138,7 @@ const ContactPage = () => {
                 </button>
             </form>
         </div>
+        </>
     );
 }
 export default ContactPage;

@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import BackButton from "@/components/BackButton/BackButton";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useLikedProducts } from "@/hooks/useLikedProducts";
+import Header from "@/components/Header";
 
 const LikeList = () => {
     const { likedProducts, loading, user } = useLikedProducts();
@@ -18,13 +18,10 @@ const LikeList = () => {
     }
 
     return (
+        <>
+        <Header />
         <div className="font-sans px-4 py-8" style={styles.container}>
-            <BackButton />
-            <header style={styles.header}>
-                <h1 style={styles.title}>Like List</h1>
-                <h2 style={styles.subtitle}>あなたが「いいね」した商品</h2>
-            </header>
-
+            <h1 className="text-2xl font-bold text-gray-800">いいねリスト</h1>
             <div className="mx-auto lg:max-w-6xl md:max-w-4xl">
             <h2 className="sectionTitle" style={styles.sectionTitle}>お気に入り商品</h2>
 
@@ -61,6 +58,7 @@ const LikeList = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 
