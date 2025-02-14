@@ -6,6 +6,7 @@ import { db } from "../../../firebaseConfig";
 import { getAuth } from 'firebase/auth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import LoadingComponent from '@/components/LoadingComponent';
+import Header from '@/components/Header';
 
 const containerStyle = {
   fontFamily: 'Arial, sans-serif',
@@ -116,6 +117,8 @@ const SelectPaymentMethod =() => {
         : calculateTotal(products) + 300;
 
     return (
+        <>
+        <Header/>
         <div style={containerStyle}>
             <h1 style={headingStyle}>代金引換</h1>
 
@@ -183,6 +186,7 @@ const SelectPaymentMethod =() => {
                 </button>
             </div>
         </div>
+        </>
     );
 }
 export default SelectPaymentMethod;

@@ -4,6 +4,7 @@ import BackButton from "@/components/BackButton/BackButton";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useLikedProducts } from "@/hooks/useLikedProducts";
+import Header from "@/components/Header";
 
 const LikeList = () => {
     const { likedProducts, loading, user } = useLikedProducts();
@@ -18,6 +19,8 @@ const LikeList = () => {
     }
 
     return (
+        <>
+        <Header />
         <div className="font-sans px-4 py-8" style={styles.container}>
             <BackButton />
             <header style={styles.header}>
@@ -61,6 +64,7 @@ const LikeList = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

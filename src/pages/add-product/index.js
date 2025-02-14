@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getAuth } from 'firebase/auth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import BackButtonHome from "@/components/BackButton/BackButtonHome";
+import Header from '@/components/Header';
 
 const AddProduct = () => {
     const [name, setName] = useState('');
@@ -127,6 +128,8 @@ const AddProduct = () => {
     };
 
     return (
+        <>
+        <Header />
         <div style={{ padding: '20px' }}>
             <BackButtonHome />
             <h1>商品を追加する</h1>
@@ -198,6 +201,7 @@ const AddProduct = () => {
                 </button>
             </form>
         </div>
+        </>
     );
 };
 

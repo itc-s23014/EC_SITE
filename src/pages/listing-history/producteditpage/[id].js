@@ -6,6 +6,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../../firebaseConfig";
 import LoadingComponent from '@/components/LoadingComponent';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 
 const ProductEditPage = () => {
@@ -93,8 +94,9 @@ const handleDelete = async () => {
   }
 
   return (
+    <>
+    <Header />
       <div className="container">
-
         {/* セクション1 */}
         <div className=" w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
         <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
@@ -209,6 +211,7 @@ const handleDelete = async () => {
         }
       `}</style>
       </div>
+      </>
   );
 }
 

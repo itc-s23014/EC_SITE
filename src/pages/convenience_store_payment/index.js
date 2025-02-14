@@ -5,6 +5,7 @@ import BackButton from "@/components/BackButton/BackButton";
 import {db} from '../../../firebaseConfig'
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import LoadingComponent from '@/components/LoadingComponent';
+import Header from "@/components/Header";
 
 
 const PaymentScreen = () => {
@@ -50,6 +51,8 @@ const PaymentScreen = () => {
         return <div>商品が見つかりませんでした。</div>;
     }
     return (
+        <>
+        <Header/>
         <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
             <BackButton/>
             <h1 style={{ textAlign: 'center', fontSize: '1.5rem', marginBottom: '20px', color: '#333' }}>取引画面</h1>
@@ -144,6 +147,7 @@ const PaymentScreen = () => {
                 支払い方法を変更する
             </button>
         </div>
+        </>
     );
 };
 

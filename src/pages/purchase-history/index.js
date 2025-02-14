@@ -79,9 +79,9 @@ const  UserDashboard =() => {
     }
 
     return (
+        <>
+        <Header />
         <div className="container">
-            <Header />
-
             {/* セクション1 */}
             <div className=" w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
                 <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
@@ -163,6 +163,7 @@ const  UserDashboard =() => {
         }
       `}</style>
         </div>
+        </>
     );
 }
 export default UserDashboard;

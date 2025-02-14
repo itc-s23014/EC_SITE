@@ -195,7 +195,7 @@ const ProductDetail = () => {
                   </div>
 
                   <Image src={mainImage} alt="Product" width={500} height={500}
-                         className="w-4/5 aspect-[251/171] rounded object-cover mx-auto"/>
+                         className="w-4/5 aspect-[251/171] rounded object-contain mx-auto"/>
 
 
               </div>
