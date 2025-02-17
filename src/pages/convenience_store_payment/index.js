@@ -96,7 +96,7 @@ const PaymentScreen = () => {
             >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                     <span>商品代金</span>
-                    <span>${productData.price}</span>
+                    <span>¥ {productData.price.toLocaleString()}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                     <span>コンビニ/ATM手数料</span>
@@ -105,7 +105,7 @@ const PaymentScreen = () => {
                 <hr />
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.2rem' }}>
                     <span>支払い金額</span>
-                    <span>${productData.price + 100}</span>
+                    <span>¥ {(productData.price + 100).toLocaleString()}</span>
                 </div>
             </div>
 

@@ -406,7 +406,7 @@ const TestPage = () => {
                             <h3 className="text-sm font-bold text-gray-800 truncate">
                               {product.name}
                             </h3>
-                            <h4 className="text-sm text-blue-600 font-bold mt-2">${product.price}</h4>
+                            <h4 className="text-sm text-blue-600 font-bold mt-2">¥ {product.price.toLocaleString()}</h4>
                           </div>
                         </div>
                       </Link>

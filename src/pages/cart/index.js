@@ -72,7 +72,7 @@ const CartContents = () => {
             <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" data-original="#000000"></path>
         </svg>
     </div>
-    <h3 className="text-sm sm:text-xl font-normal text-gray-800 mt-auto">${product?.price}</h3>
+    <h3 className="text-sm sm:text-xl font-normal text-gray-800 mt-auto">¥ {product?.price.toLocaleString()}</h3>
 </div>
 </div>
                             );
