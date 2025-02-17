@@ -131,7 +131,7 @@ const SelectPaymentMethod =() => {
                     </div>
                     <div style={rowStyle}>
                         <span>商品代金</span>
-                        <span>${directProduct.price}</span>
+                        <span>¥ {directProduct.price.toLocaleString()}</span>
                     </div>
                     <div style={rowStyle}>
                         <span>代金引換手数料</span>
@@ -140,7 +140,7 @@ const SelectPaymentMethod =() => {
                     <hr />
                     <div style={totalRowStyle}>
                         <span>合計金額</span>
-                        <span>${totalAmount}</span>
+                        <span>¥ {totalAmount.toLocaleString()}</span>
                     </div>
                 </div>
             ) : (
@@ -154,7 +154,7 @@ const SelectPaymentMethod =() => {
                             </div>
                             <div style={rowStyle}>
                                 <span>商品代金</span>
-                                <span>${product.price}</span>
+                                <span>¥ {product.price.toLocaleString()}</span>
                             </div>
                             <div style={rowStyle}>
                                 <span>個数</span>
@@ -162,14 +162,14 @@ const SelectPaymentMethod =() => {
                             </div>
                             <div style={rowStyle}>
                                 <span>小計</span>
-                                <span>${product.price * product.quantity}</span>
+                                <span>¥ {(product.price * product.quantity).toLocaleString()}</span>
                             </div>
                         </div>
                     ))}
                     <hr />
                     <div style={totalRowStyle}>
                         <span>合計金額</span>
-                        <span>${totalAmount}</span>
+                        <span>¥ {totalAmount.toLocaleString()}</span>
                     </div>
                 </div>
             )}

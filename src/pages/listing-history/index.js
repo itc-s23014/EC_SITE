@@ -98,7 +98,7 @@ const ProductsPage = () => {
                         </svg>
                     </div>
                 </div>
-                <h3 className="text-sm ms:text-xl font-normal text-gray-800 mt-auto">{product?.price}円</h3>
+                <h3 className="text-sm ms:text-xl font-normal text-gray-800 mt-auto">¥ {product?.price.toLocaleString()}</h3>
             </div>
         </div>
 
