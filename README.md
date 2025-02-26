@@ -23,3 +23,5 @@
 詳細については、以下のリンクから **Payments** を参照してください。
 
 🔗 [Stripe API ドキュメント](https://docs.stripe.com/?locale=ja-JP#products)
+
+※ ほとんどはtestブランチからmergeしていますが、別ブランチで作業後、一旦testブランチにmergeしてからmainブランチにmergeしています。
