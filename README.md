@@ -24,4 +24,4 @@
 
 🔗 [Stripe API ドキュメント](https://docs.stripe.com/?locale=ja-JP#products)
 
-※ ほとんどはtestブランチからmergeしていますが、別ブランチで作業後、一旦testブランチにmergeしてからmainブランチにmergeしています。
+※ ほとんどはtestブランチからmergeしていますが、別ブランチで作業後、一旦testブランチにmergeして動作確認後mainブランチにmergeしています。
